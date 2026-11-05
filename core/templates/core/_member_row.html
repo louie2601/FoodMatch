@@ -1,0 +1,23 @@
+<div data-member-row class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+  <div class="mb-3 flex items-center justify-between gap-3">
+    <p data-member-title class="text-xs font-bold uppercase tracking-[0.16em] text-slate-600">Member</p>
+    <button type="button" data-member-remove class="rounded-lg px-2.5 py-1 text-xs font-semibold text-rose-600 transition hover:bg-rose-50">Remove</button>
+  </div>
+  <div class="grid gap-3 md:grid-cols-3">
+    <div>
+      <label for="{{ f.first_name.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">First Name<span class="ml-1 text-red-600">*</span></label>
+      {{ f.first_name }}
+      <p id="{{ f.first_name.id_for_label }}_error" class="mt-1.5 text-sm text-red-600{% if not f.first_name.errors %} hidden{% endif %}">{{ f.first_name.errors|join:", " }}</p>
+    </div>
+    <div>
+      <label for="{{ f.middle_name.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">Middle Name</label>
+      {{ f.middle_name }}
+      <p id="{{ f.middle_name.id_for_label }}_error" class="mt-1.5 text-sm text-red-600{% if not f.middle_name.errors %} hidden{% endif %}">{{ f.middle_name.errors|join:", " }}</p>
+    </div>
+    <div>
+      <label for="{{ f.last_name.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">Last Name<span class="ml-1 text-red-600">*</span></label>
+      {{ f.last_name }}
+      <p id="{{ f.last_name.id_for_label }}_error" class="mt-1.5 text-sm text-red-600{% if not f.last_name.errors %} hidden{% endif %}">{{ f.last_name.errors|join:", " }}</p>
+    </div>
+  </div>
+</div>

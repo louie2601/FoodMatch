@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" width="1400" height="900" font-family="Segoe UI, Arial, Helvetica, sans-serif" role="img" aria-label="System Diagram of FOOD MATCH">
+<title>System Diagram of FOOD MATCH</title>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10z" fill="#334155"/></marker>
+  <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10z" fill="#047857"/></marker>
+  
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="700.0" y="40.0" font-size="22" font-weight="bold" fill="#0f172a" text-anchor="middle">System Diagram of FOOD MATCH</text>
+<text x="700.0" y="64.0" font-size="14" font-weight="normal" fill="#475569" text-anchor="middle">Users, system modules and outputs</text>
+<rect x="40.0" y="167.0" width="210.0" height="96.0" rx="12" fill="#f0f9ff" stroke="#0369a1" stroke-width="1.8"/>
+<circle cx="80" cy="203" r="11" fill="none" stroke="#0369a1" stroke-width="2"/><path d="M62 237 q18 -26 36 0" fill="none" stroke="#0369a1" stroke-width="2"/>
+<text x="110.0" y="211.0" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Visitor</text>
+<text x="110.0" y="231.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Not signed in</text>
+<rect x="40.0" y="332.0" width="210.0" height="96.0" rx="12" fill="#f0f9ff" stroke="#0369a1" stroke-width="1.8"/>
+<circle cx="80" cy="368" r="11" fill="none" stroke="#0369a1" stroke-width="2"/><path d="M62 402 q18 -26 36 0" fill="none" stroke="#0369a1" stroke-width="2"/>
+<text x="110.0" y="376.0" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Student</text>
+<text x="110.0" y="396.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Research group</text>
+<text x="110.0" y="411.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">account</text>
+<rect x="40.0" y="497.0" width="210.0" height="96.0" rx="12" fill="#f0f9ff" stroke="#0369a1" stroke-width="1.8"/>
+<circle cx="80" cy="533" r="11" fill="none" stroke="#0369a1" stroke-width="2"/><path d="M62 567 q18 -26 36 0" fill="none" stroke="#0369a1" stroke-width="2"/>
+<text x="110.0" y="541.0" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Admin</text>
+<text x="110.0" y="561.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Research staff with</text>
+<text x="110.0" y="576.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">granted modules</text>
+<rect x="40.0" y="662.0" width="210.0" height="96.0" rx="12" fill="#f0f9ff" stroke="#0369a1" stroke-width="1.8"/>
+<circle cx="80" cy="698" r="11" fill="none" stroke="#0369a1" stroke-width="2"/><path d="M62 732 q18 -26 36 0" fill="none" stroke="#0369a1" stroke-width="2"/>
+<text x="110.0" y="706.0" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="start">Super Admin</text>
+<text x="110.0" y="726.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">System owner</text>
+<rect x="360.0" y="100.0" width="640.0" height="720.0" rx="18" fill="#f8fafc" stroke="#047857" stroke-width="2.5"/>
+<text x="680.0" y="134.0" font-size="19" font-weight="bold" fill="#047857" text-anchor="middle">FOOD MATCH System</text>
+<rect x="390.0" y="157.0" width="360.0" height="116.0" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4"/>
+<text x="408.0" y="185.0" font-size="15.5" font-weight="bold" fill="#0f172a" text-anchor="start">Public Website</text>
+<text x="408.0" y="207.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Landing page, announcements</text>
+<text x="408.0" y="225.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Group registration, sign-in</text>
+<text x="408.0" y="243.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Forgot password (email code)</text>
+<path d="M250 215 H390" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M750 215 H778" fill="none" stroke="#334155" stroke-width="1.3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<rect x="390.0" y="322.0" width="360.0" height="116.0" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4"/>
+<text x="408.0" y="350.0" font-size="15.5" font-weight="bold" fill="#0f172a" text-anchor="start">Student Portal</text>
+<text x="408.0" y="372.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Repository search and details</text>
+<text x="408.0" y="390.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Similarity check (top 5 matches)</text>
+<text x="408.0" y="408.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Submit research, track status, My Logs</text>
+<path d="M250 380 H390" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M750 380 H778" fill="none" stroke="#334155" stroke-width="1.3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<rect x="390.0" y="487.0" width="360.0" height="116.0" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4"/>
+<text x="408.0" y="515.0" font-size="15.5" font-weight="bold" fill="#0f172a" text-anchor="start">Admin Portal</text>
+<text x="408.0" y="537.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Manage users, submissions, repository</text>
+<text x="408.0" y="555.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Categories, similarity audit, records</text>
+<text x="408.0" y="573.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">System logs, reports, landing page</text>
+<path d="M250 545 H390" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M750 545 H778" fill="none" stroke="#334155" stroke-width="1.3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<rect x="390.0" y="652.0" width="360.0" height="116.0" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4"/>
+<text x="408.0" y="680.0" font-size="15.5" font-weight="bold" fill="#0f172a" text-anchor="start">Super Admin Controls</text>
+<text x="408.0" y="702.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Grant Admin module privileges</text>
+<text x="408.0" y="720.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Approve account deletion requests</text>
+<text x="408.0" y="738.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Full access to every module</text>
+<path d="M250 710 H390" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M750 710 H778" fill="none" stroke="#334155" stroke-width="1.3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<rect x="778.0" y="157.0" width="194.0" height="611.0" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="1.4"/>
+<text x="875.0" y="185.0" font-size="15.5" font-weight="bold" fill="#047857" text-anchor="middle">Core Services</text>
+<rect x="792.0" y="205.0" width="166.0" height="72.0" rx="9" fill="#ffffff" stroke="#047857" stroke-width="1"/>
+<text x="875.0" y="235.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Access control</text>
+<text x="875.0" y="255.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">roles and module privileges</text>
+<rect x="792.0" y="289.0" width="166.0" height="72.0" rx="9" fill="#ffffff" stroke="#047857" stroke-width="1"/>
+<text x="875.0" y="319.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Similarity engine</text>
+<text x="875.0" y="339.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">TF-IDF + cosine similarity</text>
+<rect x="792.0" y="373.0" width="166.0" height="72.0" rx="9" fill="#ffffff" stroke="#047857" stroke-width="1"/>
+<text x="875.0" y="403.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Text extraction</text>
+<text x="875.0" y="423.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">PDF, DOCX, OCR</text>
+<rect x="792.0" y="457.0" width="166.0" height="72.0" rx="9" fill="#ffffff" stroke="#047857" stroke-width="1"/>
+<text x="875.0" y="487.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Notifications</text>
+<text x="875.0" y="507.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">in-app bell</text>
+<rect x="792.0" y="541.0" width="166.0" height="72.0" rx="9" fill="#ffffff" stroke="#047857" stroke-width="1"/>
+<text x="875.0" y="571.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Activity logging</text>
+<text x="875.0" y="591.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">login and actions</text>
+<rect x="792.0" y="625.0" width="166.0" height="72.0" rx="9" fill="#ffffff" stroke="#047857" stroke-width="1"/>
+<text x="875.0" y="655.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Email service</text>
+<text x="875.0" y="675.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">codes, invites, notices</text>
+<rect x="1110.0" y="167.0" width="250.0" height="96.0" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+<text x="1130.0" y="207.0" font-size="15.5" font-weight="bold" fill="#0f172a" text-anchor="start">Similarity Report</text>
+<text x="1130.0" y="229.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Scores per study, Low /</text>
+<text x="1130.0" y="244.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Moderate / High</text>
+<path d="M1000 215 H1110" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="1110.0" y="332.0" width="250.0" height="96.0" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+<text x="1130.0" y="372.0" font-size="15.5" font-weight="bold" fill="#0f172a" text-anchor="start">Research Repository</text>
+<text x="1130.0" y="394.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Approved, searchable studies</text>
+<path d="M1000 380 H1110" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="1110.0" y="497.0" width="250.0" height="96.0" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+<text x="1130.0" y="537.0" font-size="15.5" font-weight="bold" fill="#0f172a" text-anchor="start">Notifications and Emails</text>
+<text x="1130.0" y="559.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Status updates, codes, notices</text>
+<path d="M1000 545 H1110" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<rect x="1110.0" y="662.0" width="250.0" height="96.0" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+<text x="1130.0" y="702.0" font-size="15.5" font-weight="bold" fill="#0f172a" text-anchor="start">Reports and Logs</text>
+<text x="1130.0" y="724.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Charts, CSV exports, audit</text>
+<text x="1130.0" y="739.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">trail</text>
+<path d="M1000 710 H1110" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="145.0" y="140.0" font-size="13" font-weight="bold" fill="#0369a1" text-anchor="middle">USERS</text>
+<text x="1235.0" y="140.0" font-size="13" font-weight="bold" fill="#b45309" text-anchor="middle">OUTPUTS</text>
+</svg>

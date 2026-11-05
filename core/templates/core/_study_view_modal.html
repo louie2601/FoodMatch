@@ -1,0 +1,92 @@
+{% comment %}
+  Research Study Details modal shared by the Student and Admin / Super Admin
+  Similarity Check pages. Rows opt in with data-study-id + data-* fields and a
+  [data-trigger-study-view] button; behaviour lives in core/js/study-view-modal.js.
+  Optional: upload_label (passage heading) and upload_phrase (sentence wording).
+{% endcomment %}
+<div
+  id="studyViewModal"
+  class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="studyViewModalTitle"
+  aria-hidden="true"
+  data-upload-label="{{ upload_label|default:'Your file' }}"
+>
+  <div data-close-study-view class="fixed inset-0 cursor-default bg-slate-950/45 backdrop-blur-[2px]" tabindex="-1" aria-hidden="true"></div>
+
+  <div
+    id="studyViewModalPanel"
+    class="relative flex w-full max-w-4xl max-h-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-slate-200 shadow-[0_20px_60px_rgba(15,23,42,0.18)]"
+    role="document"
+  >
+    <header class="flex flex-none items-start justify-between gap-4 border-b border-slate-100 px-5 py-4 sm:px-7 sm:py-5">
+      <div class="min-w-0 flex-1">
+        <p class="text-[11px] font-bold uppercase tracking-[0.22em] text-emerald-600">Research Study Details</p>
+        <h2 id="studyViewModalTitle" class="mt-1 text-lg font-black leading-snug tracking-tight text-slate-900 sm:text-xl"></h2>
+        <p id="studyViewModalAuthors" class="mt-0.5 text-sm font-medium text-slate-600"></p>
+      </div>
+      <button
+        type="button"
+        data-close-study-view
+        aria-label="Close study details"
+        class="flex-none inline-flex h-10 w-10 items-center justify-center rounded-2xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+      >
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>
+        </svg>
+      </button>
+    </header>
+
+    <div class="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-7 sm:py-6">
+      <div id="studyViewScoreBanner" class="mb-5 flex items-center justify-between gap-4 rounded-2xl px-5 py-4 ring-1">
+        <div>
+          <p class="text-[10px] font-bold uppercase tracking-[0.18em] opacity-80">Similarity to {{ upload_phrase|default:'your upload' }}</p>
+          <div class="mt-1 flex items-baseline gap-3">
+            <span id="studyViewModalScorePct" class="text-4xl font-black leading-none sm:text-5xl"></span>
+            <span id="studyViewModalScoreLabel" class="inline-flex rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ring-1 ring-black/5"></span>
+          </div>
+        </div>
+        <span id="studyViewModalLevelPill" class="inline-flex flex-none items-center gap-1.5 rounded-full px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider ring-1"></span>
+      </div>
+
+      <div class="space-y-4">
+        <section>
+          <h3 class="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-600">Similarity Basis</h3>
+          <div id="studyViewBasisGrid" class="grid grid-cols-2 gap-2.5 sm:grid-cols-4"></div>
+          <p id="studyViewMetadataOnlyNote" class="mt-2 hidden rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-800 ring-1 ring-amber-100">
+            This matched study — not {{ upload_phrase|default:'your upload' }} — was added to the repository with only its title, abstract, and keywords on record (no document was ever uploaded for it), so its score here is based on Title + Abstract only.
+          </p>
+        </section>
+
+        <section>
+          <h3 class="mb-1 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-600">What Matched</h3>
+          <p class="mb-2 text-xs text-slate-500">Shared key terms and the closest passages between {{ upload_phrase|default:'your upload' }} and this study. <mark class="rounded bg-amber-100 px-1 text-amber-900">Highlighted</mark> words appear in both.</p>
+          <div id="studyViewMatchDetails" class="space-y-2.5"></div>
+        </section>
+
+        <section>
+          <h3 class="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-600">Abstract</h3>
+          <div class="rounded-2xl border border-slate-100 bg-slate-50/60 px-4 py-4 sm:px-5 sm:py-5">
+            <p id="studyViewModalAbstract" class="text-[14.5px] leading-7 text-slate-800 sm:text-[15px] sm:leading-8"></p>
+          </div>
+        </section>
+
+        <section>
+          <h3 class="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-600">Study Information</h3>
+          <div id="studyInfoGrid" class="grid grid-cols-1 gap-2.5 sm:grid-cols-2"></div>
+        </section>
+      </div>
+    </div>
+
+    <footer class="flex flex-none items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/60 px-5 py-4 sm:px-7 sm:py-4.5">
+      <button
+        type="button"
+        data-close-study-view
+        class="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+      >
+        Close
+      </button>
+    </footer>
+  </div>
+</div>

@@ -1,0 +1,856 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Match | {{ page_title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <div data-app-layout class="min-h-screen lg:grid lg:grid-cols-[280px_1fr]">
+      <aside data-app-sidebar class="sticky top-0 max-h-screen overflow-y-auto z-30 {% if is_super_admin %}bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900{% else %}bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900{% endif %} px-5 py-6 text-white shadow-2xl">
+        <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <img
+            src="{% static 'core/images/Logo.png' %}"
+            alt="Food Match Logo"
+            class="h-14 w-14 rounded-full border border-white/15 bg-white object-cover"
+          />
+          <div>
+            <p class="text-2xl font-bold tracking-tight">
+              FOOD <span class="{% if is_super_admin %}text-green-400{% else %}text-emerald-400{% endif %}">MATCH</span>
+            </p>
+            <p class="text-xs uppercase tracking-[0.25em] {% if is_super_admin %}text-emerald-100/80{% else %}text-emerald-100/80{% endif %}">
+              {% if is_super_admin %}Super Admin Portal{% else %}Admin Portal{% endif %}
+            </p>
+          </div>
+        </div>
+
+        {% include 'core/_nav_admin.html' %}
+      </aside>
+
+      <main class="overflow-hidden">
+        <div class="relative z-40 border-b border-slate-200 bg-white/85 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
+          {% include 'core/_sidebar_toggle.html' %}
+          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.2em] {% if is_super_admin %}text-emerald-700{% else %}text-emerald-700{% endif %}">
+                {% if is_super_admin %}Super Admin Curation{% else %}Repository Curation{% endif %}
+              </p>
+              <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">Research Repository</h1>
+            </div>
+
+            <div class="flex items-center gap-4 self-end md:self-auto">
+              <p class="hidden text-lg font-semibold text-slate-900 sm:block">
+                Welcome, {{ admin_name }}
+              </p>
+              {% include 'core/_account_menu.html' with menu_name=admin_name menu_role=admin_role menu_super=is_super_admin %}
+            </div>
+          </div>
+        </div>
+
+        <section class="px-5 py-6 sm:px-8">
+          <div class="mx-auto max-w-7xl space-y-6">
+            <div class="rounded-[2rem] border border-white/60 bg-white/75 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur sm:p-8">
+              <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p class="text-sm font-semibold uppercase tracking-[0.2em] {% if is_super_admin %}text-emerald-700{% else %}text-emerald-700{% endif %}">Repository Overview</p>
+                  <h2 class="mt-2 text-3xl font-black tracking-tight text-slate-900">
+                    {% if can_add_research %}Curate the Research Repository{% else %}Browse the Research Repository{% endif %}
+                  </h2>
+                  <p class="mt-2 max-w-3xl text-sm text-slate-600 sm:text-base">
+                    {% if can_add_research %}View and manage all research studies stored in FoodHub. Tap Add Research File to include a new study directly in the similarity index.{% else %}View all research studies stored in FoodHub, including their abstracts, authors, and indexed documents.{% endif %}
+                  </p>
+                </div>
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                  <a href="{% url 'admin_dashboard' %}" class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
+                    Back to Dashboard
+                  </a>
+                  {% if can_add_research %}
+                  <button
+                    type="button"
+                    data-open-add-research-modal
+                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-200 transition hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-800"
+                  >
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                      <path d="M12 5v14"></path>
+                      <path d="M5 12h14"></path>
+                    </svg>
+                    Add Research File
+                  </button>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="mt-6 grid gap-4 lg:grid-cols-2">
+                <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-green-50 to-white p-5 shadow-sm">
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <p class="text-xs font-bold uppercase tracking-[0.2em] text-emerald-700">Repository Entries</p>
+                      <p class="mt-2 text-5xl font-black text-emerald-900">{{ total_papers }}</p>
+                      <p class="mt-2 text-sm font-medium text-emerald-900/80">
+                        ResearchPaper metadata records
+                      </p>
+                    </div>
+                    <div class="rounded-2xl bg-white/80 p-3 text-3xl shadow-sm ring-1 ring-emerald-100">
+                      📚
+                    </div>
+                  </div>
+                </div>
+                <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-teal-50 to-white p-5 shadow-sm">
+                  <div class="flex items-start justify-between gap-4">
+                    <div>
+                      <p class="text-xs font-bold uppercase tracking-[0.2em] text-emerald-700">Indexed for Similarity</p>
+                      <p class="mt-2 text-5xl font-black text-emerald-800">{{ total_approved_submissions }}</p>
+                      <p class="mt-2 text-sm font-medium text-emerald-900/80">
+                        APPROVED submissions with full-text extraction
+                      </p>
+                    </div>
+                    <div class="rounded-2xl bg-white/80 p-3 text-3xl shadow-sm ring-1 ring-emerald-100">
+                      🔍
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {% if action_message %}
+                <div class="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900 shadow-sm">
+                  <p class="font-bold text-emerald-950">Action completed</p>
+                  <p class="mt-1">{{ action_message }}</p>
+                </div>
+              {% endif %}
+              {% if action_error %}
+                <div class="mt-6 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-900 shadow-sm">
+                  <p class="font-bold text-rose-950">Action failed</p>
+                  <p class="mt-1">{{ action_error }}</p>
+                </div>
+              {% endif %}
+
+              {% if form_submitted %}
+                <div class="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900 shadow-sm">
+                  <p class="font-bold text-emerald-950">
+                    &ldquo;{{ saved_title }}&rdquo;
+                  </p>
+                  <p class="mt-1 text-emerald-900/90">
+                    was added to the repository and is now included in similarity checks.
+                  </p>
+                </div>
+              {% endif %}
+
+              {% if saved_error %}
+                <div class="mt-6 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4 text-sm text-rose-900 shadow-sm">
+                  <p class="font-bold text-rose-950">Unable to add research</p>
+                  <p class="mt-1">{{ saved_error }}</p>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)] sm:p-8">
+              <div class="flex flex-wrap items-end justify-between gap-4 border-b border-slate-100 pb-5">
+                <div>
+                  <p class="text-xs font-bold uppercase tracking-[0.2em] {% if is_super_admin %}text-emerald-700{% else %}text-emerald-700{% endif %}">All Studies</p>
+                  <h3 class="mt-1 text-2xl font-black tracking-tight text-slate-900">
+                    Research Studies in Repository
+                  </h3>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm">
+                    <span class="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-500"></span>
+                    {{ total_papers }} total studies
+                  </span>
+                </div>
+              </div>
+
+              <form method="get" role="search" aria-label="Search the repository" class="mt-5 flex flex-wrap items-end gap-4">
+                <div class="relative min-w-[220px] flex-1">
+                  <label for="q" class="mb-1.5 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Search</label>
+                  <input
+                    type="text"
+                    id="q"
+                    name="q"
+                    value="{{ search_query }}"
+                    autocomplete="off"
+                    placeholder="Title, authors, abstract, keywords, or adviser"
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-600 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+                  />
+                  <div id="dashboard-search-suggestions-box" class="absolute left-0 right-0 top-full z-20 mt-2 hidden overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl"></div>
+                </div>
+                <div>
+                  <label for="repo-category" class="mb-1.5 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Category</label>
+                  <select id="repo-category" name="category" class="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                    <option value="">All categories</option>
+                    {% for cat in categories %}
+                      <option value="{{ cat.pk }}" {% if category_id == cat.pk|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div>
+                  <label for="repo-published-year" class="mb-1.5 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Published Year</label>
+                  <select id="repo-published-year" name="published_year" class="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                    <option value="">All years</option>
+                    {% for year in published_years %}
+                      <option value="{{ year }}" {% if published_year == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="flex flex-wrap items-end gap-4">
+                  <div>
+                    <label for="repo-added-from" class="mb-1.5 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Added from</label>
+                    <input type="date" id="repo-added-from" name="added_from" value="{{ added_from }}" class="h-[42px] rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100" />
+                  </div>
+                  <div>
+                    <label for="repo-added-to" class="mb-1.5 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Added to</label>
+                    <input type="date" id="repo-added-to" name="added_to" value="{{ added_to }}" class="h-[42px] rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100" />
+                  </div>
+                </div>
+                <div class="flex items-end gap-3">
+                  <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-800">
+                    Search
+                  </button>
+                  {% if filters_active %}
+                    <a href="{% url 'admin_repository_add' %}" class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
+                      Clear
+                    </a>
+                  {% endif %}
+                </div>
+              </form>
+
+              {% if page_obj.paginator.count %}
+                <p class="mt-4 text-sm text-slate-500">
+                  Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ page_obj.paginator.count }} {% if filters_active %}matching {% endif %}stud{{ page_obj.paginator.count|pluralize:"y,ies" }}
+                </p>
+              {% endif %}
+
+              <div class="mt-4 overflow-x-auto rounded-2xl border border-slate-200">
+                <table class="w-full min-w-[860px] table-fixed text-left">
+                  <colgroup>
+                    <col>
+                    <col style="width: 150px">
+                    <col style="width: 120px">
+                    <col style="width: 130px">
+                    <col style="width: 120px">
+                    <col style="width: {% if is_super_admin %}96px{% else %}64px{% endif %}">
+                  </colgroup>
+                  <thead class="border-b border-slate-200 bg-slate-50">
+                    <tr class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                      <th scope="col" class="px-4 py-3">Research</th>
+                      <th scope="col" class="px-4 py-3">Category</th>
+                      <th scope="col" class="px-4 py-3">Published</th>
+                      <th scope="col" class="px-4 py-3">Document</th>
+                      <th scope="col" class="px-4 py-3">Added</th>
+                      <th scope="col" class="px-4 py-3"><span class="sr-only">Actions</span></th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 bg-white">
+                    {% for paper in all_papers %}
+                    <tr
+                      class="transition hover:bg-slate-50"
+                      data-paper-row
+                      data-paper-id="{{ paper.id }}"
+                      data-title="{{ paper.title }}"
+                      data-authors="{{ paper.authors }}"
+                      data-adviser="{{ paper.adviser }}"
+                      data-abstract="{{ paper.abstract }}"
+                      data-keywords="{{ paper.keywords }}"
+                      data-published="{{ paper.published_date }}"
+                      data-published-month="{{ paper.published_month|default:"" }}"
+                      data-published-year="{{ paper.published_year|default:"" }}"
+                      data-created="{{ paper.created_at }}, {{ paper.created_time }}"
+                      data-has-document="{% if paper.has_document %}1{% else %}0{% endif %}"
+                      data-doc-url="{{ paper.doc_url }}"
+                      data-doc-name="{{ paper.doc_name }}"
+                      data-doc-type="{{ paper.doc_type }}"
+                    >
+                      <td class="px-4 py-3">
+                        <p class="line-clamp-2 text-sm font-semibold leading-snug text-slate-900" title="{{ paper.title }}">{{ paper.title }}</p>
+                        <p class="mt-0.5 truncate text-xs text-slate-500" title="{{ paper.authors }}">{{ paper.authors|default:"No authors listed" }}</p>
+                      </td>
+                      <td class="px-4 py-3">
+                        {% if paper.category %}
+                        <span class="inline-block max-w-full truncate rounded-full bg-emerald-50 px-2 py-0.5 align-middle text-[11px] font-semibold text-emerald-700 ring-1 ring-emerald-100" title="{{ paper.category }}">{{ paper.category }}</span>
+                        {% else %}
+                        <span class="text-sm text-slate-400">—</span>
+                        {% endif %}
+                      </td>
+                      <td class="px-4 py-3 text-sm text-slate-700">{{ paper.published_label|default:"—" }}</td>
+                      <td class="px-4 py-3">
+                        {% if paper.has_document %}
+                        <span class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-700" title="Full text is indexed for similarity checks"><span class="h-2 w-2 shrink-0 rounded-full bg-emerald-500"></span>Full text</span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-700" title="Only the title, abstract and keywords are indexed"><span class="h-2 w-2 shrink-0 rounded-full bg-amber-400"></span>Metadata only</span>
+                        {% endif %}
+                      </td>
+                      <td class="whitespace-nowrap px-4 py-3">
+                        <p class="text-sm text-slate-700">{{ paper.created_at }}</p>
+                        <p class="text-xs text-slate-400">{{ paper.created_time }}</p>
+                      </td>
+                      <td class="px-4 py-3">
+                        <div class="flex items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            data-view-research
+                            aria-label="View details"
+                            title="View details"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                          >
+                            <svg class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+                              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                              <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path>
+                            </svg>
+                          </button>
+                          {% if is_super_admin %}
+                          <button
+                            type="button"
+                            data-delete-research
+                            aria-label="Delete"
+                            title="Delete"
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+                          >
+                            <svg class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+                              <path d="M3 6h18"></path>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                              <path d="M10 11v6"></path>
+                              <path d="M14 11v6"></path>
+                            </svg>
+                          </button>
+                          {% endif %}
+                        </div>
+                      </td>
+                    </tr>
+                    {% empty %}
+                    {% if filters_active %}
+                    <tr>
+                      <td colspan="6" class="px-6 py-14 text-center">
+                        <div class="mx-auto max-w-sm">
+                          <p class="text-base font-bold text-slate-900">No studies matched your search</p>
+                          <p class="mt-1 text-sm text-slate-500">Try other words or a wider date range.</p>
+                          <a href="{% url 'admin_repository_add' %}" class="mt-4 inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">Clear search</a>
+                        </div>
+                      </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                      <td colspan="6" class="px-6 py-14 text-center">
+                        <div class="mx-auto max-w-sm">
+                          <p class="text-base font-bold text-slate-900">No studies in the repository yet</p>
+                          <p class="mt-1 text-sm text-slate-500">
+                            {% if can_add_research %}Click <strong class="font-bold">Add Research File</strong> to import the first study and seed the similarity engine.{% else %}Studies added to the repository will appear here.{% endif %}
+                          </p>
+                          {% if can_add_research %}
+                          <button
+                            type="button"
+                            data-open-add-research-modal
+                            class="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:from-emerald-700 hover:to-green-800"
+                          >
+                            Add First Research File
+                          </button>
+                          {% endif %}
+                        </div>
+                      </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+
+              {% if page_obj.has_other_pages %}
+                <nav aria-label="Repository pages" class="mt-5 flex items-center justify-between gap-3">
+                  {% if page_obj.has_previous %}
+                    <a href="?{% if filter_params %}{{ filter_params }}&{% endif %}page={{ page_obj.previous_page_number }}" class="inline-flex items-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">Previous</a>
+                  {% else %}
+                    <span></span>
+                  {% endif %}
+                  <span class="text-xs font-semibold text-slate-500">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                  {% if page_obj.has_next %}
+                    <a href="?{% if filter_params %}{{ filter_params }}&{% endif %}page={{ page_obj.next_page_number }}" class="inline-flex items-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">Next</a>
+                  {% else %}
+                    <span></span>
+                  {% endif %}
+                </nav>
+              {% endif %}
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    {% if can_add_research %}
+    {% comment %} ADD RESEARCH MODAL {% endcomment %}
+    <div
+      id="addResearchModal"
+      data-add-research-modal
+      class="fixed inset-0 z-50 hidden items-center justify-center px-4 py-6"
+      aria-labelledby="addResearchModalLabel"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div data-add-research-modal-backdrop class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"></div>
+
+      <div class="relative z-10 w-full max-w-3xl max-h-[92vh] overflow-y-auto rounded-[2rem] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.3)]">
+        <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r {% if is_super_admin %}from-emerald-500 via-green-500 to-pink-500{% else %}from-emerald-500 via-green-500 to-teal-500{% endif %}"></div>
+
+        <div class="bg-gradient-to-br {% if is_super_admin %}from-emerald-50 via-teal-50 to-sky-50{% else %}from-emerald-50 via-teal-50 to-sky-50{% endif %} px-6 pt-6 pb-5 sm:px-8">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex items-start gap-4">
+              <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl border-4 border-white shadow-lg text-3xl bg-gradient-to-br {% if is_super_admin %}from-emerald-100 to-green-200 text-emerald-900{% else %}from-emerald-100 to-teal-200 text-emerald-900{% endif %}">
+                📚
+              </div>
+              <div class="min-w-0">
+                <p id="addResearchModalLabel" class="text-xs font-black uppercase tracking-[0.2em] {% if is_super_admin %}text-emerald-700{% else %}text-emerald-700{% endif %}">New Entry</p>
+                <h3 class="mt-1 text-2xl font-black tracking-tight text-slate-900 break-words">Add Research File</h3>
+                <p class="mt-2 text-sm text-slate-600 max-w-xl">
+                  Upload the document first — Title, Authors, Adviser, Abstract, and Published Month/Year are
+                  read from it automatically. Review and correct anything before saving.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              data-close-add-research-modal
+              aria-label="Close Add Research modal"
+              class="-mt-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-800"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <form id="addResearchForm" method="post" enctype="multipart/form-data" class="px-6 py-6 sm:px-8 sm:py-7" novalidate>
+          {% csrf_token %}
+          <input type="hidden" name="action" value="add_research" />
+          <div class="grid gap-5">
+            <div>
+              <label for="id_document" class="mb-2 block text-sm font-semibold text-slate-800">
+                Research Document<span class="ml-1 text-red-600">*</span>
+              </label>
+              {{ form.document }}
+              <p class="mt-2 text-xs text-slate-500">
+                Complete food research only: it must have Results and Discussion, Conclusions, Recommendations, and References. PDF, DOCX, TXT, JPG, or PNG (scanned/photographed pages are read via OCR). Once chosen, the fields below are filled in automatically from its content.
+              </p>
+              {% if form.document.errors %}<p class="mt-2 text-sm text-rose-600">{{ form.document.errors.0 }}</p>{% endif %}
+              <p id="id_document_client_error" class="mt-2 hidden text-sm text-rose-600">Please upload the research document.</p>
+              <div class="mt-4 rounded-2xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-teal-50 p-4">
+                <p class="text-xs font-black uppercase tracking-[0.2em] text-emerald-800">How this affects similarity checks</p>
+                <p class="mt-2 text-sm leading-relaxed text-emerald-900/90">
+                  ✅ The uploaded document is matched in full — its ingredients/procedure section and the rest of the
+                  paper both count toward the similarity score, on top of the title and abstract. Entries added
+                  before this requirement (title/abstract only, no file) still show up in results but are matched
+                  on title and abstract alone, with a note explaining why.
+                </p>
+              </div>
+              <div id="extractStatusBanner" class="mt-4 hidden rounded-2xl border px-4 py-3 text-sm">
+                <p id="extractStatusText" class="font-semibold"></p>
+              </div>
+            </div>
+
+            <div>
+              <label for="id_title" class="mb-2 block text-sm font-semibold text-slate-800">Research Title <span class="text-rose-600">*</span></label>
+              {{ form.title }}
+              {% if form.title.errors %}<p class="mt-2 text-sm text-rose-600">{{ form.title.errors.0 }}</p>{% endif %}
+              <p id="id_title_client_error" class="mt-2 hidden text-sm text-rose-600">Please enter the research title.</p>
+            </div>
+
+            <div>
+              <label for="id_category" class="mb-2 block text-sm font-semibold text-slate-800">Food Category <span class="text-rose-600">*</span></label>
+              <div class="flex items-stretch gap-2">
+                {{ form.category }}
+                <button
+                  type="button"
+                  id="openAddCategoryBtn"
+                  class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-bold text-emerald-800 transition hover:border-emerald-300 hover:bg-emerald-100"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M12 5v14"></path>
+                    <path d="M5 12h14"></path>
+                  </svg>
+                  Add
+                </button>
+              </div>
+              <div id="addCategoryRow" class="mt-2 hidden items-stretch gap-2">
+                <input
+                  id="newCategoryInput"
+                  type="text"
+                  placeholder="New category name"
+                  data-field-rule="category"
+                  data-field-label="Category name"
+                  data-field-rule-error="newCategoryError"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                  autocomplete="off"
+                />
+                <button type="button" id="saveNewCategoryBtn" class="inline-flex shrink-0 items-center justify-center rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-emerald-700">Save</button>
+                <button type="button" id="cancelNewCategoryBtn" class="inline-flex shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-600 transition hover:bg-slate-50">Cancel</button>
+              </div>
+              <p id="newCategoryError" class="mt-1 hidden text-sm text-rose-600"></p>
+              {% if form.category.errors %}<p class="mt-2 text-sm text-rose-600">{{ form.category.errors.0 }}</p>{% endif %}
+              <p id="id_category_client_error" class="mt-2 hidden text-sm text-rose-600">Please select a food category.</p>
+            </div>
+
+            <div>
+              <label for="id_authors_json" class="mb-2 block text-sm font-semibold text-slate-800">Authors <span class="text-rose-600">*</span></label>
+              {{ form.authors_json }}
+              <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <div id="authorsChipsWrap" class="flex flex-wrap gap-2 px-3 pt-3">
+                </div>
+                <div class="flex items-stretch gap-2 p-3">
+                  <input
+                    id="authorEntryInput"
+                    type="text"
+                    placeholder="Type author name (e.g. Dela Cruz, J.)"
+                    data-field-rule="name"
+                    data-field-label="Author names"
+                    data-field-rule-error="authorRuleError"
+                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                    autocomplete="off"
+                  />
+                  <button
+                    type="button"
+                    id="addAuthorBtn"
+                    class="inline-flex items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-bold text-emerald-800 transition hover:border-emerald-300 hover:bg-emerald-100"
+                  >
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                      <path d="M12 5v14"></path>
+                      <path d="M5 12h14"></path>
+                    </svg>
+                    Add
+                  </button>
+                </div>
+              </div>
+              <p id="authorRuleError" class="mt-2 hidden text-sm text-rose-600" aria-live="polite"></p>
+              <p id="authorsEmptyHint" class="mt-2 text-xs text-slate-500">Click <strong>Add</strong> or press <strong>Enter</strong> after each author. Add at least one author.</p>
+              {% if form.authors_json.errors %}<p class="mt-2 text-sm text-rose-600">{{ form.authors_json.errors.0 }}</p>{% endif %}
+            </div>
+
+            <div>
+              <label for="id_adviser" class="mb-2 block text-sm font-semibold text-slate-800">Adviser <span class="text-rose-600">*</span></label>
+              {{ form.adviser }}
+              {% if form.adviser.help_text %}<p class="mt-2 text-xs text-slate-500">{{ form.adviser.help_text }}</p>{% endif %}
+              {% if form.adviser.errors %}<p class="mt-2 text-sm text-rose-600">{{ form.adviser.errors.0 }}</p>{% endif %}
+              <p id="id_adviser_client_error" class="mt-2 hidden text-sm text-rose-600">Please enter the adviser's name.</p>
+            </div>
+
+            <div>
+              <label for="id_abstract" class="mb-2 block text-sm font-semibold text-slate-800">Abstract <span class="text-rose-600">*</span></label>
+              {{ form.abstract }}
+              {% if form.abstract.errors %}<p class="mt-2 text-sm text-rose-600">{{ form.abstract.errors.0 }}</p>{% endif %}
+              <p id="id_abstract_client_error" class="mt-2 hidden text-sm text-rose-600">Please enter the abstract.</p>
+            </div>
+
+            <div>
+              <label class="mb-2 block text-sm font-semibold text-slate-800">Keywords</label>
+              {{ form.keywords }}
+              <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <div id="keywordsChipsWrap" class="flex flex-wrap gap-2 px-3 pt-3"></div>
+                <div class="flex items-stretch gap-2 p-3">
+                  <input
+                    id="keywordEntryInput"
+                    type="text"
+                    placeholder="Type a keyword"
+                    data-field-rule="keyword"
+                    data-field-label="Keywords"
+                    data-field-rule-error="keywordRuleError"
+                    class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+                    autocomplete="off"
+                  />
+                  <button
+                    type="button"
+                    id="addKeywordBtn"
+                    class="inline-flex items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-bold text-emerald-800 transition hover:border-emerald-300 hover:bg-emerald-100"
+                  >
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                      <path d="M12 5v14"></path>
+                      <path d="M5 12h14"></path>
+                    </svg>
+                    Add
+                  </button>
+                </div>
+              </div>
+              <p id="keywordRuleError" class="mt-2 hidden text-sm text-rose-600" aria-live="polite"></p>
+              <p class="mt-2 text-xs text-slate-500">Auto-generated from the title — add or remove as needed.</p>
+              {% if form.keywords.errors %}<p class="mt-2 text-sm text-rose-600">{{ form.keywords.errors.0 }}</p>{% endif %}
+            </div>
+
+
+            <div class="grid gap-5 md:grid-cols-2">
+              <div>
+                <label for="id_published_month" class="mb-2 block text-sm font-semibold text-slate-800">Published Month</label>
+                {{ form.published_month }}
+                {% if form.published_month.help_text %}<p class="mt-2 text-xs text-slate-500">{{ form.published_month.help_text }}</p>{% endif %}
+                {% if form.published_month.errors %}<p class="mt-2 text-sm text-rose-600">{{ form.published_month.errors.0 }}</p>{% endif %}
+              </div>
+              <div>
+                <label for="id_published_year" class="mb-2 block text-sm font-semibold text-slate-800">Published Year</label>
+                {{ form.published_year }}
+                {% if form.published_year.help_text %}<p class="mt-2 text-xs text-slate-500">{{ form.published_year.help_text }}</p>{% endif %}
+                {% if form.published_year.errors %}<p class="mt-2 text-sm text-rose-600">{{ form.published_year.errors.0 }}</p>{% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 flex flex-col-reverse gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:items-center sm:justify-end">
+            <button
+              type="button"
+              data-close-add-research-modal
+              class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-3 text-base font-bold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="submitAddResearchBtn"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-7 py-3 text-base font-bold text-white shadow-lg shadow-emerald-200 transition hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-800"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                <path d="M12 5v14"></path>
+                <path d="M5 12h14"></path>
+              </svg>
+              Add to Repository
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% endif %}
+
+    {% comment %} RESEARCH DETAILS MODAL {% endcomment %}
+    <div
+      id="researchDetailsModal"
+      data-research-details-modal
+      class="fixed inset-0 z-50 hidden items-center justify-center px-4 py-4"
+      aria-labelledby="researchDetailsModalLabel"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div data-research-details-modal-backdrop class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"></div>
+
+      <div class="relative z-10 flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-[1.5rem] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.3)]">
+        <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r {% if is_super_admin %}from-emerald-500 via-green-500 to-teal-500{% else %}from-emerald-500 via-green-500 to-teal-500{% endif %}"></div>
+
+        <div class="shrink-0 bg-gradient-to-br {% if is_super_admin %}from-emerald-50 via-teal-50 to-sky-50{% else %}from-emerald-50 via-teal-50 to-sky-50{% endif %} px-6 pt-4 pb-3">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex items-start gap-4">
+              <div id="researchDetailsAvatar" class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-4 border-white text-2xl font-black shadow-md bg-gradient-to-br {% if is_super_admin %}from-emerald-100 to-green-200 text-emerald-900{% else %}from-emerald-100 to-teal-200 text-emerald-900{% endif %}">
+                R
+              </div>
+              <div class="min-w-0 flex-1">
+                <p id="researchDetailsModalLabel" class="text-xs font-black uppercase tracking-[0.2em] {% if is_super_admin %}text-emerald-700{% else %}text-emerald-700{% endif %}">Research Details</p>
+                <h3 id="researchDetailsTitle" class="text-xl font-black tracking-tight text-slate-900 break-words">Research Title</h3>
+                <p id="researchDetailsAuthors" class="mt-1 text-sm font-medium text-slate-600 max-w-xl">Authors</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              data-close-research-details-modal
+              aria-label="Close Research Details modal"
+              class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-800"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="min-h-0 flex-1 space-y-3 overflow-y-auto px-6 py-4">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+            <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Indexing Status</p>
+            <div class="mt-2 grid gap-3 sm:grid-cols-2">
+              <div>
+                <p class="text-xs font-semibold text-slate-500">Similarity Inclusion</p>
+                <p id="researchDetailsIndexed" class="mt-1 text-base font-bold text-slate-900">—</p>
+              </div>
+              <div>
+                <p class="text-xs font-semibold text-slate-500">Full-Text Document</p>
+                <p id="researchDetailsDocStatus" class="mt-1 text-base font-bold text-slate-900">—</p>
+              </div>
+            </div>
+            <div id="researchDetailsDocLinkWrap" class="mt-4 hidden">
+              <a
+                id="researchDetailsDocLink"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-800 shadow-sm transition hover:border-slate-300 hover:bg-slate-100"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                  <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 5Z"></path>
+                  <path d="M9 13h6"></path>
+                  <path d="M9 17h6"></path>
+                  <path d="M9 9h1"></path>
+                </svg>
+                <span id="researchDetailsDocLinkText">Open Document</span>
+                <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path d="M7 17 17 7"></path>
+                  <path d="M7 7h10v10"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-white p-4">
+            <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Abstract</p>
+            <p id="researchDetailsAbstract" class="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-slate-700">—</p>
+          </div>
+
+          <div class="grid gap-3 md:grid-cols-2">
+            <div class="rounded-2xl border border-slate-200 bg-white p-4">
+              <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Authors</p>
+              <div id="researchDetailsAuthorsChips" class="mt-2 text-sm text-slate-700 break-words">
+                —
+              </div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-4">
+              <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Adviser</p>
+              <div id="researchDetailsAdviser" class="mt-2 text-sm text-slate-700 break-words">
+                —
+              </div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-4 md:col-span-2">
+              <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Publication &amp; Upload</p>
+              <ul class="mt-2 grid gap-2 sm:grid-cols-2 text-sm text-slate-700">
+                <li class="flex items-center justify-between gap-3">
+                  <span class="text-slate-500">Published</span>
+                  <span id="researchDetailsPublished" class="font-semibold text-slate-900">—</span>
+                </li>
+                <li class="flex items-center justify-between gap-3">
+                  <span class="text-slate-500">Published Month</span>
+                  <span id="researchDetailsPublishedMonth" class="font-semibold text-slate-900">—</span>
+                </li>
+                <li class="flex items-center justify-between gap-3">
+                  <span class="text-slate-500">Published Year</span>
+                  <span id="researchDetailsPublishedYear" class="font-bold text-slate-900">—</span>
+                </li>
+                <li class="flex items-center justify-between gap-3">
+                  <span class="text-slate-500">School Year</span>
+                  <span id="researchDetailsSchoolYear" class="font-bold text-emerald-700">—</span>
+                </li>
+                <li class="flex items-center justify-between gap-3 sm:col-span-2">
+                  <span class="text-slate-500">Added to repo</span>
+                  <span id="researchDetailsCreated" class="font-semibold text-slate-900">—</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="flex shrink-0 items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/60 px-6 py-3">
+            <button
+              type="button"
+              data-close-research-details-modal
+              class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+            >
+              Close
+            </button>
+
+        </div>
+      </div>
+    </div>
+
+    {% if is_super_admin %}
+    {% comment %} DELETE RESEARCH CONFIRMATION MODAL {% endcomment %}
+    <div
+      id="deleteResearchModal"
+      data-delete-research-modal
+      class="fixed inset-0 z-50 hidden items-center justify-center px-4 py-6"
+      aria-labelledby="deleteResearchModalLabel"
+      role="alertdialog"
+      aria-modal="true"
+    >
+      <div data-delete-research-modal-backdrop class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"></div>
+
+      <div class="relative z-10 w-full max-w-lg rounded-[2rem] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.3)]">
+        <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-rose-500 via-red-500 to-pink-500"></div>
+
+        <div class="bg-gradient-to-br from-rose-50 via-red-50 to-pink-50 px-6 pt-6 pb-5 sm:px-8">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex items-start gap-4">
+              <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl border-4 border-white shadow-lg bg-gradient-to-br from-rose-100 to-red-200 text-rose-900">
+                <svg class="h-8 w-8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path d="M12 9v4"></path>
+                  <path d="M12 17h.01"></path>
+                  <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path>
+                </svg>
+              </div>
+              <div class="min-w-0">
+                <p id="deleteResearchModalLabel" class="text-xs font-black uppercase tracking-[0.2em] text-rose-700">Delete Research</p>
+                <h3 class="mt-1 text-2xl font-black tracking-tight text-slate-900 break-words">Delete this study?</h3>
+                <p id="researchDeleteTitle" class="mt-2 text-sm font-semibold text-rose-900/90 break-words">Title</p>
+                <p class="mt-2 text-sm text-slate-600 max-w-md">
+                  This will permanently remove the study from the repository and exclude it from future similarity checks. This action cannot be undone.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              data-close-delete-research-modal
+              aria-label="Close Delete Research modal"
+              class="-mt-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-800"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <form id="deleteResearchForm" method="post" class="px-6 py-6 sm:px-8 sm:py-7">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="delete_research" />
+          <input id="deleteResearchPaperId" type="hidden" name="paper_id" value="" />
+
+          <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4">
+            <p class="text-xs font-black uppercase tracking-[0.2em] text-rose-700">Be careful</p>
+            <ul class="mt-2 space-y-1 text-sm leading-relaxed text-rose-900/90">
+              <li>• Metadata entry (ResearchPaper) will be permanently deleted.</li>
+              <li>• If this Super Admin uploaded a full document (PDF/DOCX/TXT), it will also be removed from similarity indexing.</li>
+              <li>• Other authors' submissions sharing the same title are <em class="font-semibold">preserved</em>.</li>
+            </ul>
+          </div>
+
+          <div class="mt-6 flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-end">
+            <button
+              type="button"
+              data-close-delete-research-modal
+              class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-3 text-base font-bold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="submitDeleteResearchBtn"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-rose-600 via-red-600 to-pink-600 px-7 py-3 text-base font-bold text-white shadow-lg shadow-rose-200 transition hover:-translate-y-0.5 hover:from-rose-700 hover:via-red-700 hover:to-pink-700"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                <path d="M3 6h18"></path>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <path d="M10 11v6"></path>
+                <path d="M14 11v6"></path>
+              </svg>
+              Delete Research
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% endif %}
+
+    <script src="{% static 'core/js/field-rules.js' %}"></script>
+    <script src="{% static 'core/js/pages/admin-repository-add-research-1.js' %}" data-add-category-url="{% url 'add_food_category' %}" data-extract-url="{% url 'admin_extract_research_metadata' %}" data-has-errors="{% if form.errors %}1{% endif %}"></script>
+
+    {{ search_suggestions|json_script:"dashboard-search-suggestions-data" }}
+    <script src="{% static 'core/js/search-suggestions.js' %}"></script>
+    <script src="{% static 'core/js/sidebar-groups.js' %}"></script>
+  </body>
+</html>

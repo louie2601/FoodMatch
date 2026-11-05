@@ -1,0 +1,158 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Food Match | Register{% endblock %}
+
+{% block content %}
+<section class="relative overflow-hidden bg-gradient-to-br from-slate-100 via-white to-emerald-50 px-4 py-8 md:px-6 md:py-12">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(16,185,129,0.12),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(15,23,42,0.08),_transparent_30%)]"></div>
+  <div class="mx-auto max-w-3xl">
+    <div class="relative overflow-hidden rounded-[2rem] border border-white/80 bg-white/85 shadow-[0_24px_80px_rgba(15,23,42,0.12)] backdrop-blur">
+      <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-green-600 to-teal-500"></div>
+      <div class="px-5 py-7 sm:px-7 lg:px-8">
+        <div class="mx-auto w-full max-w-xl">
+          <div class="mb-6">
+            <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700 ring-1 ring-emerald-100">
+              Group Registration
+            </span>
+            <h1 class="mt-4 text-2xl font-bold tracking-tight text-slate-950 sm:text-[1.75rem]">Create Account</h1>
+            <p class="mt-1 text-sm text-slate-600">Register your research group. One account is shared by all members.</p>
+          </div>
+
+          {% if form_submitted %}
+            <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 shadow-sm">
+              Registration form submitted successfully.
+            </div>
+          {% endif %}
+
+          <form method="post" class="space-y-5" data-register-form novalidate>
+            {% csrf_token %}
+
+            <div class="space-y-4 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4">
+<div>
+  <label for="{{ form.group_name.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+    Group Name <span class="text-sm font-normal text-slate-500">(optional)</span>
+  </label>
+  {{ form.group_name }}
+  <p id="id_group_name_error" class="mt-2 text-sm text-red-600{% if not form.group_name.errors %} hidden{% endif %}">{{ form.group_name.errors|join:", " }}</p>
+</div>
+{% include 'core/_members_formset.html' %}
+            </div>
+
+            <div class="grid gap-4 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 md:grid-cols-2">
+              <div>
+                <label for="{{ form.college.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+                  {{ form.college.label }}<span class="ml-1 text-red-600">*</span>
+                </label>
+                {{ form.college }}
+                <p id="id_college_error" class="mt-2 text-sm text-red-600{% if not form.college.errors %} hidden{% endif %}">{{ form.college.errors|join:", " }}</p>
+              </div>
+
+              <div>
+                <label for="{{ form.program.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+                  {{ form.program.label }}<span class="ml-1 text-red-600">*</span>
+                </label>
+                {{ form.program }}
+                <p id="id_program_error" class="mt-2 text-sm text-red-600{% if not form.program.errors %} hidden{% endif %}">{{ form.program.errors|join:", " }}</p>
+              </div>
+            </div>
+
+            <div class="grid gap-4 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4 md:grid-cols-2">
+              <div>
+                <label for="{{ form.email.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+                  {{ form.email.label }}<span class="ml-1 text-red-600">*</span>
+                </label>
+                {{ form.email }}
+                <p id="id_email_error" class="mt-2 text-sm text-red-600{% if not form.email.errors %} hidden{% endif %}">{{ form.email.errors|join:", " }}</p>
+              </div>
+
+              <div>
+                <label for="{{ form.username.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+                  {{ form.username.label }}<span class="ml-1 text-red-600">*</span>
+                </label>
+                {{ form.username }}
+                <p class="mt-1.5 text-xs text-slate-500">Format: Word.Word, e.g. Juan.Delacruz</p>
+                <p id="id_username_error" class="mt-2 text-sm text-red-600{% if not form.username.errors %} hidden{% endif %}">{{ form.username.errors|join:", " }}</p>
+              </div>
+            </div>
+
+            <div class="grid gap-4 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4 md:grid-cols-2">
+              <div>
+                <label for="{{ form.password.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+                  {{ form.password.label }}<span class="ml-1 text-red-600">*</span>
+                </label>
+                <div class="relative">
+                  {{ form.password }}
+                  <button
+                    type="button"
+                    class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700"
+                    aria-label="Toggle password visibility"
+                    data-password-toggle
+                  >
+                    <svg
+                      class="h-6 w-6"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.8"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M4 20 20 4"></path>
+                    </svg>
+                  </button>
+                </div>
+                <p id="id_password_error" class="mt-2 text-sm text-red-600{% if not form.password.errors %} hidden{% endif %}">{{ form.password.errors|join:", " }}</p>
+              </div>
+
+              <div>
+                <label for="{{ form.confirm_password.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+                  {{ form.confirm_password.label }}<span class="ml-1 text-red-600">*</span>
+                </label>
+                <div class="relative">
+                  {{ form.confirm_password }}
+                  <button
+                    type="button"
+                    class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700"
+                    aria-label="Toggle password visibility"
+                    data-password-toggle
+                  >
+                    <svg
+                      class="h-6 w-6"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="1.8"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M4 20 20 4"></path>
+                    </svg>
+                  </button>
+                </div>
+                <p id="id_confirm_password_error" class="mt-2 text-sm text-red-600{% if not form.confirm_password.errors %} hidden{% endif %}">{{ form.confirm_password.errors|join:", " }}</p>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="w-full rounded-2xl bg-gradient-to-r from-emerald-600 to-green-700 px-5 py-3 text-lg font-semibold text-white shadow-lg shadow-emerald-200 transition duration-200 hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-800 hover:shadow-xl"
+            >
+              Register
+            </button>
+          </form>
+
+          <p class="mt-6 text-base text-slate-700">
+            Already have an account?
+            <a href="{% url 'login' %}" class="font-semibold text-emerald-700 hover:text-emerald-800">Login here</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% include 'core/_program_by_college.html' with mapping=form.program_college_map %}
+{% endblock %}

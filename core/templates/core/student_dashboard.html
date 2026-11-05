@@ -1,0 +1,401 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Match | Student Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <div data-app-layout class="min-h-screen lg:grid lg:grid-cols-[280px_1fr]">
+      <aside data-app-sidebar class="sticky top-0 max-h-screen overflow-y-auto z-30 bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900 px-5 py-6 text-white shadow-2xl">
+        <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <img
+            src="{% static 'core/images/Logo.png' %}"
+            alt="Food Match Logo"
+            class="h-14 w-14 rounded-full border border-white/15 bg-white object-cover"
+          />
+          <div>
+            <p class="text-2xl font-bold tracking-tight">
+              FOOD <span class="text-emerald-400">MATCH</span>
+            </p>
+            <p class="text-xs uppercase tracking-[0.25em] text-emerald-100/80">Student Portal</p>
+          </div>
+        </div>
+
+        <nav class="mt-8 space-y-1">
+          <a href="{% url 'student_dashboard' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'student_dashboard' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">Dashboard</a>
+          <a href="{% url 'student_logs' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'student_logs' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">My Logs</a>
+
+          <div class="mt-3">
+            <button type="button" data-group-toggle class="flex w-full items-center justify-center gap-2 rounded-xl px-2 py-2 text-lg font-bold tracking-wide text-emerald-200/80 transition hover:text-emerald-100">
+              <span>My Research</span>
+              <svg data-group-chevron class="h-5 w-5 shrink-0 transition-transform duration-200{% if request.resolver_match.url_name == 'research_similarity' or request.resolver_match.url_name == 'student_submissions' or request.resolver_match.url_name == 'student_similarity_records' %}{% else %} -rotate-90{% endif %}" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
+                <path d="m6 9 6 6 6-6"></path>
+              </svg>
+            </button>
+            <div data-group-panel class="mt-1 space-y-2{% if request.resolver_match.url_name == 'research_similarity' or request.resolver_match.url_name == 'student_submissions' or request.resolver_match.url_name == 'student_similarity_records' %}{% else %} hidden{% endif %}">
+              <a href="{% url 'research_similarity' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'research_similarity' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">Similarity Check</a>
+              <a href="{% url 'student_similarity_records' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'student_similarity_records' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">Similarity Check Records</a>
+              <a href="{% url 'student_submissions' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'student_submissions' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">My Submissions</a>
+            </div>
+          </div>
+
+        </nav>
+      </aside>
+
+      <main class="overflow-hidden">
+        <div class="relative z-40 border-b border-slate-200 bg-white/80 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
+          {% include 'core/_sidebar_toggle.html' %}
+          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 class="text-2xl font-bold tracking-tight text-slate-900">Dashboard</h1>
+              <p class="mt-1 text-sm text-slate-500">Overview of your research activity.</p>
+            </div>
+
+            {% include 'core/_account_menu.html' with menu_name=student_name menu_role=student_role menu_super=False %}
+          </div>
+        </div>
+
+        <section class="space-y-6 px-5 py-6 sm:px-8">
+          <section class="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+            <h2 class="text-lg font-bold text-slate-900">Search the Repository</h2>
+            <p class="mt-1 text-sm text-slate-500">Search every approved research study -- not just your own.</p>
+            <form method="get" class="mt-4 flex flex-wrap items-end gap-4">
+              <div class="relative min-w-[220px] flex-1">
+                <label for="q" class="mb-1.5 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Search</label>
+                <input
+                  type="text"
+                  id="q"
+                  name="q"
+                  value="{{ search_query }}"
+                  autocomplete="off"
+                  placeholder="Title, authors, abstract, keywords, or adviser"
+                  class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-600 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+                />
+                <div id="dashboard-search-suggestions-box" class="absolute left-0 right-0 top-full z-20 mt-2 hidden overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl"></div>
+              </div>
+              <div>
+                <label for="category" class="mb-1.5 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Category</label>
+                <select id="category" name="category" class="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                  <option value="">All categories</option>
+                  {% for cat in categories %}
+                    <option value="{{ cat.pk }}" {% if category_id == cat.pk|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div>
+                <label for="published_year" class="mb-1.5 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Published Year</label>
+                <select id="published_year" name="published_year" class="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                  <option value="">All years</option>
+                  {% for year in published_years %}
+                    <option value="{{ year }}" {% if published_year == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-800">
+                Search
+              </button>
+              {% if search_query or category_id or published_year %}
+                <a href="{% url 'student_dashboard' %}" class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
+                  Clear
+                </a>
+              {% endif %}
+            </form>
+          </section>
+
+          <div class="grid gap-4 md:grid-cols-3">
+            <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Total Submissions</p>
+              <p class="mt-3 text-4xl font-black text-slate-900">{{ stats.total_submissions }}</p>
+            </article>
+
+            <article class="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
+              <p class="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Completed</p>
+              <p class="mt-3 text-4xl font-black text-emerald-700">{{ stats.completed }}</p>
+            </article>
+
+            <article class="rounded-2xl border border-amber-100 bg-white p-5 shadow-sm">
+              <p class="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">Pending</p>
+              <p class="mt-3 text-4xl font-black text-amber-700">{{ stats.pending }}</p>
+            </article>
+          </div>
+
+          <div class="grid gap-4 xl:grid-cols-2">
+            <section class="rounded-[2rem] border border-emerald-100 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+              <h2 class="text-2xl font-bold text-slate-900">Similarity Check</h2>
+              <p class="mt-2 text-sm text-slate-600">Compare your document before submission.</p>
+              <a
+                href="{% url 'research_similarity' %}"
+                class="mt-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-200 transition hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-800"
+              >
+                Open Similarity Check
+              </a>
+            </section>
+
+            <section class="rounded-[2rem] border border-sky-100 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+              <h2 class="text-2xl font-bold text-slate-900">My Submissions</h2>
+              <p class="mt-2 text-sm text-slate-600">Submit and monitor your research files.</p>
+              <a
+                href="{% url 'student_submissions' %}"
+                class="mt-6 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-600 to-blue-700 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-sky-200 transition hover:-translate-y-0.5 hover:from-sky-700 hover:to-blue-800"
+              >
+                Open My Submissions
+              </a>
+            </section>
+          </div>
+
+          <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+            <p class="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+              {{ page_obj.paginator.count }} {{ page_obj.paginator.count|pluralize:"result,results" }}
+            </p>
+
+            <div class="mt-5 space-y-4">
+              {% for row in results %}
+                <article
+                  class="rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-4 shadow-sm transition hover:shadow-md"
+                  data-result-card
+                  data-title="{{ row.title }}"
+                  data-authors="{{ row.authors }}"
+                  data-adviser="{{ row.adviser }}"
+                  data-category="{{ row.category.name|default:"" }}"
+                  data-published="{{ row.published_month }} {{ row.published_year }}"
+                  data-published-month="{{ row.published_month }}"
+                  data-published-year="{{ row.published_year|default:"" }}"
+                  data-added="{{ row.added_at }}"
+                  data-abstract="{{ row.abstract }}"
+                  data-keywords="{{ row.keywords }}"
+                  data-is-mine="{% if row.is_mine %}1{% endif %}"
+                  data-has-document="{% if row.has_document %}1{% endif %}"
+                  data-doc-type="{{ row.doc_type }}"
+                  data-document-url="{{ row.document_url }}"
+                >
+                  <div class="flex items-start justify-between gap-4">
+                    <div class="min-w-0 flex-1">
+                      <h3 class="text-base font-bold text-slate-900 break-words">
+                        <button type="button" data-view-details-btn class="text-left underline-offset-2 hover:text-emerald-700 hover:underline">{{ row.title }}</button>
+                      </h3>
+                      {% if row.authors %}
+                        <p class="mt-1 text-sm font-medium text-slate-600 break-words">{{ row.authors }}</p>
+                      {% endif %}
+                      {% if row.adviser %}
+                        <p class="mt-1 text-xs text-slate-500">Adviser: {{ row.adviser }}</p>
+                      {% endif %}
+                    </div>
+                    <div class="flex shrink-0 flex-col items-end gap-1.5">
+                      {% if row.category %}
+                        <span class="inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-emerald-700 ring-1 ring-emerald-100">{{ row.category.name }}</span>
+                      {% endif %}
+                      {% if row.published_month or row.published_year %}
+                        <span class="text-[11px] font-semibold text-slate-500">{{ row.published_month }} {{ row.published_year }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+
+                  {% if row.abstract %}
+                    <p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{{ row.abstract|truncatechars:220 }}</p>
+                  {% endif %}
+
+                  {% if row.keywords %}
+                    <p class="mt-2 text-xs text-slate-500"><span class="font-semibold text-slate-600">Keywords:</span> {{ row.keywords }}</p>
+                  {% endif %}
+
+                  <div class="mt-3 flex items-center gap-3 border-t border-slate-100 pt-3">
+                    {% if row.is_mine %}
+                      <span class="inline-flex rounded-full bg-sky-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-sky-700 ring-1 ring-sky-100">Your submission</span>
+                      {% if row.document_url %}
+                        <a href="{{ row.document_url }}" target="_blank" rel="noreferrer" class="inline-flex items-center text-sm font-semibold text-emerald-700 hover:text-emerald-800">
+                          Open file
+                        </a>
+                      {% endif %}
+                    {% endif %}
+                    {% comment %} metadata-only: no document link is ever rendered here for entries
+                         that aren't the viewer's own -- see document_url in views.py {% endcomment %}
+                    <button
+                      type="button"
+                      data-view-details-btn
+                      class="ml-auto inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+                    >
+                      <svg class="h-3.5 w-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                      </svg>
+                      View details
+                    </button>
+                  </div>
+                </article>
+              {% empty %}
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
+                  No repository entries matched your search.
+                </div>
+              {% endfor %}
+            </div>
+
+            {% if page_obj.paginator.num_pages > 1 %}
+              <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
+                <p class="text-xs text-slate-500">
+                  Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ page_obj.paginator.count }}
+                </p>
+                <div class="flex items-center gap-2">
+                  {% if page_obj.has_previous %}
+                    <a href="?q={{ search_query }}&category={{ category_id }}&published_year={{ published_year }}&page={{ page_obj.previous_page_number }}" class="inline-flex items-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">Previous</a>
+                  {% endif %}
+                  <span class="px-2 text-xs font-bold uppercase tracking-wide text-slate-600">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                  {% if page_obj.has_next %}
+                    <a href="?q={{ search_query }}&category={{ category_id }}&published_year={{ published_year }}&page={{ page_obj.next_page_number }}" class="inline-flex items-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">Next</a>
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <div
+      id="repoResultDetailsModal"
+      class="fixed inset-0 z-50 hidden items-center justify-center px-4 py-4"
+      aria-labelledby="repoResultDetailsTitle"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div data-close-repo-details-modal class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"></div>
+
+      <div class="relative z-10 flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-[1.5rem] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.3)]">
+        <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500"></div>
+
+        <div class="shrink-0 bg-gradient-to-br from-emerald-50 via-teal-50 to-sky-50 px-6 pt-4 pb-3">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex items-start gap-4">
+              <div id="repoResultDetailsAvatar" class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-4 border-white text-2xl font-black shadow-md bg-gradient-to-br from-emerald-100 to-teal-200 text-emerald-900">
+                R
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-black uppercase tracking-[0.2em] text-emerald-700">Research Details</p>
+                <h3 id="repoResultDetailsTitle" class="text-xl font-black tracking-tight text-slate-900 break-words"></h3>
+                <p id="repoResultDetailsAuthors" class="mt-1 text-sm font-medium text-slate-600 max-w-xl break-words"></p>
+              </div>
+            </div>
+            <button
+              type="button"
+              data-close-repo-details-modal
+              aria-label="Close research details"
+              class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-800"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                <path d="M18 6 6 18"></path>
+                <path d="m6 6 12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="min-h-0 flex-1 space-y-3 overflow-y-auto px-6 py-4">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50/60 p-4">
+            <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Indexing Status</p>
+            <div class="mt-2 grid gap-3 sm:grid-cols-2">
+              <div>
+                <p class="text-xs font-semibold text-slate-500">Similarity Inclusion</p>
+                <p id="repoResultDetailsIndexed" class="mt-1 text-base font-bold text-slate-900">—</p>
+              </div>
+              <div>
+                <p class="text-xs font-semibold text-slate-500">Full-Text Document</p>
+                <p id="repoResultDetailsDocStatus" class="mt-1 text-base font-bold text-slate-900">—</p>
+              </div>
+            </div>
+            <span id="repoResultDetailsMine" class="hidden mt-4 inline-flex rounded-full bg-sky-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.1em] text-sky-700 ring-1 ring-sky-100">Your submission</span>
+            {% comment %} metadata-only: this link is only ever shown for the viewer's
+                 own entry (see data-is-mine / data-document-url in the card
+                 and the JS below) -- never for another student's file. {% endcomment %}
+            <div id="repoResultDetailsFileWrap" class="mt-4 hidden">
+              <a
+                id="repoResultDetailsFileLink"
+                href="#"
+                target="_blank"
+                rel="noreferrer"
+                class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-800 shadow-sm transition hover:border-slate-300 hover:bg-slate-100"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                  <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 5Z"></path>
+                  <path d="M9 13h6"></path>
+                  <path d="M9 17h6"></path>
+                  <path d="M9 9h1"></path>
+                </svg>
+                <span id="repoResultDetailsFileLinkText">Open Document</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-white p-4">
+            <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Abstract</p>
+            <p id="repoResultDetailsAbstract" class="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-slate-700">—</p>
+          </div>
+
+          <div class="grid gap-3 md:grid-cols-2">
+            <div class="rounded-2xl border border-slate-200 bg-white p-4">
+              <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Authors</p>
+              <div id="repoResultDetailsAuthorsChips" class="mt-2 text-sm text-slate-700 break-words">—</div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-4">
+              <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Adviser</p>
+              <div id="repoResultDetailsAdviser" class="mt-2 text-sm text-slate-700 break-words">—</div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-4 md:col-span-2">
+              <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Keywords</p>
+              <div id="repoResultDetailsKeywords" class="mt-2 text-sm text-slate-700 break-words">—</div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-4 md:col-span-2">
+              <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Publication &amp; Upload</p>
+              <ul class="mt-2 grid gap-2 sm:grid-cols-2 text-sm text-slate-700">
+                <li class="flex items-center justify-between gap-3">
+                  <span class="text-slate-500">Category</span>
+                  <span id="repoResultDetailsCategory" class="font-semibold text-slate-900">—</span>
+                </li>
+                <li class="flex items-center justify-between gap-3">
+                  <span class="text-slate-500">Published</span>
+                  <span id="repoResultDetailsPublished" class="font-semibold text-slate-900">—</span>
+                </li>
+                <li class="flex items-center justify-between gap-3">
+                  <span class="text-slate-500">Published Month</span>
+                  <span id="repoResultDetailsPublishedMonth" class="font-semibold text-slate-900">—</span>
+                </li>
+                <li class="flex items-center justify-between gap-3">
+                  <span class="text-slate-500">Published Year</span>
+                  <span id="repoResultDetailsPublishedYear" class="font-bold text-slate-900">—</span>
+                </li>
+                <li class="flex items-center justify-between gap-3">
+                  <span class="text-slate-500">School Year</span>
+                  <span id="repoResultDetailsSchoolYear" class="font-bold text-emerald-700">—</span>
+                </li>
+                <li class="flex items-center justify-between gap-3 sm:col-span-2">
+                  <span class="text-slate-500">Added to repo</span>
+                  <span id="repoResultDetailsAdded" class="font-semibold text-slate-900">—</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="flex shrink-0 items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/60 px-6 py-3">
+            <button
+              type="button"
+              data-close-repo-details-modal
+              class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+            >
+              Close
+            </button>
+
+        </div>
+      </div>
+    </div>
+
+    {{ search_suggestions|json_script:"dashboard-search-suggestions-data" }}
+    <script src="{% static 'core/js/pages/student-dashboard-1.js' %}"></script>
+    <script src="{% static 'core/js/search-suggestions.js' %}"></script>
+    <script src="{% static 'core/js/sidebar-groups.js' %}"></script>
+  </body>
+</html>

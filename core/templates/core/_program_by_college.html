@@ -1,0 +1,10 @@
+{% load static %}
+{% comment %}
+  Makes a form's Program list follow its College: only the chosen college's
+  programs (plus programs with no college) are listed. Pass mapping=form.program_college_map.
+  The server checks the same rule in forms._check_program_matches_college.
+{% endcomment %}
+{% if mapping %}
+  {{ mapping|json_script:"programCollegeMap" }}
+  <script src="{% static 'core/js/program-by-college.js' %}" defer></script>
+{% endif %}

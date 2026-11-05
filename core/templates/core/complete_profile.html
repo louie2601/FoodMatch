@@ -1,0 +1,213 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Food Match | Complete Your Profile{% endblock %}
+
+{% block site_header %}{% endblock %}
+
+{% block content %}
+<section class="relative isolate flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 md:px-6">
+  <div class="fixed inset-0 -z-10 overflow-hidden bg-slate-100" aria-hidden="true">
+    <div class="flex h-full scale-105 blur-md">
+      <div class="hidden w-64 shrink-0 bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900 p-5 lg:block">
+        <div class="h-12 w-12 rounded-full bg-white/20"></div>
+        <div class="mt-8 space-y-3">
+          <div class="h-10 rounded-xl bg-white/25"></div>
+          <div class="h-10 rounded-xl bg-white/10"></div>
+          <div class="h-10 rounded-xl bg-white/10"></div>
+          <div class="h-10 rounded-xl bg-white/10"></div>
+          <div class="h-10 rounded-xl bg-white/10"></div>
+        </div>
+      </div>
+      <div class="flex-1 space-y-6 bg-slate-100 p-8">
+        <div class="h-16 rounded-2xl bg-white shadow-sm"></div>
+        <div class="grid grid-cols-2 gap-5 lg:grid-cols-4">
+          <div class="h-28 rounded-2xl bg-white shadow-sm"></div>
+          <div class="h-28 rounded-2xl bg-white shadow-sm"></div>
+          <div class="h-28 rounded-2xl bg-white shadow-sm"></div>
+          <div class="h-28 rounded-2xl bg-white shadow-sm"></div>
+        </div>
+        <div class="h-72 rounded-2xl bg-white shadow-sm"></div>
+      </div>
+    </div>
+    <div class="absolute inset-0 bg-white/50"></div>
+  </div>
+
+  <div class="mx-auto w-full max-w-3xl">
+    <div class="relative overflow-hidden rounded-[2rem] border border-white/80 bg-white/90 shadow-[0_24px_80px_rgba(15,23,42,0.18)] backdrop-blur">
+      <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-green-500 to-pink-500"></div>
+      <div class="px-5 py-7 sm:px-7 lg:px-8">
+        <div class="mx-auto w-full max-w-xl">
+          <div class="mb-6">
+            <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700 ring-1 ring-emerald-100">
+              Welcome — {{ role_display }} Onboarding
+            </span>
+            <h1 class="mt-4 text-2xl font-bold tracking-tight text-slate-950 sm:text-[1.75rem]">Complete Your Profile</h1>
+            <p class="mt-1 text-sm text-slate-600">
+              Before you can access your dashboard, please fill in the required personal information below.
+            </p>
+          </div>
+
+          <div class="mb-6 grid gap-3 rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4 sm:grid-cols-2">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Username</p>
+              <p class="mt-1 text-base font-semibold text-slate-900">{{ user_name }}</p>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Email</p>
+              <p class="mt-1 text-base font-semibold text-slate-900">{{ user_email }}</p>
+            </div>
+          </div>
+
+          {% if form.non_field_errors %}
+            <div class="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 shadow-sm">
+              {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% if form_submitted %}
+            <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 shadow-sm">
+              Profile updated successfully. Redirecting you to your dashboard...
+            </div>
+          {% endif %}
+
+          <form method="post" class="space-y-5" data-complete-profile-form novalidate>
+            {% csrf_token %}
+
+            {% if is_student_role %}
+            <div class="space-y-4 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4">
+<div>
+  <label for="{{ form.group_name.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+    Group Name <span class="text-sm font-normal text-slate-500">(optional)</span>
+  </label>
+  {{ form.group_name }}
+  <p id="id_group_name_error" class="mt-2 text-sm text-red-600{% if not form.group_name.errors %} hidden{% endif %}">{{ form.group_name.errors|join:", " }}</p>
+</div>
+{% include 'core/_members_formset.html' %}
+            </div>
+            {% else %}
+            <div class="grid gap-4 rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4 md:grid-cols-2">
+              <div>
+                <label for="{{ form.first_name.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+                  {{ form.first_name.label }}<span class="ml-1 text-red-600">*</span>
+                </label>
+                {{ form.first_name }}
+                <p id="id_first_name_error" class="mt-2 text-sm text-red-600{% if not form.first_name.errors %} hidden{% endif %}">{{ form.first_name.errors|join:", " }}</p>
+              </div>
+
+              <div>
+                <label for="{{ form.middle_name.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+                  {{ form.middle_name.label }}
+                </label>
+                {{ form.middle_name }}
+                <p id="id_middle_name_error" class="mt-2 text-sm text-red-600{% if not form.middle_name.errors %} hidden{% endif %}">{{ form.middle_name.errors|join:", " }}</p>
+              </div>
+
+              <div class="md:col-span-2">
+                <label for="{{ form.last_name.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+                  {{ form.last_name.label }}<span class="ml-1 text-red-600">*</span>
+                </label>
+                {{ form.last_name }}
+                <p id="id_last_name_error" class="mt-2 text-sm text-red-600{% if not form.last_name.errors %} hidden{% endif %}">{{ form.last_name.errors|join:", " }}</p>
+              </div>
+            </div>
+            {% endif %}
+
+            {% if is_student_role %}
+              <div class="grid gap-4 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 md:grid-cols-2">
+                <div>
+                  <label for="{{ form.college.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+                    {{ form.college.label }}<span class="ml-1 text-red-600">*</span>
+                  </label>
+                  {{ form.college }}
+                  <p id="id_college_error" class="mt-2 text-sm text-red-600{% if not form.college.errors %} hidden{% endif %}">{{ form.college.errors|join:", " }}</p>
+                </div>
+
+                <div>
+                  <label for="{{ form.program.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+                    {{ form.program.label }}<span class="ml-1 text-red-600">*</span>
+                  </label>
+                  {{ form.program }}
+                  <p id="id_program_error" class="mt-2 text-sm text-red-600{% if not form.program.errors %} hidden{% endif %}">{{ form.program.errors|join:", " }}</p>
+                </div>
+              </div>
+            {% endif %}
+
+            <div class="grid gap-4 rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50/70 via-white to-green-50/60 p-4 md:grid-cols-2">
+              <div class="md:col-span-2">
+                <div class="flex items-start gap-2">
+                  <div class="mt-1 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-xs font-bold text-white">🔐</div>
+                  <div>
+                    <h2 class="text-base font-bold tracking-tight text-slate-900">Set a Permanent Password</h2>
+                    <p class="text-sm text-slate-600">Replace the temporary password from your email with your own secure password. At least 8 characters long.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label for="{{ form.new_password.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+                  {{ form.new_password.label }}<span class="ml-1 text-red-600">*</span>
+                </label>
+                <div class="relative">
+                  {{ form.new_password }}
+                  <button
+                    type="button"
+                    class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700"
+                    aria-label="Toggle new password visibility"
+                    data-password-toggle
+                    data-target="{{ form.new_password.id_for_label }}"
+                  >
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M4 20 20 4"></path>
+                    </svg>
+                  </button>
+                </div>
+                <p id="id_new_password_error" class="mt-2 text-sm text-red-600{% if not form.new_password.errors %} hidden{% endif %}">{{ form.new_password.errors|join:", " }}</p>
+              </div>
+
+              <div>
+                <label for="{{ form.confirm_new_password.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+                  {{ form.confirm_new_password.label }}<span class="ml-1 text-red-600">*</span>
+                </label>
+                <div class="relative">
+                  {{ form.confirm_new_password }}
+                  <button
+                    type="button"
+                    class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700"
+                    aria-label="Toggle confirm password visibility"
+                    data-password-toggle
+                    data-target="{{ form.confirm_new_password.id_for_label }}"
+                  >
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                      <path d="M4 20 20 4"></path>
+                    </svg>
+                  </button>
+                </div>
+                <p id="id_confirm_new_password_error" class="mt-2 text-sm text-red-600{% if not form.confirm_new_password.errors %} hidden{% endif %}">{{ form.confirm_new_password.errors|join:", " }}</p>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="w-full rounded-2xl bg-gradient-to-r from-emerald-600 via-green-600 to-pink-600 px-5 py-3 text-lg font-semibold text-white shadow-lg shadow-emerald-200 transition duration-200 hover:-translate-y-0.5 hover:from-emerald-700 hover:via-green-700 hover:to-pink-700 hover:shadow-xl"
+            >
+              Save Profile &amp; Set Password
+            </button>
+          </form>
+
+          <p class="mt-6 text-sm text-slate-500">
+            Fields marked with <span class="text-red-600 font-semibold">*</span> are required. Once submitted, your temporary password will no longer work.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% include 'core/_program_by_college.html' with mapping=form.program_college_map %}
+{% endblock %}

@@ -1,0 +1,16 @@
+﻿Table,Item,Count,Percentage,Notes
+Overall,Total login attempts,100,100%,20 users x 5 sign-ins; system running as it does live
+Overall,Successful logins,80,80%,
+Overall,Unsuccessful logins,20,20%,All caused by wrong input
+Overall,Outcome matched expected (accuracy),100,100%,
+Overall,Lockouts triggered,0,0%,Lockout starts at the 3rd failure in a row
+Overall,Average response time (ms),946,,
+By attempt type,Correct username and password,80,80%,Successful 80 (100%); Unsuccessful 0 (0%); Correct 80/80
+By attempt type,Mistyped password,15,15%,Successful 0 (0%); Unsuccessful 15 (100%); Correct 15/15
+By attempt type,Mistyped username,5,5%,Successful 0 (0%); Unsuccessful 5 (100%); Correct 5/5
+By user role,Student,50,50%,Successful 40 (80%); Unsuccessful 10 (20%)
+By user role,Admin,25,25%,Successful 20 (80%); Unsuccessful 5 (20%)
+By user role,Super Admin,25,25%,Successful 20 (80%); Unsuccessful 5 (20%)
+Reasons for unsuccessful logins,Mistyped password,15,75%,Share of the unsuccessful logins
+Reasons for unsuccessful logins,Mistyped username,5,25%,Share of the unsuccessful logins
+Reasons for unsuccessful logins,System error,0,0%,No failure came from a crash or a correct password being rejected

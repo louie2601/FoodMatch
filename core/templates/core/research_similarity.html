@@ -1,0 +1,395 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Match | Student Similarity Check</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <div data-app-layout class="min-h-screen lg:grid lg:grid-cols-[280px_1fr]">
+      <aside data-app-sidebar class="sticky top-0 max-h-screen overflow-y-auto z-30 bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900 px-5 py-6 text-white shadow-2xl">
+        <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <img
+            src="{% static 'core/images/Logo.png' %}"
+            alt="Food Match Logo"
+            class="h-14 w-14 rounded-full border border-white/15 bg-white object-cover"
+          />
+          <div>
+            <p class="text-2xl font-bold tracking-tight">
+              FOOD <span class="text-emerald-400">MATCH</span>
+            </p>
+            <p class="text-xs uppercase tracking-[0.25em] text-emerald-100/80">Student Portal</p>
+          </div>
+        </div>
+
+        <nav class="mt-8 space-y-1">
+          <a href="{% url 'student_dashboard' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'student_dashboard' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">Dashboard</a>
+          <a href="{% url 'student_logs' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'student_logs' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">My Logs</a>
+
+          <div class="mt-3">
+            <button type="button" data-group-toggle class="flex w-full items-center justify-center gap-2 rounded-xl px-2 py-2 text-lg font-bold tracking-wide text-emerald-200/80 transition hover:text-emerald-100">
+              <span>My Research</span>
+              <svg data-group-chevron class="h-5 w-5 shrink-0 transition-transform duration-200{% if request.resolver_match.url_name == 'research_similarity' or request.resolver_match.url_name == 'student_submissions' or request.resolver_match.url_name == 'student_similarity_records' %}{% else %} -rotate-90{% endif %}" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
+                <path d="m6 9 6 6 6-6"></path>
+              </svg>
+            </button>
+            <div data-group-panel class="mt-1 space-y-2{% if request.resolver_match.url_name == 'research_similarity' or request.resolver_match.url_name == 'student_submissions' or request.resolver_match.url_name == 'student_similarity_records' %}{% else %} hidden{% endif %}">
+              <a href="{% url 'research_similarity' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'research_similarity' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">Similarity Check</a>
+              <a href="{% url 'student_similarity_records' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'student_similarity_records' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">Similarity Check Records</a>
+              <a href="{% url 'student_submissions' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'student_submissions' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">My Submissions</a>
+            </div>
+          </div>
+
+        </nav>
+      </aside>
+
+      <main class="overflow-hidden">
+        <div class="relative z-40 border-b border-slate-200 bg-white/80 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
+          {% include 'core/_sidebar_toggle.html' %}
+          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 class="text-2xl font-bold tracking-tight text-slate-900">Similarity Check</h1>
+              <p class="mt-1 text-sm text-slate-500">Compare your file before submitting it for review.</p>
+            </div>
+
+            {% include 'core/_account_menu.html' with menu_name=student_name menu_role=student_role menu_super=False %}
+          </div>
+        </div>
+
+        <section class="space-y-6 px-5 py-6 sm:px-8">
+          {% comment %} The result of the check sits at the top so it's the first thing seen. {% endcomment %}
+          {% if comparison_submitted and not repository_error %}
+            {% if similarity_outcome == 'ready' %}
+              <div id="similarityOutcome" role="status" class="flex flex-col gap-4 rounded-[1.5rem] border-2 border-emerald-200 bg-emerald-50 px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex items-start gap-3">
+                  <span class="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"></path></svg>
+                  </span>
+                  <div>
+                    <p class="text-base font-bold text-emerald-900">You may proceed to upload</p>
+                    <p class="mt-0.5 text-sm text-emerald-800">
+                      {% if similarity_results %}
+                        The detected matches are only within the low similarity range. You may proceed to upload.
+                      {% else %}
+                        No related approved study was found. You may now proceed to upload your file for review.
+                      {% endif %}
+                    </p>
+                    {% if paper_status == 'unverified' %}
+                      <p class="mt-1 text-sm text-emerald-800">This file looks like a scanned copy. When you upload, use the original PDF or Word file.</p>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="flex shrink-0 flex-col gap-2 sm:flex-row">
+                  <a href="{% url 'student_submissions' %}" class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-sky-600 to-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-200 transition hover:-translate-y-0.5 hover:from-sky-700 hover:to-blue-800">
+                    Proceed to Upload
+                  </a>
+                  <a href="{% url 'research_similarity' %}" class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
+                    Check Another File
+                  </a>
+                </div>
+              </div>
+            {% elif similarity_outcome == 'unfinished' %}
+              <div id="similarityOutcome" role="status" class="flex flex-col gap-4 rounded-[1.5rem] border-2 border-sky-200 bg-sky-50 px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex items-start gap-3">
+                  <span class="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-600 text-white">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5"></path><path d="M12 8h.01"></path></svg>
+                  </span>
+                  <div>
+                    <p class="text-base font-bold text-sky-900">This paper looks unfinished</p>
+                    <p class="mt-0.5 text-sm text-sky-900">
+                      {% if similarity_results %}The matches are only within the low similarity range.{% else %}No related approved study was found.{% endif %}
+                      You can use this result to check your topic, but you can upload only the complete paper.
+                    </p>
+                    {% if paper_missing %}
+                      <p class="mt-1 text-sm font-semibold text-sky-900">Missing: {{ paper_missing|join:", " }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="flex shrink-0 flex-col gap-2 sm:flex-row">
+                  <a href="{% url 'research_similarity' %}" class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
+                    Check Another File
+                  </a>
+                </div>
+              </div>
+            {% elif similarity_outcome == 'blocked' %}
+              <div id="similarityOutcome" role="alert" class="flex flex-col gap-4 rounded-[1.5rem] border-2 px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between {% if similarity_results.0.similarity_level == 'high' %}border-rose-300 bg-rose-50 text-rose-900{% else %}border-amber-300 bg-amber-50 text-amber-900{% endif %}">
+                <div class="flex items-start gap-3">
+                  <span class="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white {% if similarity_results.0.similarity_level == 'high' %}bg-rose-600{% else %}bg-amber-500{% endif %}">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path></svg>
+                  </span>
+                  <div>
+                    <p class="text-base font-bold">Upload blocked</p>
+                    <p class="mt-0.5 text-sm">
+                      {% if similarity_results.0.similarity_level == 'high' %}High{% else %}Moderate{% endif %} similarity was found. Upload is blocked for now so you can revise your study and avoid duplication or plagiarism.
+                    </p>
+                    {% if paper_status == 'incomplete' %}
+                      <p class="mt-1 text-sm">This paper also looks unfinished. Only the complete paper can be uploaded.</p>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="flex shrink-0 flex-col gap-2 sm:flex-row">
+                  <a href="{% url 'research_similarity' %}" class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
+                    Check Another File
+                  </a>
+                </div>
+              </div>
+            {% endif %}
+          {% endif %}
+
+          <div class="grid gap-8 xl:grid-cols-[1.15fr_0.85fr]">
+            <div class="rounded-[2rem] border border-white/70 bg-white/80 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.12)] backdrop-blur sm:p-8">
+              <h2 class="text-3xl font-black tracking-tight text-slate-900">Upload File</h2>
+              <p class="mt-3 max-w-2xl text-sm text-slate-600">
+                PDF files only are supported. This only checks similarity and does not submit your file.
+              </p>
+
+              <form method="post" enctype="multipart/form-data" class="mt-8 space-y-5">
+                {% csrf_token %}
+
+                <div>
+                  <label for="{{ form.proposal_file.id_for_label }}" class="mb-2 block text-sm font-semibold text-slate-900">
+                    {{ form.proposal_file.label }}<span class="ml-1 text-red-600">*</span>
+                  </label>
+                  {{ form.proposal_file }}
+                  <p class="mt-2 text-xs text-slate-500">{{ form.proposal_file.help_text }}</p>
+                  {% if form.proposal_file.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.proposal_file.errors|join:", " }}</p>
+                  {% endif %}
+                </div>
+
+                <button
+                  type="submit"
+                  id="checkSimilarityBtn"
+                  data-check-similarity-btn
+                  class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-200 transition hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-800 disabled:cursor-not-allowed disabled:opacity-80 disabled:hover:translate-y-0"
+                >
+                  <span data-check-similarity-label>Check Similarity</span>
+                </button>
+              </form>
+
+              {% if similarity_outcome %}
+                {% comment %} Colour follows the result, same as the level legend: green Low (ready), blue unfinished draft, amber Moderate, red High. {% endcomment %}
+                <div data-last-checked class="mt-6 rounded-2xl border px-5 py-4 {% if similarity_outcome == 'ready' %}border-emerald-200 bg-emerald-50 text-emerald-700{% elif similarity_outcome == 'unfinished' %}border-sky-200 bg-sky-50 text-sky-700{% elif similarity_results.0.similarity_level == 'high' %}border-rose-200 bg-rose-50 text-rose-700{% else %}border-amber-200 bg-amber-50 text-amber-700{% endif %}">
+                  <div class="flex items-start justify-between gap-4">
+                    <div class="min-w-0">
+                      <p class="text-xs font-bold uppercase tracking-[0.14em]">
+                        Last Checked File
+                      </p>
+                      <p class="mt-1 truncate text-sm font-semibold text-slate-900">{{ uploaded_file_name }}</p>
+                    </div>
+                    {% if similarity_results %}
+                      <div class="flex-none text-right">
+                        <p class="text-3xl font-black leading-none">
+                          {{ similarity_results.0.score_percent }}%
+                        </p>
+                        <p class="text-[10px] font-bold uppercase tracking-[0.12em]">
+                          Highest Match
+                        </p>
+                      </div>
+                    {% endif %}
+                  </div>
+                  <p class="mt-3 text-xs">
+                    {% if similarity_outcome == 'ready' %}
+                      {% if similarity_results %}Within the low similarity range — you may proceed to upload.{% else %}No related approved study was found — you may proceed to upload.{% endif %}
+                    {% elif similarity_outcome == 'unfinished' %}
+                      Low similarity, but the paper looks unfinished — upload the complete paper when it's done.
+                    {% elif similarity_results.0.similarity_level == 'high' %}
+                      High similarity detected — upload is blocked for now.
+                    {% else %}
+                      Moderate similarity detected — upload is blocked for now.
+                    {% endif %}
+                  </p>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="space-y-6">
+              <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">Approved Files</p>
+                <p class="mt-3 text-5xl font-black text-slate-900">{{ total_repository_documents }}</p>
+                {% if uploaded_file_name %}
+                  <p class="mt-3 text-xs uppercase tracking-[0.14em] text-emerald-700">Current file: {{ uploaded_file_name }}</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          {% comment %} Full-width so the results table gets room to breathe horizontally
+               instead of being squeezed into a narrow column next to the upload form. {% endcomment %}
+          <div class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+                <div class="flex items-center justify-between">
+                  <h2 class="text-lg font-bold text-slate-900">Compared Research Studies</h2>
+                  <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    Top 5 Ranked Matches
+                  </span>
+                </div>
+                <p class="mt-3 text-sm text-slate-600">
+                  These are the approved research studies that were compared with your uploaded file using TF-IDF and cosine similarity, weighted by basis:
+                  <span class="font-semibold text-slate-800">30% Ingredients &amp; Process</span>,
+                  <span class="font-semibold text-slate-800">30% Rest of the Paper</span>,
+                  <span class="font-semibold text-slate-800">20% Title</span>, and
+                  <span class="font-semibold text-slate-800">20% Abstract</span>.
+                </p>
+                {% if comparison_submitted and not repository_error %}
+                  <div class="mt-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600">
+                    <p class="font-bold uppercase tracking-[0.14em] text-slate-500">Detected from your file</p>
+                    <p class="mt-1"><span class="font-semibold text-slate-700">Title:</span> {% if detected_title %}{{ detected_title|truncatechars:120 }}{% else %}<span class="italic text-amber-600">Not detected — title weight was shifted to content/abstract.</span>{% endif %}</p>
+                    <p class="mt-1"><span class="font-semibold text-slate-700">Abstract:</span> {% if detected_abstract %}{{ detected_abstract|truncatechars:160 }}{% else %}<span class="italic text-amber-600">Not detected — abstract weight was shifted to content/title.</span>{% endif %}</p>
+                  </div>
+                {% endif %}
+
+                <div class="mt-5 grid gap-3 sm:grid-cols-3">
+                  <div class="rounded-2xl border border-emerald-100 bg-emerald-50 px-3 py-3">
+                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-emerald-700">0% - 30%</p>
+                    <p class="mt-1 text-sm font-semibold text-emerald-900">Low Similarity</p>
+                    <p class="mt-1 text-xs text-emerald-800">Original</p>
+                  </div>
+                  <div class="rounded-2xl border border-amber-100 bg-amber-50 px-3 py-3">
+                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-amber-700">31% - 49%</p>
+                    <p class="mt-1 text-sm font-semibold text-amber-900">Moderate Similarity</p>
+                    <p class="mt-1 text-xs text-amber-800">Related Study</p>
+                  </div>
+                  <div class="rounded-2xl border border-rose-100 bg-rose-50 px-3 py-3">
+                    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-rose-700">50% - 100%</p>
+                    <p class="mt-1 text-sm font-semibold text-rose-900">High Similarity</p>
+                    <p class="mt-1 text-xs text-rose-800">Possible Duplication</p>
+                  </div>
+                </div>
+
+                {% if similarity_results %}
+                  <div class="mt-5 overflow-hidden rounded-2xl border border-slate-200/80 shadow-sm" id="similarityResults">
+                    <div class="overflow-x-auto">
+                      <table class="min-w-full divide-y divide-slate-100">
+                        <thead class="bg-slate-50/60">
+                          <tr>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">#</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Study</th>
+                            <th scope="col" class="px-3 py-3 text-center text-xs font-bold uppercase tracking-wider text-slate-500" title="30% weight">Ingredients</th>
+                            <th scope="col" class="px-3 py-3 text-center text-xs font-bold uppercase tracking-wider text-slate-500" title="30% weight"><span class="whitespace-nowrap">Rest of</span> Paper</th>
+                            <th scope="col" class="px-3 py-3 text-center text-xs font-bold uppercase tracking-wider text-slate-500" title="20% weight">Title</th>
+                            <th scope="col" class="px-3 py-3 text-center text-xs font-bold uppercase tracking-wider text-slate-500" title="20% weight">Abstract</th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Overall</th>
+                            <th scope="col" class="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 bg-white">
+                          {% for result in similarity_results %}
+                            <tr
+                              class="group transition hover:bg-slate-50/60"
+                              data-study-id="{{ result.id }}"
+                              data-title="{{ result.title }}"
+                              data-authors="{{ result.authors }}"
+                              data-submitter-name="{{ result.submitter_name|default_if_none:'' }}"
+                              data-submitter-email="{{ result.submitter_email|default_if_none:'' }}"
+                              data-submitter-program="{{ result.submitter_program|default_if_none:'' }}"
+                              data-submitter-college="{{ result.submitter_college|default_if_none:'' }}"
+                              data-submitter-login-as="{{ result.submitter_login_as|default_if_none:'' }}"
+                              data-adviser="{{ result.adviser|default_if_none:'' }}"
+                              data-published-month="{{ result.published_month|default_if_none:'' }}"
+                              data-published-year="{{ result.published_year|default_if_none:'' }}"
+                              data-keywords="{{ result.keywords|default_if_none:'' }}"
+                              data-abstract="{{ result.abstract|default_if_none:'' }}"
+                              data-status="{{ result.status|default_if_none:'' }}"
+                              data-submitted-at="{{ result.submitted_at|default_if_none:'' }}"
+                              data-reviewed-at="{{ result.reviewed_at|default_if_none:'' }}"
+                              data-score-percent="{{ result.score_percent }}"
+                              data-similarity-level="{{ result.similarity_level }}"
+                              data-similarity-label="{{ result.similarity_label }}"
+                              data-ingredients-score="{{ result.ingredients_score }}"
+                              data-general-score="{{ result.general_score }}"
+                              data-title-score="{{ result.title_score }}"
+                              data-abstract-score="{{ result.abstract_score }}"
+                              data-ingredients-weight="{{ result.ingredients_weight }}"
+                              data-general-weight="{{ result.general_weight }}"
+                              data-title-weight="{{ result.title_weight }}"
+                              data-abstract-weight="{{ result.abstract_weight }}"
+                              data-metadata-only="{% if result.metadata_only %}true{% else %}false{% endif %}"
+                              data-match-details="{{ result.match_details_json }}"
+                            >
+                              <td class="px-4 py-4 align-top text-sm font-bold text-slate-400">{{ forloop.counter }}</td>
+                              <td class="max-w-[15rem] px-4 py-4 align-top">
+                                <p class="truncate text-sm font-bold text-slate-900" title="{{ result.title }}">{{ result.title }}</p>
+                                {% if result.authors %}
+                                  <p class="mt-0.5 truncate text-xs font-medium text-slate-500" title="{{ result.authors }}">{{ result.authors }}</p>
+                                {% endif %}
+                                {% if result.metadata_only %}
+                                  <span class="mt-1.5 inline-flex rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-amber-700 ring-1 ring-amber-100" title="No document was ever uploaded for this entry, so its score is based on Title + Abstract only.">
+                                    Metadata only
+                                  </span>
+                                {% endif %}
+                              </td>
+                              <td class="px-3 py-4 text-center align-top text-sm font-semibold text-slate-700">{{ result.ingredients_score }}%</td>
+                              <td class="px-3 py-4 text-center align-top text-sm font-semibold text-slate-700">{{ result.general_score }}%</td>
+                              <td class="px-3 py-4 text-center align-top text-sm font-semibold text-slate-700">{{ result.title_score }}%</td>
+                              <td class="px-3 py-4 text-center align-top text-sm font-semibold text-slate-700">{{ result.abstract_score }}%</td>
+                              <td class="whitespace-nowrap px-4 py-4 align-top">
+                                <span class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 ring-1
+                                  {% if result.similarity_level == 'low' %}bg-emerald-50 text-emerald-700 ring-emerald-100
+                                  {% elif result.similarity_level == 'moderate' %}bg-amber-50 text-amber-800 ring-amber-100
+                                  {% else %}bg-rose-50 text-rose-700 ring-rose-100{% endif %}">
+                                  <span class="text-sm font-black leading-none">{{ result.score_percent }}%</span>
+                                  <span class="text-[10px] font-semibold uppercase tracking-[0.1em]">{{ result.similarity_label }}</span>
+                                </span>
+                              </td>
+                              <td class="whitespace-nowrap px-4 py-4 text-right align-top">
+                                <button
+                                  type="button"
+                                  class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+                                  data-trigger-study-view
+                                  aria-label="View full details for {{ result.title }}"
+                                >
+                                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                  </svg>
+                                  View details
+                                </button>
+                              </td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                {% elif repository_error %}
+                  <div class="mt-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                    {{ repository_error }}
+                  </div>
+                {% else %}
+                  <div class="mt-5 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                    Upload a file to view the research studies compared against it.
+                  </div>
+                {% endif %}
+              </div>
+        </section>
+      </main>
+    </div>
+
+    {% include 'core/_study_view_modal.html' %}
+
+    <div
+      id="analyzingOverlay"
+      class="fixed inset-0 z-[200] hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm px-4"
+      role="alert"
+      aria-live="assertive"
+      aria-busy="true"
+    >
+      <div class="w-full max-w-sm rounded-3xl bg-white px-8 py-9 text-center shadow-[0_30px_80px_rgba(15,23,42,0.35)]">
+        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50">
+          <svg class="h-9 w-9 animate-spin text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke-width="3" class="opacity-25"></circle>
+            <path d="M4 12a8 8 0 018-8" stroke-width="3" class="opacity-75" stroke-linecap="round"></path>
+          </svg>
+        </div>
+        <h2 class="mt-5 text-xl font-black tracking-tight text-slate-900">Analyzing your file&hellip;</h2>
+      </div>
+    </div>
+
+    <script src="{% static 'core/js/pages/research-similarity-1.js' %}"></script>
+    <script src="{% static 'core/js/study-view-modal.js' %}"></script>
+
+    <script src="{% static 'core/js/sidebar-groups.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 760" width="1400" height="760" font-family="Segoe UI, Arial, Helvetica, sans-serif" role="img" aria-label="Conceptual Framework of FOOD MATCH (Input-Process-Output)">
+<title>Conceptual Framework of FOOD MATCH (Input-Process-Output)</title>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10z" fill="#334155"/></marker>
+  <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10z" fill="#047857"/></marker>
+  
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="700.0" y="40.0" font-size="22" font-weight="bold" fill="#0f172a" text-anchor="middle">Conceptual Framework of FOOD MATCH</text>
+<text x="700.0" y="64.0" font-size="14" font-weight="normal" fill="#475569" text-anchor="middle">Input – Process – Output (IPO) model</text>
+<rect x="40.0" y="90.0" width="390.0" height="570.0" rx="12" fill="#ffffff" stroke="#047857" stroke-width="2"/>
+<path d="M40 136 V102 Q40 90 52 90 H418 Q430 90 430 102 V136 Z" fill="#047857"/>
+<text x="235.0" y="120.0" font-size="17" font-weight="bold" fill="#ffffff" text-anchor="middle">INPUT</text>
+<rect x="505.0" y="90.0" width="390.0" height="570.0" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2"/>
+<path d="M505 136 V102 Q505 90 517 90 H883 Q895 90 895 102 V136 Z" fill="#047857"/>
+<text x="700.0" y="120.0" font-size="17" font-weight="bold" fill="#ffffff" text-anchor="middle">PROCESS</text>
+<rect x="970.0" y="90.0" width="390.0" height="570.0" rx="12" fill="#ffffff" stroke="#047857" stroke-width="2"/>
+<path d="M970 136 V102 Q970 90 982 90 H1348 Q1360 90 1360 102 V136 Z" fill="#047857"/>
+<text x="1165.0" y="120.0" font-size="17" font-weight="bold" fill="#ffffff" text-anchor="middle">OUTPUT</text>
+<path d="M438 353.0 h34 v-16 l26 38 l-26 38 v-16 h-34 z" fill="#047857"/>
+<path d="M903 353.0 h34 v-16 l26 38 l-26 38 v-16 h-34 z" fill="#047857"/>
+<text x="60.0" y="166.0" font-size="14.5" font-weight="bold" fill="#047857" text-anchor="start">Knowledge Requirements</text>
+<circle cx="65" cy="183.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="188.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Food research repository and review processes</text>
+<circle cx="65" cy="204.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="209.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Text similarity: TF-IDF and cosine similarity</text>
+<circle cx="65" cy="225.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="230.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Text extraction and optical character</text>
+<text x="76.0" y="248.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">recognition (OCR)</text>
+<circle cx="65" cy="264.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="269.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Web development with the Django framework</text>
+<circle cx="65" cy="285.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="290.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Database design and information security</text>
+<text x="60.0" y="321.0" font-size="14.5" font-weight="bold" fill="#047857" text-anchor="start">Software Requirements</text>
+<circle cx="65" cy="338.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="343.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Python 3.12 and Django 4.2</text>
+<circle cx="65" cy="359.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="364.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">PostgreSQL 17 database</text>
+<circle cx="65" cy="380.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="385.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">scikit-learn and NumPy</text>
+<circle cx="65" cy="401.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="406.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">PyPDF2, python-docx and Tesseract OCR</text>
+<circle cx="65" cy="422.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="427.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">HTML, Tailwind CSS, JavaScript and Chart.js</text>
+<circle cx="65" cy="443.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="448.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Docker, Gunicorn and nginx</text>
+<text x="60.0" y="479.0" font-size="14.5" font-weight="bold" fill="#047857" text-anchor="start">Hardware Requirements</text>
+<circle cx="65" cy="496.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="501.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Computer or laptop with a web browser</text>
+<circle cx="65" cy="517.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="522.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Internet connection</text>
+<circle cx="65" cy="538.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="543.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Server for deployment</text>
+<text x="60.0" y="574.0" font-size="14.5" font-weight="bold" fill="#047857" text-anchor="start">Data</text>
+<circle cx="65" cy="591.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="596.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Approved food research papers</text>
+<circle cx="65" cy="612.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="617.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Student research submissions</text>
+<circle cx="65" cy="633.5" r="2.6" fill="#0f172a"/>
+<text x="76.0" y="638.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">User account information</text>
+<circle cx="542" cy="172" r="15" fill="#047857"/>
+<text x="542.0" y="177.0" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">1</text>
+<text x="567.0" y="172.0" font-size="14.5" font-weight="bold" fill="#0f172a" text-anchor="start">Requirements Gathering and Analysis</text>
+<text x="567.0" y="192.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Identify the needs of students, advisers and</text>
+<text x="567.0" y="209.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">the research office</text>
+<line x1="542" y1="189" x2="542" y2="230" stroke="#047857" stroke-width="2" stroke-dasharray="3 4"/>
+<circle cx="542" cy="248" r="15" fill="#047857"/>
+<text x="542.0" y="253.0" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">2</text>
+<text x="567.0" y="248.0" font-size="14.5" font-weight="bold" fill="#0f172a" text-anchor="start">System Design</text>
+<text x="567.0" y="268.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Architecture, database (ERD), data flow and</text>
+<text x="567.0" y="285.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">interface design</text>
+<line x1="542" y1="265" x2="542" y2="306" stroke="#047857" stroke-width="2" stroke-dasharray="3 4"/>
+<circle cx="542" cy="324" r="15" fill="#047857"/>
+<text x="542.0" y="329.0" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">3</text>
+<text x="567.0" y="324.0" font-size="14.5" font-weight="bold" fill="#0f172a" text-anchor="start">Development</text>
+<text x="567.0" y="344.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Build the repository, submission workflow,</text>
+<text x="567.0" y="361.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">role-based modules and similarity engine</text>
+<line x1="542" y1="341" x2="542" y2="382" stroke="#047857" stroke-width="2" stroke-dasharray="3 4"/>
+<circle cx="542" cy="400" r="15" fill="#047857"/>
+<text x="542.0" y="405.0" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">4</text>
+<text x="567.0" y="400.0" font-size="14.5" font-weight="bold" fill="#0f172a" text-anchor="start">Testing</text>
+<text x="567.0" y="420.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Functional, access-control and security</text>
+<text x="567.0" y="437.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">testing</text>
+<line x1="542" y1="417" x2="542" y2="458" stroke="#047857" stroke-width="2" stroke-dasharray="3 4"/>
+<circle cx="542" cy="476" r="15" fill="#047857"/>
+<text x="542.0" y="481.0" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">5</text>
+<text x="567.0" y="476.0" font-size="14.5" font-weight="bold" fill="#0f172a" text-anchor="start">Deployment</text>
+<text x="567.0" y="496.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Package and run the system with Docker</text>
+<line x1="542" y1="493" x2="542" y2="517" stroke="#047857" stroke-width="2" stroke-dasharray="3 4"/>
+<circle cx="542" cy="535" r="15" fill="#047857"/>
+<text x="542.0" y="540.0" font-size="14" font-weight="bold" fill="#ffffff" text-anchor="middle">6</text>
+<text x="567.0" y="535.0" font-size="14.5" font-weight="bold" fill="#0f172a" text-anchor="start">Evaluation</text>
+<text x="567.0" y="555.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Assess software quality using ISO/IEC 25010</text>
+<text x="567.0" y="572.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">criteria</text>
+<rect x="992.0" y="160.0" width="346.0" height="112.0" rx="10" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="1165.0" y="194.0" font-size="24" font-weight="bold" fill="#047857" text-anchor="middle">FOOD MATCH</text>
+<text x="1165.0" y="222.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">A Web-Based Food Research Repository</text>
+<text x="1165.0" y="241.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">and Similarity Checking System</text>
+<text x="992.0" y="306.0" font-size="14.5" font-weight="bold" fill="#047857" text-anchor="start">Key outputs</text>
+<circle cx="997" cy="325.5" r="2.6" fill="#0f172a"/>
+<text x="1008.0" y="330.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Searchable repository of approved food</text>
+<text x="1008.0" y="348.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">research</text>
+<circle cx="997" cy="367.5" r="2.6" fill="#0f172a"/>
+<text x="1008.0" y="372.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Similarity check results rated Low,</text>
+<text x="1008.0" y="390.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Moderate or High</text>
+<circle cx="997" cy="409.5" r="2.6" fill="#0f172a"/>
+<text x="1008.0" y="414.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Research submission and review workflow</text>
+<circle cx="997" cy="433.5" r="2.6" fill="#0f172a"/>
+<text x="1008.0" y="438.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Role-based access with Admin module</text>
+<text x="1008.0" y="456.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">privileges</text>
+<circle cx="997" cy="475.5" r="2.6" fill="#0f172a"/>
+<text x="1008.0" y="480.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Notifications, login and activity logs</text>
+<circle cx="997" cy="499.5" r="2.6" fill="#0f172a"/>
+<text x="1008.0" y="504.0" font-size="13.5" font-weight="normal" fill="#0f172a" text-anchor="start">Reports with charts and CSV export</text>
+<path d="M1165.0 660 V706 H235.0 V666" fill="none" stroke="#047857" stroke-width="2" marker-end="url(#arrow-accent)" stroke-dasharray="7 5"/>
+<rect x="472.2" y="695.5" width="455.5" height="21.6" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="700.0" y="710.0" font-size="13.5" font-weight="bold" fill="#047857" text-anchor="middle">Evaluation results and user feedback guide improvements</text>
+</svg>

@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Match | Access Denied</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <div data-app-layout class="min-h-screen lg:grid lg:grid-cols-[280px_1fr]">
+      <aside data-app-sidebar class="sticky top-0 max-h-screen overflow-y-auto z-30 bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900 px-5 py-6 text-white shadow-2xl">
+        <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <img
+            src="{% static 'core/images/Logo.png' %}"
+            alt="Food Match Logo"
+            class="h-14 w-14 rounded-full border border-white/15 bg-white object-cover"
+          />
+          <div>
+            <p class="text-2xl font-bold tracking-tight">
+              FOOD <span class="text-emerald-400">MATCH</span>
+            </p>
+            <p class="text-xs uppercase tracking-[0.25em] text-emerald-100/80">{% if is_super_admin %}Super Admin Portal{% else %}Admin Portal{% endif %}</p>
+          </div>
+        </div>
+
+        {% include 'core/_nav_admin.html' %}
+      </aside>
+
+      <main class="overflow-hidden">
+        <div class="relative z-40 border-b border-slate-200 bg-white/85 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
+          {% include 'core/_sidebar_toggle.html' %}
+          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 class="text-2xl font-bold tracking-tight text-slate-900">{{ module_label }}</h1>
+            </div>
+            <div class="flex items-center gap-4 self-end md:self-auto">
+              <p class="hidden text-lg font-semibold text-slate-900 sm:block">
+                Welcome, {{ admin_name }}
+              </p>
+              {% include 'core/_account_menu.html' with menu_name=admin_name menu_role=admin_role menu_super=is_super_admin %}
+            </div>
+          </div>
+        </div>
+
+        <section class="flex min-h-[calc(100vh-6rem)] items-center justify-center px-5 py-10 sm:px-8">
+          <div class="w-full max-w-xl overflow-hidden rounded-[2rem] border border-rose-100 bg-white text-center shadow-[0_24px_80px_rgba(15,23,42,0.10)]">
+            <div class="h-1.5 bg-gradient-to-r from-rose-500 via-red-500 to-rose-600"></div>
+            <div class="px-6 py-10 sm:px-10">
+              <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-rose-50 ring-8 ring-rose-50/60">
+                <svg class="h-10 w-10 text-rose-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="4" y="11" width="16" height="10" rx="2"></rect>
+                  <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
+                </svg>
+              </div>
+              <p class="mt-6 text-sm font-bold uppercase tracking-[0.25em] text-rose-600">Access Denied</p>
+              <h2 class="mt-2 text-3xl font-black tracking-tight text-slate-900">You don't have access to {{ module_label }}</h2>
+              <p class="mt-3 text-sm text-slate-600 sm:text-base">
+                {% if super_admin_only %}
+                  This module is reserved for Super Admins only.
+                {% else %}
+                  A Super Admin hasn't granted this module to your account yet. Ask a Super Admin to give you access in Privilege &amp; Access Control.
+                {% endif %}
+              </p>
+              <a href="{% url 'admin_dashboard' %}" class="mt-8 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-emerald-200 transition hover:-translate-y-0.5">
+                Back to Dashboard
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="{% static 'core/js/sidebar-groups.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+{% if widget.is_initial %}
+  <div class="mb-3 flex flex-wrap items-center gap-3">
+    <img src="{{ widget.value.url }}" alt="Current image" class="h-16 w-24 rounded-lg object-cover ring-1 ring-slate-200" />
+    {% if not widget.required %}
+      <label class="inline-flex items-center gap-2 text-sm font-medium text-slate-600">
+        <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}" class="h-4 w-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500" />
+        Remove image
+      </label>
+    {% endif %}
+  </div>
+{% endif %}
+<input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %} />

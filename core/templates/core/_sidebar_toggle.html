@@ -1,0 +1,35 @@
+{% load static %}
+<button
+  type="button"
+  data-sidebar-toggle
+  aria-label="Toggle sidebar"
+  aria-expanded="true"
+  title="Toggle sidebar"
+  class="absolute left-5 top-4 rounded-xl bg-slate-100 p-3 text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-200 focus:outline-none focus:ring-4 focus:ring-slate-200 sm:left-8 md:top-1/2 md:-translate-y-1/2"
+>
+  <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"></path>
+  </svg>
+</button>
+<style>
+  @media (max-width: 1023px) {
+    [data-app-sidebar] { display: none; }
+    [data-app-sidebar].is-open {
+      display: block;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 18rem;
+      max-width: 85vw;
+      max-height: none;
+      overflow-y: auto;
+      z-index: 70;
+    }
+  }
+  @media (min-width: 1024px) {
+    body.sidebar-collapsed [data-app-sidebar] { display: none; }
+    body.sidebar-collapsed [data-app-layout] { grid-template-columns: minmax(0, 1fr) !important; }
+  }
+</style>
+<script src="{% static 'core/js/pages/sidebar-toggle.js' %}"></script>

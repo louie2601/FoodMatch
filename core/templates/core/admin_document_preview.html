@@ -1,0 +1,313 @@
+{% load core_extras %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Match | {{ page_title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <div data-app-layout class="min-h-screen lg:grid lg:grid-cols-[280px_1fr]">
+      <aside data-app-sidebar class="sticky top-0 max-h-screen overflow-y-auto z-30 {% if is_super_admin %}bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900{% else %}bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900{% endif %} px-5 py-6 text-white shadow-2xl">
+        <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <img
+            src="{% static 'core/images/Logo.png' %}"
+            alt="Food Match Logo"
+            class="h-14 w-14 rounded-full border border-white/15 bg-white object-cover"
+          />
+          <div>
+            <p class="text-2xl font-bold tracking-tight">
+              FOOD <span class="{% if is_super_admin %}text-green-400{% else %}text-emerald-400{% endif %}">MATCH</span>
+            </p>
+            <p class="text-xs uppercase tracking-[0.25em] {% if is_super_admin %}text-emerald-100/80{% else %}text-emerald-100/80{% endif %}">
+              {% if is_super_admin %}Super Admin Portal{% else %}Admin Portal{% endif %}
+            </p>
+          </div>
+        </div>
+
+        {% include 'core/_nav_admin.html' %}
+      </aside>
+
+      <main class="overflow-hidden">
+        <div class="relative z-40 border-b border-slate-200 bg-white/85 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
+          {% include 'core/_sidebar_toggle.html' %}
+          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.2em] {% if is_super_admin %}text-emerald-700{% else %}text-emerald-700{% endif %}">
+                Document Preview
+              </p>
+              <div class="mt-1 flex flex-wrap items-center gap-2">
+                <h1 class="text-2xl font-bold tracking-tight text-slate-900 truncate max-w-2xl">
+                  {{ submission.title }}
+                </h1>
+                <span class="inline-flex items-center rounded-full bg-slate-900/90 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white ring-1 ring-slate-950/10">
+                  {{ file_ext }}
+                </span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 self-end md:self-auto">
+              <p class="hidden text-lg font-semibold text-slate-900 sm:block">
+                Welcome, {{ admin_name }}
+              </p>
+              {% include 'core/_account_menu.html' with menu_name=admin_name menu_role=admin_role menu_super=is_super_admin %}
+            </div>
+          </div>
+        </div>
+
+        <section class="px-5 py-6 sm:px-8">
+          <div class="mx-auto max-w-7xl space-y-5">
+            <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+              <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex items-start gap-4">
+                  <div class="flex h-14 w-14 flex-none items-center justify-center rounded-2xl {% if file_ext == '.pdf' %}bg-gradient-to-br from-rose-100 to-red-200 text-rose-700{% elif file_ext == '.docx' or file_ext == '.doc' %}bg-gradient-to-br from-sky-100 to-blue-200 text-blue-700{% elif file_ext == '.txt' %}bg-gradient-to-br from-amber-100 to-yellow-200 text-amber-700{% else %}bg-gradient-to-br from-slate-100 to-slate-200 text-slate-700{% endif %} text-2xl shadow-inner">
+                    {% if file_ext == '.pdf' %}
+                      📕
+                    {% elif file_ext == '.docx' or file_ext == '.doc' %}
+                      📘
+                    {% elif file_ext == '.txt' %}
+                      📄
+                    {% else %}
+                      📎
+                    {% endif %}
+                  </div>
+                  <div class="min-w-0">
+                    <p class="truncate text-sm font-bold text-slate-900 sm:text-base" title="{{ file_name }}">
+                      {{ file_name }}
+                    </p>
+                    <p class="mt-1 text-xs text-slate-500 sm:text-sm">
+                      {% if file_size %}
+                        {{ file_size|filesizeformat }}
+                        <span class="mx-1.5 text-slate-300">·</span>
+                      {% endif %}
+                      Submitted by
+                      <span class="font-semibold text-slate-700">
+                        {{ submission.student|account_name }}
+                      </span>
+                      {% if submission.submitted_at %}
+                        <span class="mx-1.5 text-slate-300">·</span>
+                        {{ submission.submitted_at|date:"M d, Y" }}
+                      {% endif %}
+                    </p>
+                    {% if viewer_mode == 'text' and total_words %}
+                      <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
+                        <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 font-semibold text-slate-700">
+                          📊 {{ total_words }} words
+                        </span>
+                        <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 font-semibold text-slate-700">
+                          📑 ~{{ approx_pages }} page{{ approx_pages|pluralize }}
+                        </span>
+                        <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 font-semibold text-slate-700">
+                          🧩 {{ text_paragraphs|length }} paragraph{{ text_paragraphs|length|pluralize }}
+                        </span>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <a
+                    href="{{ back_url }}"
+                    class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+                  >
+                    <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M19 12H5"></path>
+                      <path d="m12 19-7-7 7-7"></path>
+                    </svg>
+                    Back
+                  </a>
+                  <a
+                    href="{{ native_viewer_url }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-slate-800 to-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:from-slate-900 hover:to-black"
+                  >
+                    <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                      <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 5Z"></path>
+                      <path d="M9 13h6"></path>
+                      <path d="M9 17h6"></path>
+                    </svg>
+                    Open native viewer
+                  </a>
+                  <a
+                    href="{{ download_url }}"
+                    class="inline-flex items-center gap-2 rounded-xl {% if is_super_admin %}bg-gradient-to-r from-emerald-500 to-green-600 shadow-green-900/30{% else %}bg-gradient-to-r from-emerald-500 to-green-600 shadow-emerald-900/30{% endif %} px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:brightness-110"
+                  >
+                    <svg class="h-4.5 w-4.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <path d="m7 10 5 5 5-5"></path>
+                      <path d="M12 15V3"></path>
+                    </svg>
+                    Download file
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {% if text_error %}
+              <div class="rounded-3xl border border-amber-200 bg-white p-3 shadow-sm sm:p-4">
+                <div class="rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 via-amber-50 to-yellow-50 px-4 py-3 shadow-sm">
+                  <div class="flex items-start gap-3">
+                    <div class="flex-none rounded-full bg-amber-100 p-2 text-amber-700">
+                      <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path>
+                        <path d="M12 9v4"></path>
+                        <path d="M12 17h.01"></path>
+                      </svg>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <p class="text-sm font-bold text-amber-900">{{ text_error }}</p>
+                      <p class="mt-1 text-xs text-amber-800 sm:text-sm">
+                        You can still use <span class="font-semibold">"Open native viewer"</span> or <span class="font-semibold">"Download file"</span> buttons above.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+
+            <div class="rounded-3xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
+              <div class="mb-3 flex flex-wrap items-center justify-between gap-3 px-1">
+                <div>
+                  <h2 class="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">Native file viewer</h2>
+                  <p class="mt-0.5 text-xs text-slate-500 sm:text-sm">
+                    Browser tries to render <span class="font-semibold uppercase">{{ file_ext }}</span> directly — the actual file itself as served inline.
+                  </p>
+                </div>
+                {% if total_words %}
+                  <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                    <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 font-semibold text-slate-700">
+                      📊 {{ total_words }} words
+                    </span>
+                    <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 font-semibold text-slate-700">
+                      📑 ~{{ approx_pages }} page{{ approx_pages|pluralize }}
+                    </span>
+                    {% if conversion_method %}
+                      <span class="inline-flex items-center gap-1 rounded-full {% if conversion_method == 'mammoth' %}bg-emerald-100 text-emerald-800{% else %}bg-slate-100 text-slate-700{% endif %} px-2.5 py-1 font-semibold">
+                        ✨ {{ conversion_method }}
+                      </span>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+                <iframe
+                  src="{{ native_viewer_url }}"
+                  title="Native File Viewer — {{ file_name }}"
+                  class="h-[85vh] w-full bg-white"
+                  frameborder="0"
+                ></iframe>
+              </div>
+              {% if conversion_warnings %}
+                <div class="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800 sm:text-sm">
+                  <p class="font-semibold">Conversion notes:</p>
+                  <ul class="mt-1 list-disc space-y-0.5 pl-5">
+                    {% for warning in conversion_warnings %}
+                      <li>{{ warning }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
+              <p class="mt-3 px-1 text-xs text-slate-500 sm:text-sm">
+                💡 If nothing shows above (common for DOCX on browsers without an Office extension installed), scroll down to the <span class="font-semibold text-slate-700">Formatted HTML preview</span> section below for a rendered document view, or use <span class="font-semibold text-slate-700">"Open native viewer"</span> to force browser handling.
+              </p>
+            </div>
+
+            {% if formatted_html %}
+              <div class="rounded-3xl border border-slate-200 bg-white p-3 shadow-sm sm:p-4">
+                <div class="mb-3 flex flex-wrap items-center justify-between gap-3 px-1">
+                  <div>
+                    <h2 class="text-sm font-bold uppercase tracking-[0.2em] text-slate-600">Formatted HTML preview</h2>
+                    <p class="mt-0.5 text-xs text-slate-500 sm:text-sm">
+                      Document content rendered with preserved headings, <strong>bold</strong>, <em>italic</em>, underline, lists and paragraph spacing.
+                    </p>
+                  </div>
+                  <div class="text-xs text-slate-500">
+                    <span class="inline-flex items-center gap-1 rounded-full bg-slate-900/90 px-3 py-1 font-bold uppercase tracking-wider text-white ring-1 ring-slate-950/10">
+                      {{ file_ext }}
+                    </span>
+                  </div>
+                </div>
+                <div class="overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-slate-50/60 to-white p-6 sm:p-10 shadow-inner">
+                  <article class="mx-auto max-w-3xl prose prose-slate">
+                    {% if conversion_method == 'mammoth' %}
+                      {{ formatted_html|safe }}
+                    {% else %}
+                      <div class="space-y-0.5">
+                        {{ formatted_html|safe }}
+                      </div>
+                    {% endif %}
+                  </article>
+                </div>
+                <p class="mt-3 px-1 text-xs text-slate-500 sm:text-sm">
+                  📝 This is a <span class="font-semibold">formatted conversion</span> of the file — for the pixel-perfect original, use <span class="font-semibold text-slate-700">"Download file"</span> and open it in Microsoft Word / Adobe Reader.
+                </p>
+              </div>
+            {% elif not text_error and file_ext != '.pdf' %}
+              <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+                <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-5 py-10 text-center">
+                  <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-100 text-3xl text-slate-400">
+                    📭
+                  </div>
+                  <p class="mt-4 text-sm font-semibold text-slate-700 sm:text-base">
+                    No formatted preview available for this file.
+                  </p>
+                  <p class="mt-1 text-xs text-slate-500 sm:text-sm">
+                    Use <span class="font-semibold">"Open native viewer"</span> or <span class="font-semibold">"Download file"</span> above to view the actual document.
+                  </p>
+                </div>
+              </div>
+            {% endif %}
+
+            <div class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+              <h2 class="text-sm font-bold uppercase tracking-[0.2em] text-slate-500">Submission metadata</h2>
+              <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3">
+                  <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Title</p>
+                  <p class="mt-1 text-sm font-bold text-slate-900 sm:text-base">{{ submission.title }}</p>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3">
+                  <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Status</p>
+                  <p class="mt-1 text-sm font-bold text-slate-900 sm:text-base">{{ submission.status|title }}</p>
+                </div>
+                {% if submission.submitted_at %}
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Submitted</p>
+                    <p class="mt-1 text-sm font-bold text-slate-900 sm:text-base">{{ submission.submitted_at|date:"F j, Y · g:i A" }}</p>
+                  </div>
+                {% endif %}
+                {% if submission.reviewed_at %}
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Reviewed</p>
+                    <p class="mt-1 text-sm font-bold text-slate-900 sm:text-base">{{ submission.reviewed_at|date:"F j, Y · g:i A" }}</p>
+                  </div>
+                {% endif %}
+                <div class="rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3 lg:col-span-2">
+                  <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Submitted by</p>
+                  <p class="mt-1 text-sm font-bold text-slate-900 sm:text-base">{{ submission.student|account_name }}</p>
+                  <p class="text-xs text-slate-500">{{ submission.student.email }}</p>
+                </div>
+                {% if submission.abstract %}
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50/60 px-4 py-3 sm:col-span-2 lg:col-span-3">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Abstract</p>
+                    <p class="mt-1 text-sm leading-7 text-slate-800 sm:text-base">{{ submission.abstract }}</p>
+                  </div>
+                {% endif %}
+                {% if submission.admin_notes %}
+                  <div class="rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 via-yellow-50 to-amber-50 px-4 py-3 sm:col-span-2 lg:col-span-3">
+                    <p class="text-xs font-semibold uppercase tracking-wider text-amber-700">Admin notes</p>
+                    <p class="mt-1 text-sm leading-7 text-amber-900 sm:text-base">{{ submission.admin_notes|linebreaksbr }}</p>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="{% static 'core/js/sidebar-groups.js' %}"></script>
+  </body>
+</html>

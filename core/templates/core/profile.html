@@ -1,0 +1,303 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Match | {% if page_mode == 'password' %}Change Password{% else %}My Profile{% endif %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <div data-app-layout class="min-h-screen lg:grid lg:grid-cols-[280px_1fr]">
+      <aside data-app-sidebar class="sticky top-0 max-h-screen overflow-y-auto z-30 {% if portal_role == 'super_admin' %}bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900{% else %}bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900{% endif %} px-5 py-6 text-white shadow-2xl">
+        <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <img
+            src="{% static 'core/images/Logo.png' %}"
+            alt="Food Match Logo"
+            class="h-14 w-14 rounded-full border border-white/15 bg-white object-cover"
+          />
+          <div>
+            <p class="text-2xl font-bold tracking-tight">
+              FOOD <span class="{% if portal_role == 'super_admin' %}text-green-400{% else %}text-emerald-400{% endif %}">MATCH</span>
+            </p>
+            <p class="text-xs uppercase tracking-[0.25em] {% if portal_role == 'super_admin' %}text-emerald-100/80{% else %}text-emerald-100/80{% endif %}">
+              {% if portal_role == 'super_admin' %}Super Admin Portal{% elif portal_role == 'admin' %}Admin Portal{% else %}Student Portal{% endif %}
+            </p>
+          </div>
+        </div>
+
+        {% if portal_role == 'super_admin' or portal_role == 'admin' %}
+          {% include 'core/_nav_admin.html' %}
+        {% else %}
+          {% include 'core/_nav_student.html' %}
+        {% endif %}
+      </aside>
+
+      <main class="overflow-hidden">
+        <div class="relative z-40 border-b border-slate-200 bg-white/85 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
+          {% include 'core/_sidebar_toggle.html' %}
+          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.2em] {% if portal_role == 'super_admin' %}text-emerald-700{% else %}text-emerald-700{% endif %}">Account</p>
+              <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">{% if page_mode == 'password' %}Change Password{% else %}My Profile{% endif %}</h1>
+            </div>
+            <div class="self-end md:self-auto">
+              {% include 'core/_account_menu.html' with menu_name=display_name menu_role=role_display menu_super=is_super_admin_portal %}
+            </div>
+          </div>
+        </div>
+
+        <section class="px-5 py-6 sm:px-8">
+          <div class="mx-auto grid max-w-6xl gap-6 xl:grid-cols-[320px_1fr]">
+            <aside class="h-fit rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+              <div class="flex flex-col items-center text-center">
+                <div class="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br {% if portal_role == 'super_admin' %}from-emerald-100 to-green-200 text-emerald-900{% else %}from-emerald-100 to-teal-200 text-emerald-900{% endif %} text-4xl font-black ring-4 ring-white shadow-md">
+                  {{ display_name|slice:":1"|upper }}
+                </div>
+                <h2 class="mt-4 text-xl font-black tracking-tight text-slate-900">{{ display_name }}</h2>
+                <span class="mt-2 inline-flex rounded-full {% if portal_role == 'super_admin' %}bg-emerald-100 text-emerald-800{% else %}bg-emerald-100 text-emerald-800{% endif %} px-3 py-1 text-xs font-bold uppercase tracking-[0.16em]">{{ role_display }}</span>
+              </div>
+              <dl class="mt-6 space-y-3 text-sm">
+                <div class="rounded-2xl bg-slate-50 px-4 py-3">
+                  <dt class="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Username</dt>
+                  <dd class="mt-1 font-semibold text-slate-900 break-all">{{ account_username }}</dd>
+                </div>
+                {% if not is_virtual_account %}
+                  <div class="rounded-2xl bg-slate-50 px-4 py-3">
+                    <dt class="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Member since</dt>
+                    <dd class="mt-1 font-semibold text-slate-900">{{ date_joined }}</dd>
+                  </div>
+                  <div class="rounded-2xl bg-slate-50 px-4 py-3">
+                    <dt class="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Last login</dt>
+                    <dd class="mt-1 font-semibold text-slate-900">{{ last_login }}</dd>
+                  </div>
+                {% endif %}
+              </dl>
+              {% if is_student and group_members %}
+              <div class="mt-4 rounded-2xl bg-slate-50 px-4 py-3">
+                <p class="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Group members</p>
+                <ol class="mt-2 space-y-1 text-sm font-semibold text-slate-900">
+                  {% for name in group_members %}<li>{{ forloop.counter }}. {{ name }}{% if forloop.first %} <span class="text-xs font-medium text-slate-500">(leader)</span>{% endif %}</li>{% endfor %}
+                </ol>
+              </div>
+              {% endif %}
+              <p class="mt-4 text-xs text-slate-500">Your username is used to log in and cannot be changed here.</p>
+            </aside>
+
+            <div class="space-y-6">
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-900 shadow-sm">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+
+              {% if is_virtual_account %}
+                <div class="rounded-[2rem] border border-amber-200 bg-amber-50 p-6 text-sm text-amber-900 shadow-sm">
+                  <p class="font-bold">Emergency account</p>
+                  <p class="mt-1">This is the built-in emergency Super Admin account. It exists only in the server configuration, so there is no profile or password to edit here.</p>
+                </div>
+              {% else %}
+                {% if page_mode == 'profile' %}
+                <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] sm:p-8">
+                  <p class="text-sm font-semibold uppercase tracking-[0.2em] {% if portal_role == 'super_admin' %}text-emerald-700{% else %}text-emerald-700{% endif %}">Personal Information</p>
+                  <h2 class="mt-1 text-2xl font-black tracking-tight text-slate-900">Edit your details</h2>
+
+                  {% if profile_form.non_field_errors %}
+                    <div class="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                      {% for error in profile_form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+                    </div>
+                  {% endif %}
+
+                  <form method="post" class="mt-6 space-y-5" data-profile-form data-original-email="{{ original_email }}" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="update_profile" />
+
+                    <div class="grid gap-4 md:grid-cols-2">
+                      {% if is_student %}
+                      <div class="md:col-span-2 space-y-4">
+<div>
+  <label for="{{ profile_form.group_name.id_for_label }}" class="mb-1.5 block text-base font-semibold text-slate-900">
+    Group Name <span class="text-sm font-normal text-slate-500">(optional)</span>
+  </label>
+  {{ profile_form.group_name }}
+  <p id="id_group_name_error" class="mt-2 text-sm text-red-600{% if not profile_form.group_name.errors %} hidden{% endif %}">{{ profile_form.group_name.errors|join:", " }}</p>
+</div>
+{% include 'core/_members_formset.html' %}
+                      </div>
+                      {% else %}
+                      <div>
+                        <label for="{{ profile_form.first_name.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">{{ profile_form.first_name.label }}<span class="ml-1 text-red-600">*</span></label>
+                        {{ profile_form.first_name }}
+                        <p id="id_first_name_error" class="mt-2 text-sm text-red-600{% if not profile_form.first_name.errors %} hidden{% endif %}">{{ profile_form.first_name.errors|join:", " }}</p>
+                      </div>
+                      <div>
+                        <label for="{{ profile_form.middle_name.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">{{ profile_form.middle_name.label }}</label>
+                        {{ profile_form.middle_name }}
+                        <p id="id_middle_name_error" class="mt-2 text-sm text-red-600{% if not profile_form.middle_name.errors %} hidden{% endif %}">{{ profile_form.middle_name.errors|join:", " }}</p>
+                      </div>
+                      <div>
+                        <label for="{{ profile_form.last_name.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">{{ profile_form.last_name.label }}<span class="ml-1 text-red-600">*</span></label>
+                        {{ profile_form.last_name }}
+                        <p id="id_last_name_error" class="mt-2 text-sm text-red-600{% if not profile_form.last_name.errors %} hidden{% endif %}">{{ profile_form.last_name.errors|join:", " }}</p>
+                      </div>
+                      {% endif %}
+                      <div>
+                        <label for="{{ profile_form.email.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">{{ profile_form.email.label }}<span class="ml-1 text-red-600">*</span></label>
+                        {{ profile_form.email }}
+                        <p id="id_email_error" class="mt-2 text-sm text-red-600{% if not profile_form.email.errors %} hidden{% endif %}">{{ profile_form.email.errors|join:", " }}</p>
+                      </div>
+                    </div>
+
+                    <div id="emailChangeConfirm" class="rounded-2xl border border-amber-200 bg-amber-50 p-4{% if not profile_form.current_password.errors %} hidden{% endif %}">
+                      <p class="text-sm font-semibold text-amber-900">You're changing your email. Confirm with your current password to continue.</p>
+                      <div class="relative mt-3 max-w-md">
+                        {{ profile_form.current_password }}
+                        <button type="button" class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700" aria-label="Toggle password visibility" data-password-toggle><svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle><path d="M4 20 20 4"></path></svg></button>
+                      </div>
+                      <p id="id_current_password_error" class="mt-2 text-sm text-red-600{% if not profile_form.current_password.errors %} hidden{% endif %}">{{ profile_form.current_password.errors|join:", " }}</p>
+                    </div>
+
+                    {% if is_student %}
+                      <div class="grid gap-4 rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 md:grid-cols-2">
+                        <div>
+                          <label for="{{ profile_form.college.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">{{ profile_form.college.label }}<span class="ml-1 text-red-600">*</span></label>
+                          {{ profile_form.college }}
+                          <p id="id_college_error" class="mt-2 text-sm text-red-600{% if not profile_form.college.errors %} hidden{% endif %}">{{ profile_form.college.errors|join:", " }}</p>
+                        </div>
+                        <div>
+                          <label for="{{ profile_form.program.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">{{ profile_form.program.label }}<span class="ml-1 text-red-600">*</span></label>
+                          {{ profile_form.program }}
+                          <p id="id_program_error" class="mt-2 text-sm text-red-600{% if not profile_form.program.errors %} hidden{% endif %}">{{ profile_form.program.errors|join:", " }}</p>
+                        </div>
+                      </div>
+                    {% endif %}
+
+                    <div class="flex justify-end">
+                      <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r {% if portal_role == 'super_admin' %}from-emerald-600 to-green-600 shadow-emerald-200 hover:from-emerald-700 hover:to-green-700{% else %}from-emerald-600 to-green-700 shadow-emerald-200 hover:from-emerald-700 hover:to-green-800{% endif %} px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5">Save Changes</button>
+                    </div>
+                  </form>
+                </section>
+
+                {% endif %}
+
+                {% if page_mode == 'password' %}
+                <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] sm:p-8">
+                  <p class="text-sm font-semibold uppercase tracking-[0.2em] {% if portal_role == 'super_admin' %}text-emerald-700{% else %}text-emerald-700{% endif %}">Security</p>
+                  <h2 class="mt-1 text-2xl font-black tracking-tight text-slate-900">Change password</h2>
+
+                  {% if change_step == 'no_email' %}
+                    <div class="mt-5 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">
+                      <p class="font-bold">Add an email address first</p>
+                      <p class="mt-1">Changing your password requires a verification code sent to your email, but your account has no email on file.</p>
+                      <a href="{% url 'profile' %}" class="mt-3 inline-flex rounded-xl bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600">Go to Profile</a>
+                    </div>
+                  {% else %}
+                    <ol class="mt-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em]" aria-label="Progress">
+                      <li class="flex items-center gap-2 {% if change_step == 'verify' %}text-slate-900{% else %}text-emerald-600{% endif %}">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-full {% if change_step == 'verify' %}bg-slate-900 text-white{% else %}bg-emerald-100 text-emerald-700{% endif %}">1</span>Verify
+                      </li>
+                      <li class="h-px flex-1 bg-slate-300"></li>
+                      <li class="flex items-center gap-2 {% if change_step == 'otp' %}text-slate-900{% elif change_step == 'new' %}text-emerald-600{% else %}text-slate-400{% endif %}">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-full {% if change_step == 'otp' %}bg-slate-900 text-white{% elif change_step == 'new' %}bg-emerald-100 text-emerald-700{% else %}bg-slate-200 text-slate-500{% endif %}">2</span>Code
+                      </li>
+                      <li class="h-px flex-1 bg-slate-300"></li>
+                      <li class="flex items-center gap-2 {% if change_step == 'new' %}text-slate-900{% else %}text-slate-400{% endif %}">
+                        <span class="flex h-6 w-6 items-center justify-center rounded-full {% if change_step == 'new' %}bg-slate-900 text-white{% else %}bg-slate-200 text-slate-500{% endif %}">3</span>New password
+                      </li>
+                    </ol>
+
+                    {% if change_step == 'verify' %}
+                      {% if verify_form.non_field_errors %}
+                        <div class="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{% for error in verify_form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+                      {% endif %}
+                      <p class="mt-5 text-sm text-slate-600">To protect your account, enter your current password. We'll then email a 6-digit code to <span class="font-semibold text-slate-900">{{ masked_email }}</span>.</p>
+                      <form method="post" class="mt-5 max-w-md space-y-5" data-change-verify-form novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="send_code" />
+                        <div>
+                          <label for="{{ verify_form.current_password.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">{{ verify_form.current_password.label }}<span class="ml-1 text-red-600">*</span></label>
+                          <div class="relative">
+                            {{ verify_form.current_password }}
+                            <button type="button" class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700" aria-label="Toggle password visibility" data-password-toggle><svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle><path d="M4 20 20 4"></path></svg></button>
+                          </div>
+                          <p id="id_current_password_error" class="mt-2 text-sm text-red-600{% if not verify_form.current_password.errors %} hidden{% endif %}">{{ verify_form.current_password.errors|join:", " }}</p>
+                        </div>
+                        <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-800">Send Code</button>
+                      </form>
+
+                    {% elif change_step == 'otp' %}
+                      {% if notice %}<div class="mt-4 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900">{{ notice }}</div>{% endif %}
+                      <p class="mt-5 text-sm text-slate-600">We sent a 6-digit code to <span class="font-semibold text-slate-900">{{ masked_email }}</span>. It expires in {{ otp_minutes }} minutes.</p>
+                      <form method="post" class="mt-5 max-w-md space-y-5" data-otp-form novalidate>
+                        {% csrf_token %}
+                        <div>
+                          <label for="{{ otp_form.code.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">{{ otp_form.code.label }}<span class="ml-1 text-red-600">*</span></label>
+                          {{ otp_form.code }}
+                          <p id="id_code_error" class="mt-2 text-sm text-red-600{% if not otp_form.code.errors %} hidden{% endif %}">{{ otp_form.code.errors|join:", " }}</p>
+                        </div>
+                        <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-800">Verify Code</button>
+                      </form>
+                      <div class="mt-4 flex flex-wrap items-center gap-5 text-sm">
+                        <form method="post" class="inline">
+                          {% csrf_token %}
+                          <input type="hidden" name="action" value="resend" />
+                          <button type="submit" id="resendCodeBtn" data-resend-wait="{{ resend_wait }}" class="font-semibold text-emerald-700 transition hover:text-emerald-800 disabled:cursor-not-allowed disabled:text-slate-400"><span data-resend-label>Resend code</span></button>
+                        </form>
+                        <form method="post" class="inline">
+                          {% csrf_token %}
+                          <input type="hidden" name="action" value="cancel" />
+                          <button type="submit" class="font-semibold text-slate-600 transition hover:text-slate-900">Cancel</button>
+                        </form>
+                      </div>
+
+                    {% elif change_step == 'new' %}
+                      {% if new_form.non_field_errors %}
+                        <div class="mt-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">{% for error in new_form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+                      {% endif %}
+                      <p class="mt-5 text-sm text-slate-600">Code verified. Choose a new password for your account.</p>
+                      <form method="post" class="mt-5 space-y-5" data-reset-password-form novalidate>
+                        {% csrf_token %}
+                        <div class="grid gap-4 md:grid-cols-2">
+                          <div>
+                            <label for="{{ new_form.new_password.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">{{ new_form.new_password.label }}<span class="ml-1 text-red-600">*</span></label>
+                            <div class="relative">
+                              {{ new_form.new_password }}
+                              <button type="button" class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700" aria-label="Toggle password visibility" data-password-toggle><svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle><path d="M4 20 20 4"></path></svg></button>
+                            </div>
+                            <p id="id_new_password_error" class="mt-2 text-sm text-red-600{% if not new_form.new_password.errors %} hidden{% endif %}">{{ new_form.new_password.errors|join:", " }}</p>
+                          </div>
+                          <div>
+                            <label for="{{ new_form.confirm_new_password.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">{{ new_form.confirm_new_password.label }}<span class="ml-1 text-red-600">*</span></label>
+                            <div class="relative">
+                              {{ new_form.confirm_new_password }}
+                              <button type="button" class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700" aria-label="Toggle password visibility" data-password-toggle><svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle><path d="M4 20 20 4"></path></svg></button>
+                            </div>
+                            <p id="id_confirm_new_password_error" class="mt-2 text-sm text-red-600{% if not new_form.confirm_new_password.errors %} hidden{% endif %}">{{ new_form.confirm_new_password.errors|join:", " }}</p>
+                          </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                          <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-800">Update Password</button>
+                        </div>
+                      </form>
+                      <form method="post" class="mt-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="cancel" />
+                        <button type="submit" class="text-sm font-semibold text-slate-600 transition hover:text-slate-900">Cancel</button>
+                      </form>
+                    {% endif %}
+                  {% endif %}
+                </section>
+                {% endif %}
+              {% endif %}
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="{% static 'core/js/main.js' %}"></script>
+    <script src="{% static 'core/js/pages/profile-1.js' %}"></script>
+    <script src="{% static 'core/js/sidebar-groups.js' %}"></script>
+      {% include 'core/_program_by_college.html' with mapping=profile_form.program_college_map %}
+  </body>
+</html>

@@ -1,0 +1,967 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Match | Manage Users</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <div data-app-layout class="min-h-screen lg:grid lg:grid-cols-[280px_1fr]">
+      <aside data-app-sidebar class="sticky top-0 max-h-screen overflow-y-auto z-30 {% if is_super_admin %}bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900{% else %}bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900{% endif %} px-5 py-6 text-white shadow-2xl">
+        <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <img
+            src="{% static 'core/images/Logo.png' %}"
+            alt="Food Match Logo"
+            class="h-14 w-14 rounded-full border border-white/15 bg-white object-cover"
+          />
+          <div>
+            <p class="text-2xl font-bold tracking-tight">
+              FOOD <span class="{% if is_super_admin %}text-green-400{% else %}text-emerald-400{% endif %}">MATCH</span>
+            </p>
+            <p class="text-xs uppercase tracking-[0.25em] {% if is_super_admin %}text-emerald-100/80{% else %}text-emerald-100/80{% endif %}">
+              {% if is_super_admin %}Super Admin Portal{% else %}Admin Portal{% endif %}
+            </p>
+          </div>
+        </div>
+
+        {% include 'core/_nav_admin.html' %}
+      </aside>
+
+      <main class="overflow-hidden">
+        <div class="relative z-40 border-b border-slate-200 bg-white/85 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
+          {% include 'core/_sidebar_toggle.html' %}
+          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.2em] {% if is_super_admin %}text-emerald-700{% else %}text-emerald-700{% endif %}">
+                {% if is_super_admin %}Super Admin Access Control{% else %}Admin Access Control{% endif %}
+              </p>
+              <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">Manage Users</h1>
+            </div>
+
+            <div class="flex items-center gap-4 self-end md:self-auto">
+              <p class="hidden text-lg font-semibold text-slate-900 sm:block">
+                Welcome, {{ admin_name }}
+              </p>
+              {% include 'core/_account_menu.html' with menu_name=admin_name menu_role=admin_role menu_super=is_super_admin %}
+            </div>
+          </div>
+        </div>
+
+        <section class="px-5 py-6 sm:px-8">
+          <div class="mx-auto max-w-7xl">
+            <div class="rounded-[2rem] border border-white/60 bg-white/75 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur sm:p-8">
+              <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p class="text-sm font-semibold uppercase tracking-[0.2em] {% if is_super_admin %}text-emerald-700{% else %}text-emerald-700{% endif %}">User Management</p>
+                  <h2 class="mt-2 text-3xl font-black tracking-tight text-slate-900">
+                    {% if is_super_admin %}All Users &amp; Accounts{% else %}Admin &amp; Student Accounts{% endif %}
+                  </h2>
+                  <p class="mt-2 max-w-3xl text-sm text-slate-600 sm:text-base">
+                    {% if is_super_admin %}Manage every account in the system. Create a Student, Staff Admin, or Super Admin login with a temporary password — the user fills in their personal details on their first login.{% else %}Manage registered Admin and Student accounts (Super Admin accounts are not shown here). Create a new student login with a temporary password — the student fills in their personal details on their first login.{% endif %}
+                  </p>
+                </div>
+
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
+                  <a href="{% url 'admin_dashboard' %}" class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
+                    Back to Dashboard
+                  </a>
+                  <button
+                    type="button"
+                    data-open-create-modal
+                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-200 transition hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-800"
+                  >
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                      <path d="M12 5v14"></path>
+                      <path d="M5 12h14"></path>
+                    </svg>
+                    {% if is_super_admin %}Create User{% else %}Create Student{% endif %}
+                  </button>
+                </div>
+              </div>
+
+              {% if form_submitted %}
+                <div class="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 shadow-sm">
+                  Invite for {% if is_super_admin %}{{ created_user_role }}{% else %}Student{% endif %} account <span class="font-semibold">{{ created_user_name }}</span> was created. The username and a temporary password were emailed to <span class="font-semibold">{{ created_user_email }}</span> — only the user can see them. The account will be created in the database once they log in and complete their onboarding profile.
+                </div>
+              {% endif %}
+
+
+              <div class="mt-6 flex flex-wrap items-center gap-3">
+                <span class="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm">
+                  {% if is_super_admin %}Total Users{% else %}Total Accounts{% endif %}
+                  <span class="ml-2 rounded-full {% if is_super_admin %}bg-emerald-100 text-emerald-800{% else %}bg-emerald-100 text-emerald-800{% endif %} px-3 py-0.5 text-xs font-bold tracking-wide">{{ total_users }}</span>
+                </span>
+                <span id="usersFilteredCount" class="hidden inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm">
+                  Filtered
+                  <span id="usersFilteredCountValue" class="ml-2 rounded-full bg-slate-100 text-slate-800 px-3 py-0.5 text-xs font-bold tracking-wide">{{ total_users }}</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="mt-6 rounded-[2rem] border border-slate-200/70 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+              <div class="flex flex-col gap-4 border-b border-slate-200/60 px-5 py-4 sm:px-6 sm:py-5">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div class="relative w-full sm:max-w-md">
+                    <svg class="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                      <path d="m21 21-4.3-4.3"></path>
+                      <circle cx="11" cy="11" r="7"></circle>
+                    </svg>
+                    <input
+                      type="search"
+                      id="userSearchInput"
+                      placeholder="Search by username, name, or email..."
+                      class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-10 text-sm font-medium text-slate-900 placeholder:text-slate-400 shadow-sm outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                    />
+                    <button
+                      type="button"
+                      id="userSearchClear"
+                      class="absolute right-3 top-1/2 hidden h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+                      aria-label="Clear search"
+                    >
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                        <path d="M18 6 6 18"></path>
+                        <path d="m6 6 12 12"></path>
+                      </svg>
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    id="userFiltersToggle"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 sm:hidden"
+                    aria-expanded="false"
+                    aria-controls="userFiltersPanel"
+                  >
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                      <path d="M3 6h18"></path>
+                      <path d="M7 12h10"></path>
+                      <path d="M10 18h4"></path>
+                    </svg>
+                    Filters
+                  </button>
+                </div>
+
+                <div id="userFiltersPanel" class="flex flex-col gap-4 pt-2 sm:flex sm:flex-row sm:items-center sm:gap-5 sm:pt-0">
+                  <div class="flex flex-col gap-2">
+                    <label for="userRoleFilters" class="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Role</label>
+                    <select
+                      id="userRoleFilters"
+                      aria-label="Filter by role"
+                      class="w-full min-w-[9.5rem] rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-800 shadow-sm outline-none transition hover:border-slate-300 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 sm:w-auto"
+                    >
+                      <option value="all">All Roles</option>
+                      {% if is_super_admin %}
+                        <option value="super_admin">🛡️ Super Admin</option>
+                      {% endif %}
+                      <option value="admin">👨‍💼 Admin</option>
+                      <option value="student">🎓 Student</option>
+                    </select>
+                  </div>
+
+                  <div class="flex flex-col gap-2">
+                    <label for="userStatusFilters" class="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Status</label>
+                    <select
+                      id="userStatusFilters"
+                      aria-label="Filter by account status"
+                      class="w-full min-w-[9.5rem] rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-800 shadow-sm outline-none transition hover:border-slate-300 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 sm:w-auto"
+                    >
+                      <option value="all">All Statuses</option>
+                      <option value="active">✅ Active</option>
+                      <option value="inactive">⚫ Inactive</option>
+                    </select>
+                  </div>
+
+                  <div class="flex flex-col gap-2">
+                    <p class="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Joined</p>
+                    <div class="flex items-center gap-2">
+                      <input
+                        type="date"
+                        id="userDateFrom"
+                        aria-label="Joined from date"
+                        class="w-full min-w-[8.5rem] rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm outline-none transition hover:border-slate-300 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                      />
+                      <span class="text-xs font-bold text-slate-400">to</span>
+                      <input
+                        type="date"
+                        id="userDateTo"
+                        aria-label="Joined to date"
+                        class="w-full min-w-[8.5rem] rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800 shadow-sm outline-none transition hover:border-slate-300 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+                      />
+                    </div>
+                  </div>
+
+                  {% if not is_super_admin %}
+                  <div class="flex flex-col gap-2">
+                    <p class="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">Onboarding</p>
+                    <div id="userOnboardingFilters" class="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by onboarding status">
+                      <button type="button" data-user-onboarding-filter="all" class="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-3.5 py-1.5 text-xs font-bold text-slate-800 shadow-sm ring-2 ring-slate-200 transition hover:bg-slate-200">
+                        All
+                      </button>
+                      <button type="button" data-user-onboarding-filter="completed" class="inline-flex items-center rounded-full border border-emerald-200 bg-white px-3.5 py-1.5 text-xs font-bold text-emerald-900 shadow-sm transition hover:bg-emerald-50">
+                        ✅ Completed
+                      </button>
+                      <button type="button" data-user-onboarding-filter="pending" class="inline-flex items-center rounded-full border border-amber-200 bg-white px-3.5 py-1.5 text-xs font-bold text-amber-900 shadow-sm transition hover:bg-amber-50">
+                        ⚠️ Pending
+                      </button>
+                    </div>
+                  </div>
+                  {% endif %}
+
+                  <div class="flex sm:ml-auto">
+                    <button
+                      type="button"
+                      id="userFiltersReset"
+                      class="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                    >
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                        <path d="M3 12a9 9 0 1 0 3-6.7"></path>
+                        <path d="M3 4v5h5"></path>
+                      </svg>
+                      Reset Filters
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div id="userTableEmptyState" class="hidden px-5 py-12 text-center sm:px-6">
+                <svg class="mx-auto h-14 w-14 text-slate-300" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <path d="m21 21-4.3-4.3"></path>
+                </svg>
+                <p class="mt-4 text-sm font-semibold text-slate-700">{% if is_super_admin %}No users match the current filters{% else %}No accounts match the current filters{% endif %}</p>
+                <p class="mt-1 text-sm text-slate-500">Try changing the search keyword, role, status, joined date{% if not is_super_admin %}, or onboarding filters{% else %} filters{% endif %}.</p>
+                <button type="button" id="userFiltersResetFromEmpty" class="mt-5 inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
+                  Reset All Filters
+                </button>
+              </div>
+
+              <div class="overflow-x-auto" id="userTableWrap">
+                <table class="w-full border-collapse text-sm">
+                  <thead>
+                    <tr class="border-b border-slate-200 {% if is_super_admin %}bg-gradient-to-r from-emerald-50 via-teal-50 to-sky-50{% else %}bg-gradient-to-r from-emerald-50 via-teal-50 to-sky-50{% endif %}">
+                      <th class="px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Username</th>
+                      <th class="px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Name</th>
+                      <th class="hidden px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600 md:table-cell">Email</th>
+                      <th class="px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Role</th>
+                      <th class="px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Status</th>
+                      {% if not is_super_admin %}
+                      <th class="hidden px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600 lg:table-cell">Onboarding</th>
+                      {% endif %}
+                      <th class="hidden px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600 lg:table-cell">Created</th>
+                      <th class="px-5 py-3.5 text-right text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for row in user_rows %}
+                      <tr
+                        class="border-b border-slate-100 last:border-0 transition {% if row.has_pending_delete %}bg-amber-50/40{% else %}hover:bg-slate-50/60{% endif %}"
+                        data-user-row
+                        data-user-id="{{ row.id }}"
+                        data-username="{{ row.username|lower }}"
+                        data-name="{{ row.display_name|default:''|lower }}"
+                        data-email="{{ row.email|lower }}"
+                        data-role="{{ row.role_category }}"
+                        data-status="{% if row.is_active %}active{% else %}inactive{% endif %}"
+                        data-onboarding="{% if row.profile_complete %}completed{% else %}pending{% endif %}"
+                        data-date-joined="{{ row.date_joined_iso }}"
+                        data-has-pending-delete="{% if row.has_pending_delete %}true{% else %}false{% endif %}"
+                        data-is-self="{% if row.id == request.user.pk %}true{% else %}false{% endif %}"
+                        data-profile-username="{{ row.username }}"
+                        data-profile-email="{{ row.email }}"
+                        data-profile-first-name="{{ row.first_name|default:'' }}"
+                        data-profile-middle-name="{{ row.middle_name|default:'' }}"
+                        data-profile-last-name="{{ row.last_name|default:'' }}"
+                        data-profile-display-name="{{ row.display_name|default:'' }}"
+                        data-profile-group-name="{{ row.group_name|default:'' }}"
+                        data-profile-members="{{ row.members_joined|default:'' }}"
+                        data-profile-role-label="{{ row.role_label }}"
+                        data-profile-role-category="{{ row.role_category }}"
+                        data-profile-is-active="{{ row.is_active|lower }}"
+                        data-profile-profile-complete="{{ row.profile_complete|lower }}"
+                        data-profile-is-superuser="{{ row.is_superuser|lower }}"
+                        data-profile-is-staff="{{ row.is_staff|lower }}"
+                        data-profile-program="{{ row.program|default:'' }}"
+                        data-profile-college="{{ row.college|default:'' }}"
+                        data-profile-date-joined="{{ row.date_joined }}"
+                        data-profile-last-login="{{ row.last_login }}"
+                      >
+                        <td class="px-5 py-3">
+                          <div class="flex flex-col gap-1.5">
+                            <div class="flex items-center gap-3">
+                              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br {% if row.role_category == 'super_admin' %}from-emerald-100 to-green-200{% elif row.role_category == 'admin' %}from-emerald-100 to-teal-200{% else %}from-amber-100 to-orange-200{% endif %} text-sm font-bold ring-2 ring-white shadow-sm {% if row.role_category == 'super_admin' %}text-emerald-900{% elif row.role_category == 'admin' %}text-emerald-900{% else %}text-amber-900{% endif %}">
+                                {{ row.username|slice:":1"|upper }}
+                              </div>
+                              <div class="min-w-0">
+                                <span class="block truncate font-semibold text-slate-900">{{ row.username }}</span>
+                                <span class="block truncate text-xs text-slate-500 md:hidden">{{ row.email }}</span>
+                              </div>
+                            </div>
+                            {% if row.has_pending_delete %}
+                              <span class="inline-flex w-fit items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-bold text-amber-900 ring-1 ring-amber-200">
+                                <span class="inline-block h-1.5 w-1.5 rounded-full bg-amber-500"></span>
+                                ⏳ Deletion pending approval
+                              </span>
+                            {% endif %}
+                          </div>
+                        </td>
+                        <td class="px-5 py-3 text-slate-700">
+                          {% if row.display_name %}
+                            {{ row.display_name }}
+                            {% if row.members|length > 1 %}<span class="ml-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">{{ row.members|length }} members</span>{% endif %}
+                          {% else %}
+                            <span class="text-slate-400 italic">Not set yet</span>
+                          {% endif %}
+                        </td>
+                        <td class="hidden px-5 py-3 text-slate-700 md:table-cell">
+                          <a href="mailto:{{ row.email }}" class="hover:underline">{{ row.email }}</a>
+                        </td>
+                        <td class="px-5 py-3">
+                          {% if row.role_category == 'super_admin' %}
+                            <span class="inline-flex items-center rounded-full bg-gradient-to-r from-emerald-100 via-green-100 to-pink-100 px-2.5 py-1 text-xs font-bold text-emerald-900 ring-1 ring-green-200">
+                              🛡️ {{ row.role_label }}
+                            </span>
+                          {% elif row.role_category == 'admin' %}
+                            <span class="inline-flex items-center rounded-full bg-gradient-to-r from-emerald-50 to-teal-100 px-2.5 py-1 text-xs font-bold text-emerald-900 ring-1 ring-emerald-200">
+                              👨‍💼 {{ row.role_label }}
+                            </span>
+                          {% else %}
+                            <span class="inline-flex items-center rounded-full bg-gradient-to-r from-amber-50 to-orange-100 px-2.5 py-1 text-xs font-bold text-amber-900 ring-1 ring-amber-200">
+                              🎓 {{ row.role_label }}
+                            </span>
+                          {% endif %}
+                        </td>
+                        <td class="px-5 py-3">
+                          {% if row.is_active %}
+                            <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-200">
+                              <span class="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                              Active
+                            </span>
+                          {% else %}
+                            <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700 ring-1 ring-slate-200">
+                              <span class="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-slate-500"></span>
+                              Inactive
+                            </span>
+                          {% endif %}
+                        </td>
+                        {% if not is_super_admin %}
+                        <td class="hidden px-5 py-3 lg:table-cell">
+                          {% if row.profile_complete %}
+                            <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-200">
+                              ✅ Completed
+                            </span>
+                          {% else %}
+                            <span class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-amber-200">
+                              ⚠️ Pending
+                            </span>
+                          {% endif %}
+                        </td>
+                        {% endif %}
+                        <td class="hidden px-5 py-3 text-slate-600 lg:table-cell">
+                          {{ row.date_joined }}
+                        </td>
+                        <td class="px-5 py-3">
+                          <div class="flex items-center justify-end gap-1">
+                            <button
+                              type="button"
+                              data-trigger-view-profile
+                              title="View full account and profile details"
+                              aria-label="View full account and profile details"
+                              class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+                            >
+                              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                              </svg>
+                            </button>
+
+                            {% if row.id != request.user.pk %}{% if is_super_admin or not row.is_superuser %}
+                              <a
+                                href="?edit={{ row.id }}"
+                                data-edit-user
+                                title="Edit this account"
+                                aria-label="Edit this account"
+                                class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-sky-200 bg-sky-50 text-sky-800 shadow-sm transition hover:border-sky-300 hover:bg-sky-100"
+                              >
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                                  <path d="M12 20h9"></path>
+                                  <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                                </svg>
+                              </a>
+                            {% endif %}{% endif %}
+
+                            {% if is_super_admin %}
+                              {# --------------- SUPER ADMIN ACTIONS --------------- #}
+                              <form method="post" class="inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ row.id }}" />
+                                <input type="hidden" name="action" value="toggle_active" />
+                                <input type="hidden" name="make_active" value="{% if row.is_active %}0{% else %}1{% endif %}" />
+                                {% if row.id == request.user.pk %}
+                                <button
+                                  type="button"
+                                  disabled
+                                  title="You cannot modify your own account status"
+                                  aria-label="Account status locked"
+                                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 shadow-sm opacity-60 cursor-not-allowed"
+                                >
+                                  <span class="inline-block h-2 w-2 rounded-full bg-slate-300"></span>
+                                </button>
+                                {% elif row.is_active %}
+                                <button
+                                  type="submit"
+                                  data-action-btn="deactivate"
+                                  data-needs-deactivation-reason
+                                  data-target-name="{{ row.display_name|default:row.username }}"
+                                  title="Deactivate this account"
+                                  aria-label="Deactivate this account"
+                                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-amber-200 bg-amber-50 text-amber-800 shadow-sm transition hover:border-amber-300 hover:bg-amber-100"
+                                >
+                                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                                    <path d="M18.36 6.64A9 9 0 0 1 20.77 15"></path>
+                                    <path d="M6.16 6.16a9 9 0 1 0 12.68 12.68"></path>
+                                    <path d="M2.26 2.26l19.5 19.5"></path>
+                                    <path d="M7.16 7.16A4 4 0 0 0 12 16c1.24 0 2.35-.52 3.14-1.36"></path>
+                                  </svg>
+                                </button>
+                                {% else %}
+                                <button
+                                  type="submit"
+                                  data-action-btn="activate"
+                                  title="Activate this account"
+                                  aria-label="Activate this account"
+                                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-100"
+                                >
+                                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="8"></circle>
+                                    <path d="M9 12l2 2 4-4"></path>
+                                  </svg>
+                                </button>
+                                {% endif %}
+                              </form>
+
+                              {% if row.id != request.user.pk %}
+                              <form method="post" class="inline" data-delete-form data-user-name="{{ row.display_name|default:row.username }}">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ row.id }}" />
+                                <input type="hidden" name="action" value="delete_user" />
+                                <button
+                                  type="button"
+                                  data-delete-confirm
+                                  title="Permanently delete this account"
+                                  aria-label="Permanently delete this account"
+                                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-200 bg-white text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-50"
+                                >
+                                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                                    <path d="M3 6h18"></path>
+                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                                    <path d="M10 11v6"></path>
+                                    <path d="M14 11v6"></path>
+                                  </svg>
+                                </button>
+                              </form>
+                              {% endif %}
+
+                            {% else %}
+                              {# --------------- STAFF ADMIN ACTIONS (ADMINS & STUDENTS, NOT SELF/SUPER ADMIN) --------------- #}
+                              <form method="post" class="inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ row.id }}" />
+                                <input type="hidden" name="action" value="toggle_active" />
+                                <input type="hidden" name="make_active" value="{% if row.is_active %}0{% else %}1{% endif %}" />
+                                {% if row.id == request.user.pk %}
+                                <button
+                                  type="button"
+                                  disabled
+                                  title="You cannot modify your own account status"
+                                  aria-label="Account status locked"
+                                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 shadow-sm opacity-60 cursor-not-allowed"
+                                >
+                                  <span class="inline-block h-2 w-2 rounded-full bg-slate-300"></span>
+                                </button>
+                                {% elif row.is_active %}
+                                <button
+                                  type="submit"
+                                  data-action-btn="deactivate"
+                                  data-needs-deactivation-reason
+                                  data-target-name="{{ row.display_name|default:row.username }}"
+                                  title="Deactivate this account"
+                                  aria-label="Deactivate this account"
+                                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-amber-200 bg-amber-50 text-amber-800 shadow-sm transition hover:border-amber-300 hover:bg-amber-100"
+                                >
+                                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                                    <path d="M18.36 6.64A9 9 0 0 1 20.77 15"></path>
+                                    <path d="M6.16 6.16a9 9 0 1 0 12.68 12.68"></path>
+                                    <path d="M2.26 2.26l19.5 19.5"></path>
+                                    <path d="M7.16 7.16A4 4 0 0 0 12 16c1.24 0 2.35-.52 3.14-1.36"></path>
+                                  </svg>
+                                </button>
+                                {% else %}
+                                <button
+                                  type="submit"
+                                  data-action-btn="activate"
+                                  title="Activate this account"
+                                  aria-label="Activate this account"
+                                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-100"
+                                >
+                                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="8"></circle>
+                                    <path d="M9 12l2 2 4-4"></path>
+                                  </svg>
+                                </button>
+                                {% endif %}
+                              </form>
+
+                              {% if row.id != request.user.pk %}
+                              <form method="post" class="inline" data-request-delete-form data-user-name="{{ row.display_name|default:row.username }}">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ row.id }}" />
+                                <input type="hidden" name="action" value="request_delete" />
+                                {% if row.has_pending_delete %}
+                                  <button
+                                    type="button"
+                                    disabled
+                                    title="A deletion request for this account is already pending Super Admin approval"
+                                    aria-label="Deletion request pending Super Admin approval"
+                                    class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-amber-200 bg-amber-50 text-amber-700 shadow-sm opacity-70 cursor-not-allowed"
+                                  >
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                                      <path d="M12 8v4"></path>
+                                      <path d="M12 16h.01"></path>
+                                      <circle cx="12" cy="12" r="10"></circle>
+                                    </svg>
+                                  </button>
+                                {% else %}
+                                  <button
+                                    type="button"
+                                    data-trigger-request-delete
+                                    title="Submit a deletion request for Super Admin approval"
+                                    aria-label="Request deletion for Super Admin approval"
+                                    class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-200 bg-white text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-50"
+                                  >
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                                      <path d="M3 6h18"></path>
+                                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                                      <path d="M10 11v6"></path>
+                                      <path d="M14 11v6"></path>
+                                    </svg>
+                                  </button>
+                                {% endif %}
+                              </form>
+                              {% endif %}
+                            {% endif %}
+                          </div>
+                        </td>
+                      </tr>
+                    {% empty %}
+                      <tr>
+                        <td colspan="7" class="px-6 py-12 text-center">
+                          <p class="text-sm text-slate-500">{% if is_super_admin %}No users yet. Click the Create User button above to add the first account.{% else %}No accounts yet. Click the Create Student button above to add the first account.{% endif %}</p>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+
+              <div id="userPagination" class="hidden flex-col gap-3 border-t border-slate-200/60 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                <p id="userPaginationSummary" class="text-xs font-medium text-slate-500"></p>
+                <div class="flex items-center gap-2">
+                  <button
+                    type="button"
+                    id="userPaginationPrev"
+                    class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white"
+                  >
+                    Previous
+                  </button>
+                  <span id="userPaginationPageLabel" class="px-2 text-xs font-bold uppercase tracking-wide text-slate-600"></span>
+                  <button
+                    type="button"
+                    id="userPaginationNext"
+                    class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {% if pending_invites %}
+          <div class="mx-auto mt-6 max-w-7xl">
+            <div class="rounded-[2rem] border border-amber-200/70 bg-amber-50/60 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+              <div class="border-b border-amber-200/60 px-5 py-4 sm:px-6 sm:py-5">
+                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">Pending Invites</p>
+                <p class="mt-1 text-sm text-amber-900">
+                  Not yet in the database. The account is only created once the invited person logs in with these credentials and completes their onboarding profile.
+                </p>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full border-collapse text-sm">
+                  <thead>
+                    <tr class="border-b border-amber-200/60 bg-amber-50/80">
+                      <th class="px-5 py-3 text-left text-xs font-bold uppercase tracking-[0.18em] text-amber-800">Username</th>
+                      <th class="hidden px-5 py-3 text-left text-xs font-bold uppercase tracking-[0.18em] text-amber-800 md:table-cell">Email</th>
+                      <th class="px-5 py-3 text-left text-xs font-bold uppercase tracking-[0.18em] text-amber-800">Role</th>
+                      <th class="hidden px-5 py-3 text-left text-xs font-bold uppercase tracking-[0.18em] text-amber-800 lg:table-cell">Invited By</th>
+                      <th class="hidden px-5 py-3 text-left text-xs font-bold uppercase tracking-[0.18em] text-amber-800 lg:table-cell">Invited On</th>
+                      <th class="px-5 py-3 text-right text-xs font-bold uppercase tracking-[0.18em] text-amber-800">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for invite in pending_invites %}
+                      <tr class="border-b border-amber-100 last:border-0">
+                        <td class="px-5 py-3 font-semibold text-slate-900">{{ invite.username }}</td>
+                        <td class="hidden px-5 py-3 text-slate-700 md:table-cell">{{ invite.email }}</td>
+                        <td class="px-5 py-3 text-slate-700">{{ invite.login_as }}</td>
+                        <td class="hidden px-5 py-3 text-slate-700 lg:table-cell">{{ invite.created_by_name }}</td>
+                        <td class="hidden px-5 py-3 text-slate-600 lg:table-cell">{{ invite.created_at }}</td>
+                        <td class="px-5 py-3 text-right">
+                          <form method="post" class="inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ invite.id }}" />
+                            <input type="hidden" name="action" value="resend_invite" />
+                            <button
+                              type="submit"
+                              title="Email a new temporary password to the user"
+                              class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+                            >
+                              Resend Login
+                            </button>
+                          </form>
+                          <form method="post" class="inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ invite.id }}" />
+                            <input type="hidden" name="action" value="cancel_invite" />
+                            <button
+                              type="submit"
+                              class="inline-flex items-center justify-center rounded-xl border border-rose-200 bg-white px-3.5 py-2 text-xs font-semibold text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-50"
+                            >
+                              Cancel Invite
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+        </section>
+
+        <div
+          id="createUserModal"
+          data-user-modal
+          class="fixed inset-0 z-50 hidden items-center justify-center px-4 py-6"
+          aria-labelledby="createUserModalLabel"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div data-modal-backdrop class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"></div>
+
+          <div class="relative z-10 w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.3)]">
+            <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r {% if is_super_admin %}from-emerald-500 via-green-500 to-pink-500{% else %}from-emerald-500 via-green-500 to-teal-500{% endif %}"></div>
+
+            <div class="flex items-start justify-between gap-4 px-6 pt-6 pb-4 sm:px-8">
+              <div>
+                <p id="createUserModalLabel" class="text-xs font-bold uppercase tracking-[0.2em] {% if is_super_admin %}text-emerald-700{% else %}text-emerald-700{% endif %}">{% if is_super_admin %}New Account{% else %}New Student Account{% endif %}</p>
+                <h3 class="mt-1 text-2xl font-black tracking-tight text-slate-900">{% if is_super_admin %}Create New User{% else %}Create New Student{% endif %}</h3>
+                <p class="mt-1 text-sm text-slate-600">{% if is_super_admin %}Enter the username, email, and role. A temporary password is generated and emailed to the user, who completes the remaining personal information on their first login.{% else %}Enter the username and email. A temporary password is generated and emailed to the student, who completes the remaining personal information on their first login.{% endif %}</p>
+              </div>
+              <button
+                type="button"
+                data-close-create-modal
+                aria-label="{% if is_super_admin %}Close create user modal{% else %}Close create student modal{% endif %}"
+                class="-mt-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-800"
+              >
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path d="M18 6 6 18"></path>
+                  <path d="m6 6 12 12"></path>
+                </svg>
+              </button>
+            </div>
+
+            {% if form.non_field_errors %}
+              <div class="mx-6 mb-4 mt-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 shadow-sm sm:mx-8">
+                {% for error in form.non_field_errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            <form method="post" class="space-y-5 px-6 pb-6 sm:px-8 sm:pb-8" data-create-user-form>
+              {% csrf_token %}
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label for="{{ form.username.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">
+                    {{ form.username.label }}<span class="ml-1 text-red-600">*</span>
+                  </label>
+                  {{ form.username }}
+                  <p class="mt-1.5 text-xs text-slate-500">Format: Word.Word, e.g. Juan.Delacruz</p>
+                  <p id="id_username_error" class="mt-2 text-sm text-red-600{% if not form.username.errors %} hidden{% endif %}">{{ form.username.errors|join:", " }}</p>
+                </div>
+
+                <div>
+                  <label for="{{ form.email.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">
+                    {{ form.email.label }}<span class="ml-1 text-red-600">*</span>
+                  </label>
+                  {{ form.email }}
+                  {% if form.email.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.email.errors|join:", " }}</p>
+                  {% endif %}
+                </div>
+
+                <div class="sm:col-span-2">
+                  <label for="{{ form.login_as.id_for_label }}" class="mb-1.5 block text-sm font-semibold text-slate-900">
+                    {{ form.login_as.label }}<span class="ml-1 text-red-600">*</span>
+                  </label>
+                  {{ form.login_as }}
+                  {% if form.login_as.errors %}
+                    <p class="mt-2 text-sm text-red-600">{{ form.login_as.errors|join:", " }}</p>
+                  {% endif %}
+                </div>
+
+                <div class="sm:col-span-2 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900">
+                  <p class="font-semibold">Temporary password is automatic</p>
+                  <p class="mt-1">An 8-character temporary password is generated and emailed, together with the username, to the address above. Only the user receives it — you will not see it.</p>
+                </div>
+              </div>
+
+              <div class="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
+                <button
+                  type="button"
+                  data-close-create-modal
+                  class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-200 transition hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-800"
+                >
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M12 5v14"></path>
+                    <path d="M5 12h14"></path>
+                  </svg>
+                  {% if is_super_admin %}Create User Account{% else %}Create Student Account{% endif %}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {% if is_super_admin %}
+          {% include 'core/_delete_confirm_modal.html' %}
+        {% endif %}
+
+        <div
+          id="requestDeleteModal"
+          data-request-delete-modal
+          class="fixed inset-0 z-50 hidden items-center justify-center px-4 py-6"
+          aria-labelledby="requestDeleteModalLabel"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div data-request-delete-modal-backdrop class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"></div>
+
+          <div class="relative z-10 w-full max-w-lg overflow-hidden rounded-[2rem] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.3)]">
+            <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500"></div>
+
+            <div class="flex items-start gap-4 px-6 pt-6 pb-4 sm:px-8">
+              <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
+                <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path d="M20 7h-3.5l-1.1-2.2A2 2 0 0 0 13.6 4h-3.2a2 2 0 0 0-1.8 0.8L7.5 7H4"></path>
+                  <path d="M5 7l1 13a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-13"></path>
+                  <path d="M10 11v6"></path>
+                  <path d="M14 11v6"></path>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <p id="requestDeleteModalLabel" class="text-xs font-bold uppercase tracking-[0.2em] text-amber-700">Request Account Deletion</p>
+                <h3 class="mt-1 text-2xl font-black tracking-tight text-slate-900">Request deletion of <span id="requestDeleteTargetName" class="text-amber-700">this account</span>?</h3>
+                <p class="mt-2 text-sm leading-relaxed text-slate-600">
+                  This will submit a deletion request to the Super Admin for approval. The account will <strong>not</strong> be deleted until a Super Admin approves the request.
+                </p>
+              </div>
+            </div>
+
+            <div class="px-6 pb-5 sm:px-8">
+              <label for="requestDeleteReason" class="block text-sm font-semibold text-slate-700">Reason for deletion <span class="text-rose-500">*</span></label>
+              <textarea id="requestDeleteReason" maxlength="500" rows="4" placeholder="e.g. Duplicate account; the group registered twice."
+                class="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-100"></textarea>
+              <p id="requestDeleteReasonError" class="mt-1 hidden text-sm font-semibold text-rose-700">Please give a reason for the deletion request.</p>
+              <p class="mt-1 text-xs text-slate-500">The Super Admin sees this reason when reviewing the request.</p>
+            </div>
+
+            <div class="flex flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50/50 px-6 py-5 sm:flex-row sm:items-center sm:justify-end sm:px-8">
+              <button
+                type="button"
+                data-close-request-delete-modal
+                class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                id="confirmRequestDeleteBtn"
+                class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-amber-200 transition hover:-translate-y-0.5 hover:from-amber-600 hover:via-orange-600 hover:to-yellow-600"
+              >
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <path d="M22 4 12 14.01l-3-3"></path>
+                </svg>
+                Submit Request
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="viewProfileModal"
+          data-profile-modal
+          class="fixed inset-0 z-50 hidden items-center justify-center px-4 py-4"
+          aria-labelledby="viewProfileModalLabel"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div data-profile-modal-backdrop class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"></div>
+
+          <div class="relative z-10 flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden rounded-[1.5rem] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.3)]">
+            <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500"></div>
+
+            <div class="shrink-0 bg-gradient-to-br from-emerald-50 via-teal-50 to-sky-50 px-6 pt-4 pb-3">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex items-center gap-4">
+                  <div id="profileAvatarWrap" class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border-4 border-white shadow-md text-2xl font-black from-emerald-100 to-green-200 text-emerald-900">
+                    U
+                  </div>
+                  <div class="min-w-0">
+                    <p id="viewProfileModalLabel" class="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-700">Account &amp; Profile Details</p>
+                    <h3 id="profileFullName" class="text-xl font-black tracking-tight text-slate-900 break-words">User Profile</h3>
+                    <div class="mt-1.5 flex flex-wrap items-center gap-2">
+                      <span id="profileRoleBadge" class="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold ring-1">
+                        Role
+                      </span>
+                      <span id="profileStatusBadge" class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1">
+                        Status
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  data-close-profile-modal
+                  aria-label="Close profile modal"
+                  class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-800"
+                >
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="min-h-0 flex-1 overflow-y-auto px-6 py-4">
+              <div class="grid gap-3 md:grid-cols-2">
+                <div class="rounded-2xl border border-slate-100 bg-slate-50/60 p-4">
+                  <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Login Credentials</p>
+                  <dl class="mt-2 space-y-2">
+                    <div>
+                      <dt class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Username</dt>
+                      <dd id="profileUsername" class="text-sm font-semibold text-slate-900 break-all">&mdash;</dd>
+                    </div>
+                    <div>
+                      <dt class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Email</dt>
+                      <dd><a id="profileEmail" href="#" class="text-sm font-semibold text-slate-900 break-all hover:underline">&mdash;</a></dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <div class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+                  <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Personal Information</p>
+                  <dl class="mt-2 grid grid-cols-3 gap-3">
+                    <div>
+                      <dt class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">First Name</dt>
+                      <dd id="profileFirstName" class="text-sm font-medium text-slate-900 break-words">&mdash;</dd>
+                    </div>
+                    <div>
+                      <dt class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Middle Name</dt>
+                      <dd id="profileMiddleName" class="text-sm font-medium text-slate-900 break-words">&mdash;</dd>
+                    </div>
+                    <div>
+                      <dt class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Last Name</dt>
+                      <dd id="profileLastName" class="text-sm font-medium text-slate-900 break-words">&mdash;</dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <div id="groupMembersCard" class="hidden rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
+                  <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">Group Members</p>
+                  <p id="profileGroupName" class="mt-1.5 hidden text-sm font-semibold text-slate-900"></p>
+                  <ol id="profileMembersList" class="mt-1.5 space-y-0.5 text-sm font-medium text-slate-900"></ol>
+                </div>
+
+                <div id="studentProfileCard" class="hidden rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50 to-orange-50 p-4">
+                  <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-amber-700">Student Academic Profile</p>
+                  <dl class="mt-2 space-y-2">
+                    <div>
+                      <dt class="text-[11px] font-semibold uppercase tracking-wider text-amber-700/90">Program</dt>
+                      <dd id="profileProgram" class="text-sm font-semibold text-amber-900">&mdash;</dd>
+                    </div>
+                    <div>
+                      <dt class="text-[11px] font-semibold uppercase tracking-wider text-amber-700/90">College</dt>
+                      <dd id="profileCollege" class="text-sm font-semibold text-amber-900">&mdash;</dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <dl class="grid grid-cols-3 gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm md:col-span-2">
+                  <div>
+                    <dt class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Onboarding</dt>
+                    <dd class="mt-1"><span id="profileOnboarding" class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1">&mdash;</span></dd>
+                  </div>
+                  <div>
+                    <dt class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Account Created</dt>
+                    <dd id="profileDateJoined" class="mt-1 text-sm font-medium text-slate-800">&mdash;</dd>
+                  </div>
+                  <div>
+                    <dt class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Last Login</dt>
+                    <dd id="profileLastLogin" class="mt-1 text-sm font-medium text-slate-800">&mdash;</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+
+            <div class="flex shrink-0 items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/60 px-6 py-3">
+              <button
+                type="button"
+                data-close-profile-modal
+                class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {% include 'core/_deactivate_reason_modal.html' %}
+
+        <script src="{% static 'core/js/pages/admin-manage-users-1.js' %}" data-has-errors="{% if form.errors %}1{% endif %}"></script>
+        {% include 'core/_edit_user_modal.html' %}
+        {% include 'core/_result_modal.html' with message=action_message error=action_error %}
+      </main>
+    </div>
+
+    <script src="{% static 'core/js/sidebar-groups.js' %}"></script>
+
+    <script src="{% static 'core/js/main.js' %}"></script>
+  </body>
+</html>

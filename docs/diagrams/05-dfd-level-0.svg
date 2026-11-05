@@ -1,0 +1,223 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1840 1365" width="1840" height="1365" font-family="Segoe UI, Arial, Helvetica, sans-serif" role="img" aria-label="Data Flow Diagram Level 0 of FOOD MATCH">
+<title>Data Flow Diagram Level 0 of FOOD MATCH</title>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10z" fill="#334155"/></marker>
+  <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10z" fill="#047857"/></marker>
+  
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="920.0" y="40.0" font-size="22" font-weight="bold" fill="#0f172a" text-anchor="middle">Data Flow Diagram – Level 0</text>
+<text x="920.0" y="64.0" font-size="14" font-weight="normal" fill="#475569" text-anchor="middle">Major processes, data stores and data flows of FOOD MATCH (Gane–Sarson notation)</text>
+<rect x="750.0" y="110.0" width="300.0" height="100.0" rx="16" fill="#ffffff" stroke="#047857" stroke-width="2"/>
+<line x1="750.0" y1="140.0" x2="1050.0" y2="140.0" stroke="#047857" stroke-width="1.5"/>
+<text x="900.0" y="131.0" font-size="14" font-weight="bold" fill="#047857" text-anchor="middle">1.0</text>
+<text x="900.0" y="170.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Manage Accounts</text>
+<text x="900.0" y="188.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">and Access</text>
+<rect x="370.0" y="380.0" width="260.0" height="100.0" rx="16" fill="#ffffff" stroke="#047857" stroke-width="2"/>
+<line x1="370.0" y1="410.0" x2="630.0" y2="410.0" stroke="#047857" stroke-width="1.5"/>
+<text x="500.0" y="401.0" font-size="14" font-weight="bold" fill="#047857" text-anchor="middle">2.0</text>
+<text x="500.0" y="449.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Check Similarity</text>
+<rect x="750.0" y="510.0" width="300.0" height="100.0" rx="16" fill="#ffffff" stroke="#047857" stroke-width="2"/>
+<line x1="750.0" y1="540.0" x2="1050.0" y2="540.0" stroke="#047857" stroke-width="1.5"/>
+<text x="900.0" y="531.0" font-size="14" font-weight="bold" fill="#047857" text-anchor="middle">3.0</text>
+<text x="900.0" y="570.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Submit and Review</text>
+<text x="900.0" y="588.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Research</text>
+<rect x="370.0" y="640.0" width="260.0" height="100.0" rx="16" fill="#ffffff" stroke="#047857" stroke-width="2"/>
+<line x1="370.0" y1="670.0" x2="630.0" y2="670.0" stroke="#047857" stroke-width="1.5"/>
+<text x="500.0" y="661.0" font-size="14" font-weight="bold" fill="#047857" text-anchor="middle">4.0</text>
+<text x="500.0" y="709.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Search Repository</text>
+<rect x="1170.0" y="380.0" width="260.0" height="100.0" rx="16" fill="#ffffff" stroke="#047857" stroke-width="2"/>
+<line x1="1170.0" y1="410.0" x2="1430.0" y2="410.0" stroke="#047857" stroke-width="1.5"/>
+<text x="1300.0" y="401.0" font-size="14" font-weight="bold" fill="#047857" text-anchor="middle">5.0</text>
+<text x="1300.0" y="440.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Manage Repository</text>
+<text x="1300.0" y="458.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">and Categories</text>
+<rect x="520.0" y="950.0" width="260.0" height="100.0" rx="16" fill="#ffffff" stroke="#047857" stroke-width="2"/>
+<line x1="520.0" y1="980.0" x2="780.0" y2="980.0" stroke="#047857" stroke-width="1.5"/>
+<text x="650.0" y="971.0" font-size="14" font-weight="bold" fill="#047857" text-anchor="middle">6.0</text>
+<text x="650.0" y="1010.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Record Notifications</text>
+<text x="650.0" y="1028.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">and Activity Logs</text>
+<rect x="1170.0" y="640.0" width="260.0" height="100.0" rx="16" fill="#ffffff" stroke="#047857" stroke-width="2"/>
+<line x1="1170.0" y1="670.0" x2="1430.0" y2="670.0" stroke="#047857" stroke-width="1.5"/>
+<text x="1300.0" y="661.0" font-size="14" font-weight="bold" fill="#047857" text-anchor="middle">7.0</text>
+<text x="1300.0" y="709.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Generate Reports</text>
+<rect x="1020.0" y="950.0" width="260.0" height="100.0" rx="16" fill="#ffffff" stroke="#047857" stroke-width="2"/>
+<line x1="1020.0" y1="980.0" x2="1280.0" y2="980.0" stroke="#047857" stroke-width="1.5"/>
+<text x="1150.0" y="971.0" font-size="14" font-weight="bold" fill="#047857" text-anchor="middle">8.0</text>
+<text x="1150.0" y="1019.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">Manage Landing Page</text>
+<path d="M1050.0 270 H750.0 V310 H1050.0" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+<rect x="751.0" y="271" width="298" height="38" fill="#fffbeb"/>
+<path d="M1050.0 270 H750.0 V310 H1050.0" fill="none" stroke="#b45309" stroke-width="2"/>
+<line x1="796.0" y1="270" x2="796.0" y2="310" stroke="#b45309" stroke-width="1.5"/>
+<text x="773.0" y="296.0" font-size="14" font-weight="bold" fill="#b45309" text-anchor="middle">D1</text>
+<text x="808.0" y="296.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="start">User Accounts</text>
+<path d="M1050.0 410 H750.0 V450 H1050.0" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+<rect x="751.0" y="411" width="298" height="38" fill="#fffbeb"/>
+<path d="M1050.0 410 H750.0 V450 H1050.0" fill="none" stroke="#b45309" stroke-width="2"/>
+<line x1="796.0" y1="410" x2="796.0" y2="450" stroke="#b45309" stroke-width="1.5"/>
+<text x="773.0" y="436.0" font-size="14" font-weight="bold" fill="#b45309" text-anchor="middle">D2</text>
+<text x="808.0" y="436.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="start">Research Submissions</text>
+<path d="M1050.0 810 H750.0 V850 H1050.0" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+<rect x="751.0" y="811" width="298" height="38" fill="#fffbeb"/>
+<path d="M1050.0 810 H750.0 V850 H1050.0" fill="none" stroke="#b45309" stroke-width="2"/>
+<line x1="796.0" y1="810" x2="796.0" y2="850" stroke="#b45309" stroke-width="1.5"/>
+<text x="773.0" y="836.0" font-size="14" font-weight="bold" fill="#b45309" text-anchor="middle">D3</text>
+<text x="808.0" y="836.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="start">Research Repository</text>
+<path d="M1450.0 270 H1150.0 V310 H1450.0" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+<rect x="1151.0" y="271" width="298" height="38" fill="#fffbeb"/>
+<path d="M1450.0 270 H1150.0 V310 H1450.0" fill="none" stroke="#b45309" stroke-width="2"/>
+<line x1="1196.0" y1="270" x2="1196.0" y2="310" stroke="#b45309" stroke-width="1.5"/>
+<text x="1173.0" y="296.0" font-size="14" font-weight="bold" fill="#b45309" text-anchor="middle">D4</text>
+<text x="1208.0" y="296.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="start">Food Categories</text>
+<path d="M650.0 270 H350.0 V310 H650.0" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+<rect x="351.0" y="271" width="298" height="38" fill="#fffbeb"/>
+<path d="M650.0 270 H350.0 V310 H650.0" fill="none" stroke="#b45309" stroke-width="2"/>
+<line x1="396.0" y1="270" x2="396.0" y2="310" stroke="#b45309" stroke-width="1.5"/>
+<text x="373.0" y="296.0" font-size="14" font-weight="bold" fill="#b45309" text-anchor="middle">D5</text>
+<text x="408.0" y="296.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="start">Similarity Records</text>
+<path d="M800.0 1090 H500.0 V1130 H800.0" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+<rect x="501.0" y="1091" width="298" height="38" fill="#fffbeb"/>
+<path d="M800.0 1090 H500.0 V1130 H800.0" fill="none" stroke="#b45309" stroke-width="2"/>
+<line x1="546.0" y1="1090" x2="546.0" y2="1130" stroke="#b45309" stroke-width="1.5"/>
+<text x="523.0" y="1116.0" font-size="14" font-weight="bold" fill="#b45309" text-anchor="middle">D6</text>
+<text x="558.0" y="1116.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="start">Logs and Notifications</text>
+<path d="M1300.0 1090 H1000.0 V1130 H1300.0" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+<rect x="1001.0" y="1091" width="298" height="38" fill="#fffbeb"/>
+<path d="M1300.0 1090 H1000.0 V1130 H1300.0" fill="none" stroke="#b45309" stroke-width="2"/>
+<line x1="1046.0" y1="1090" x2="1046.0" y2="1130" stroke="#b45309" stroke-width="1.5"/>
+<text x="1023.0" y="1116.0" font-size="14" font-weight="bold" fill="#b45309" text-anchor="middle">D7</text>
+<text x="1058.0" y="1116.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="start">Landing Content</text>
+<rect x="46.0" y="121.0" width="180.0" height="70.0" rx="0" fill="#0369a1" stroke="#0369a1" stroke-width="2"/>
+<rect x="40.0" y="115.0" width="180.0" height="70.0" rx="0" fill="#f0f9ff" stroke="#0369a1" stroke-width="2"/>
+<text x="130.0" y="156.1" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">Visitor</text>
+<rect x="46.0" y="416.0" width="180.0" height="300.0" rx="0" fill="#0369a1" stroke="#0369a1" stroke-width="2"/>
+<rect x="40.0" y="410.0" width="180.0" height="300.0" rx="0" fill="#f0f9ff" stroke="#0369a1" stroke-width="2"/>
+<text x="130.0" y="566.1" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">Student</text>
+<rect x="1606.0" y="416.0" width="180.0" height="300.0" rx="0" fill="#0369a1" stroke="#0369a1" stroke-width="2"/>
+<rect x="1600.0" y="410.0" width="180.0" height="300.0" rx="0" fill="#f0f9ff" stroke="#0369a1" stroke-width="2"/>
+<text x="1690.0" y="566.1" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">Admin</text>
+<rect x="1606.0" y="121.0" width="180.0" height="70.0" rx="0" fill="#0369a1" stroke="#0369a1" stroke-width="2"/>
+<rect x="1600.0" y="115.0" width="180.0" height="70.0" rx="0" fill="#f0f9ff" stroke="#0369a1" stroke-width="2"/>
+<text x="1690.0" y="156.1" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">Super Admin</text>
+<rect x="1606.0" y="271.0" width="180.0" height="70.0" rx="0" fill="#0369a1" stroke="#0369a1" stroke-width="2"/>
+<rect x="1600.0" y="265.0" width="180.0" height="70.0" rx="0" fill="#f0f9ff" stroke="#0369a1" stroke-width="2"/>
+<text x="1690.0" y="306.1" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">Email Server</text>
+<path d="M220 135 H750.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="412.9" y="114.5" width="134.2" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="480.0" y="127.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">registration details</text>
+<path d="M1020.0 1030.0 H960 V1170 H20 V165 H40" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="492.9" y="1149.5" width="134.2" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="560.0" y="1162.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">landing page content</text>
+<path d="M200 410 V230 H280 V180 H750.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="428.1" y="159.5" width="183.9" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="520.0" y="172.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">credentials, profile updates</text>
+<path d="M220 420 H370.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="234.6" y="399.5" width="90.7" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="280.0" y="412.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">research file</text>
+<path d="M370.0 445 H220" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="219.1" y="449.5" width="121.8" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="280.0" y="462.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">similarity results</text>
+<path d="M220 550 H750.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="406.0" y="529.5" width="128.0" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="470.0" y="542.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">research submission</text>
+<path d="M750.0 575 H220" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="387.4" y="579.5" width="165.2" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="470.0" y="592.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">status and reviewer notes</text>
+<path d="M220 680 H370.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="237.7" y="659.5" width="84.5" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="280.0" y="672.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">search query</text>
+<path d="M370.0 705 H220" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="231.5" y="709.5" width="96.9" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="280.0" y="722.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">search results</text>
+<path d="M520.0 1000 H130 V710" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="228.1" y="979.5" width="183.9" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="320.0" y="992.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">notifications, activity logs</text>
+<path d="M1600 120 H1050.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="1201.8" y="99.5" width="196.3" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1300.0" y="112.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">privileges, deletion decisions</text>
+<path d="M1050.0 145 H1600" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="1205.0" y="149.5" width="190.1" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1300.0" y="162.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">deletion requests and records</text>
+<path d="M1050.0 198 H1690 V265" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="1693.0" y="217.5" width="128.0" height="33.9" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1698.0" y="230.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">codes, invitations,</text>
+<text x="1698.0" y="244.9" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">status emails</text>
+<path d="M1600 418 H1570 V232 H1010 V210.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="1189.4" y="211.5" width="221.1" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1300.0" y="224.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">account actions, deletion requests</text>
+<path d="M1600 450 H1430.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="1429.3" y="453.5" width="171.5" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1515.0" y="466.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">study and category entries</text>
+<path d="M1600 550 H1050.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="1237.4" y="529.5" width="165.2" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1320.0" y="542.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">review decision and notes</text>
+<path d="M1050.0 575 H1600" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="1256.0" y="579.5" width="128.0" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1320.0" y="592.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">pending submissions</text>
+<path d="M1600 680 H1430.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="1476.5" y="659.5" width="96.9" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1525.0" y="672.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">report filters</text>
+<path d="M1430.0 705 H1600" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="1451.7" y="709.5" width="146.6" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1525.0" y="722.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">charts and CSV exports</text>
+<path d="M760 950.0 V890 H1630 V710" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="1118.1" y="869.5" width="183.9" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1210.0" y="882.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">notifications, activity logs</text>
+<path d="M1730 710 V920 H1150 V950.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="1342.5" y="927.5" width="214.9" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1450.0" y="940.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">landing page content (if granted)</text>
+<path d="M1780 150 H1810 V1000 H1280.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="1472.9" y="979.5" width="134.2" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1540.0" y="992.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">landing page content</text>
+<path d="M900 210.0 V270" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<rect x="903.0" y="225.5" width="84.5" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="908.0" y="238.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">account data</text>
+<path d="M500 380.0 V310" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="503.0" y="337.5" width="90.7" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="508.0" y="350.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">check results</text>
+<path d="M900 510.0 V450" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<rect x="903.0" y="472.5" width="103.2" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="908.0" y="485.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">submission data</text>
+<path d="M900 610.0 V810" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="903.0" y="687.5" width="96.9" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="908.0" y="700.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">approved study</text>
+<path d="M750 820 H690 V450 H630.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="690.0" y="627.5" width="103.2" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="695.0" y="640.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">repository text</text>
+<path d="M750 840 H500 V740.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="574.6" y="819.5" width="90.7" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="620.0" y="832.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">study details</text>
+<path d="M1170.0 450 H1100 V820 H1050" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="972.0" y="747.5" width="128.0" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1095.0" y="760.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="end">new or edited study</text>
+<path d="M1050 840 H1300 V740.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="1144.0" y="819.5" width="72.1" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1180.0" y="832.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">study data</text>
+<path d="M1050 430 H1130 V670 H1170.0" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="1132.0" y="607.5" width="103.2" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1137.0" y="620.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">submission data</text>
+<path d="M1300 380.0 V310" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<rect x="1303.0" y="337.5" width="90.7" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1308.0" y="350.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">category list</text>
+<path d="M650 1050.0 V1090" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="653.0" y="1055.5" width="171.5" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="658.0" y="1068.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">log entries, notifications</text>
+<path d="M1150 1050.0 V1090" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<rect x="1153.0" y="1055.5" width="103.2" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1158.0" y="1068.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">landing content</text>
+<text x="40.0" y="1258.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="start">Gane–Sarson symbols</text>
+<rect x="44.0" y="1284.0" width="58.0" height="36.0" rx="0" fill="#0369a1" stroke="#0369a1" stroke-width="1.5"/>
+<rect x="40.0" y="1280.0" width="58.0" height="36.0" rx="0" fill="#f0f9ff" stroke="#0369a1" stroke-width="1.5"/>
+<text x="114.0" y="1303.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">External entity</text>
+<rect x="240.0" y="1276.0" width="64.0" height="46.0" rx="8" fill="#ffffff" stroke="#047857" stroke-width="1.5"/>
+<line x1="240" y1="1292" x2="304" y2="1292" stroke="#047857" stroke-width="1.2"/>
+<text x="272.0" y="1288.0" font-size="10" font-weight="bold" fill="#047857" text-anchor="middle">1.0</text>
+<text x="320.0" y="1303.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Process (ID and name)</text>
+<rect x="480" y="1283" width="96" height="30" fill="#fffbeb"/>
+<path d="M576 1283 H480 V1313 H576" fill="none" stroke="#b45309" stroke-width="1.5"/>
+<line x1="510" y1="1283" x2="510" y2="1313" stroke="#b45309" stroke-width="1.2"/>
+<text x="495.0" y="1303.0" font-size="11" font-weight="bold" fill="#b45309" text-anchor="middle">D1</text>
+<text x="592.0" y="1303.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Data store (open-ended)</text>
+<path d="M810 1298 H880" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)"/>
+<text x="894.0" y="1303.0" font-size="13" font-weight="normal" fill="#475569" text-anchor="start">Data flow</text>
+<text x="40.0" y="1215.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Notes: every process sends events to 6.0. 7.0 also reads D1 (users) and D5 (similarity records). 6.0 also shows notifications and logs to the Super Admin.</text>
+</svg>

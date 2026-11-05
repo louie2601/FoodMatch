@@ -1,0 +1,295 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Match | Manage Categories</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <div data-app-layout class="min-h-screen lg:grid lg:grid-cols-[280px_1fr]">
+      <aside data-app-sidebar class="sticky top-0 max-h-screen overflow-y-auto z-30 bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900 px-5 py-6 text-white shadow-2xl">
+        <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <img
+            src="{% static 'core/images/Logo.png' %}"
+            alt="Food Match Logo"
+            class="h-14 w-14 rounded-full border border-white/15 bg-white object-cover"
+          />
+          <div>
+            <p class="text-2xl font-bold tracking-tight">
+              FOOD <span class="text-emerald-400">MATCH</span>
+            </p>
+            <p class="text-xs uppercase tracking-[0.25em] text-emerald-100/80">
+              {% if is_super_admin %}Super Admin Portal{% else %}Admin Portal{% endif %}
+            </p>
+          </div>
+        </div>
+
+        {% include 'core/_nav_admin.html' %}
+      </aside>
+
+      <main class="overflow-hidden">
+        <div class="relative z-40 border-b border-slate-200 bg-white/85 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
+          {% include 'core/_sidebar_toggle.html' %}
+          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">
+                Settings
+              </p>
+              <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">Manage Categories</h1>
+            </div>
+
+            <div class="flex items-center gap-4 self-end md:self-auto">
+              <p class="hidden text-lg font-semibold text-slate-900 sm:block">
+                Welcome, {{ admin_name }}
+              </p>
+              {% include 'core/_account_menu.html' with menu_name=admin_name menu_role=admin_role menu_super=is_super_admin %}
+            </div>
+          </div>
+        </div>
+
+        <section class="px-5 py-6 sm:px-8">
+          <div class="mx-auto max-w-7xl">
+            {% if action_message %}
+              <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 shadow-sm">
+                {{ action_message }}
+              </div>
+            {% endif %}
+            {% if action_error %}
+              <div class="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900 shadow-sm">
+                {{ action_error }}
+              </div>
+            {% endif %}
+
+            <div class="mb-6 flex flex-col gap-4 rounded-[2rem] border border-white/60 bg-white/75 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:p-8">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Food Category Taxonomy</p>
+                <h2 class="mt-2 text-3xl font-black tracking-tight text-slate-900">Categories &amp; Subcategories</h2>
+                <p class="mt-2 max-w-2xl text-sm text-slate-600">
+                  Used to classify research submissions and repository entries by food type.
+                  <span class="ml-2 rounded-full bg-emerald-100 px-3 py-0.5 text-xs font-bold text-emerald-800">{{ total_categories }} categories</span>
+                  <span class="ml-2 rounded-full bg-green-100 px-3 py-0.5 text-xs font-bold text-green-800">{{ total_subcategories }} subcategories</span>
+                </p>
+              </div>
+              <div class="flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  data-open-add-category-modal
+                  class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-200 transition hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-700"
+                >
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M12 5v14"></path>
+                    <path d="M5 12h14"></path>
+                  </svg>
+                  Add Category
+                </button>
+                <button
+                  type="button"
+                  data-open-add-subcategory-modal
+                  class="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-200 bg-white px-5 py-3 text-sm font-semibold text-emerald-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50"
+                >
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                    <path d="M12 5v14"></path>
+                    <path d="M5 12h14"></path>
+                  </svg>
+                  Add Subcategory
+                </button>
+              </div>
+            </div>
+
+            <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {% for category in categories %}
+                <div class="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="flex items-center gap-2.5">
+                      <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-100 to-green-200 text-sm font-black text-emerald-900">
+                        {{ category.name|slice:1 }}
+                      </div>
+                      <h3 class="text-base font-bold text-slate-900">{{ category.name }}</h3>
+                    </div>
+                    <form method="post" data-delete-category-form data-category-id="{{ category.id }}" data-category-name="{{ category.name }}" data-child-count="{{ category.subcategories.all|length }}" class="inline">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="delete_category">
+                      <input type="hidden" name="category_id" value="{{ category.id }}">
+                      <button
+                        type="button"
+                        data-trigger-delete-category
+                        aria-label="Delete {{ category.name }}"
+                        class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"
+                      >
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                          <path d="M3 6h18"></path>
+                          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                        </svg>
+                      </button>
+                    </form>
+                  </div>
+
+                  <div class="mt-4 flex flex-wrap gap-1.5">
+                    {% for sub in category.subcategories.all %}
+                      <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700">
+                        {{ sub.name }}
+                        <form method="post" data-delete-category-form data-category-id="{{ sub.id }}" data-category-name="{{ sub.name }}" data-child-count="0" class="inline">
+                          {% csrf_token %}
+                          <input type="hidden" name="action" value="delete_category">
+                          <input type="hidden" name="category_id" value="{{ sub.id }}">
+                          <button
+                            type="button"
+                            data-trigger-delete-category
+                            aria-label="Delete {{ sub.name }}"
+                            class="inline-flex h-4 w-4 items-center justify-center rounded-full text-slate-400 transition hover:text-rose-600"
+                          >
+                            <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
+                              <path d="M18 6 6 18"></path>
+                              <path d="m6 6 12 12"></path>
+                            </svg>
+                          </button>
+                        </form>
+                      </span>
+                    {% empty %}
+                      <p class="text-xs italic text-slate-400">No subcategories yet.</p>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div
+      id="addCategoryModal"
+      data-add-category-modal
+      class="fixed inset-0 z-50 hidden items-center justify-center px-4 py-6"
+      aria-labelledby="addCategoryModalLabel"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div data-add-category-modal-backdrop class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"></div>
+      <div class="relative z-10 w-full max-w-md overflow-hidden rounded-[2rem] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.3)]">
+        <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-green-500 to-pink-500"></div>
+        <div class="flex items-start justify-between gap-4 px-6 pt-6 pb-4 sm:px-8">
+          <div>
+            <p id="addCategoryModalLabel" class="text-xs font-bold uppercase tracking-[0.2em] text-emerald-700">New Entry</p>
+            <h3 class="mt-1 text-2xl font-black tracking-tight text-slate-900">Add Category</h3>
+          </div>
+          <button type="button" data-close-add-category-modal aria-label="Close" class="-mt-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-800">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          </button>
+        </div>
+        <form method="post" class="space-y-4 px-6 pb-6 sm:px-8 sm:pb-8">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="add_category">
+          <div>
+            <label for="id_new_category_name" class="mb-2 block text-sm font-semibold text-slate-800">Category Name <span class="text-rose-600">*</span></label>
+            <input
+              id="id_new_category_name"
+              type="text"
+              name="name"
+              required
+              placeholder="e.g. Plant-Based Dishes"
+              class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-base text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+            />
+          </div>
+          <button type="submit" class="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-200 transition hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-700">
+            Add Category
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div
+      id="addSubcategoryModal"
+      data-add-subcategory-modal
+      class="fixed inset-0 z-50 hidden items-center justify-center px-4 py-6"
+      aria-labelledby="addSubcategoryModalLabel"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div data-add-subcategory-modal-backdrop class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"></div>
+      <div class="relative z-10 w-full max-w-md overflow-hidden rounded-[2rem] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.3)]">
+        <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-green-500 to-pink-500"></div>
+        <div class="flex items-start justify-between gap-4 px-6 pt-6 pb-4 sm:px-8">
+          <div>
+            <p id="addSubcategoryModalLabel" class="text-xs font-bold uppercase tracking-[0.2em] text-emerald-700">New Entry</p>
+            <h3 class="mt-1 text-2xl font-black tracking-tight text-slate-900">Add Subcategory</h3>
+          </div>
+          <button type="button" data-close-add-subcategory-modal aria-label="Close" class="-mt-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-800">
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+          </button>
+        </div>
+        <form method="post" class="space-y-4 px-6 pb-6 sm:px-8 sm:pb-8">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="add_subcategory">
+          <div>
+            <label for="id_new_subcategory_parent" class="mb-2 block text-sm font-semibold text-slate-800">Category <span class="text-rose-600">*</span></label>
+            <select
+              id="id_new_subcategory_parent"
+              name="parent_id"
+              required
+              class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-base text-slate-900 shadow-sm outline-none transition appearance-none hover:border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+            >
+              <option value="">— Select category —</option>
+              {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label for="id_new_subcategory_name" class="mb-2 block text-sm font-semibold text-slate-800">Subcategory Name <span class="text-rose-600">*</span></label>
+            <input
+              id="id_new_subcategory_name"
+              type="text"
+              name="name"
+              required
+              placeholder="e.g. Tofu Dishes"
+              class="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-base text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100"
+            />
+          </div>
+          <button type="submit" class="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-green-600 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-emerald-200 transition hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-700">
+            Add Subcategory
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div
+      id="deleteCategoryModal"
+      data-delete-category-modal
+      class="fixed inset-0 z-50 hidden items-center justify-center px-4 py-6"
+      aria-labelledby="deleteCategoryModalLabel"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div data-delete-category-modal-backdrop class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"></div>
+      <div class="relative z-10 w-full max-w-md overflow-hidden rounded-[2rem] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.3)]">
+        <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-rose-500 via-red-600 to-rose-700"></div>
+        <div class="flex items-start gap-4 px-6 pt-6 pb-4 sm:px-8">
+          <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-rose-100 text-rose-700">
+            <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+              <path d="M3 6h18"></path>
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <p id="deleteCategoryModalLabel" class="text-xs font-bold uppercase tracking-[0.2em] text-rose-700">Delete Category</p>
+            <h3 class="mt-1 text-xl font-black tracking-tight text-slate-900">Delete <span id="deleteCategoryTargetName" class="text-rose-700">this entry</span>?</h3>
+            <p id="deleteCategoryDesc" class="mt-2 text-sm leading-relaxed text-slate-600">This cannot be undone.</p>
+          </div>
+        </div>
+        <div class="flex flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50/50 px-6 py-5 sm:flex-row sm:items-center sm:justify-end sm:px-8">
+          <button type="button" data-close-delete-category-modal class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
+            Cancel
+          </button>
+          <button type="button" id="confirmDeleteCategoryBtn" class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-rose-600 to-red-700 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-200 transition hover:-translate-y-0.5 hover:from-rose-700 hover:to-red-800">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="{% static 'core/js/pages/admin-manage-categories.js' %}"></script>
+  </body>
+</html>

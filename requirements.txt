@@ -1,1 +1,12 @@
 Django>=4.2,<5.0
+psycopg2-binary>=2.9,<3.0
+PyPDF2>=3.0,<4.0
+python-docx>=1.1,<2.0
+scikit-learn>=1.5,<2.0
+numpy>=2.0,<3.0
+pytesseract>=0.3,<0.4
+PyMuPDF>=1.24,<2.0
+Pillow>=10.0,<13.0
+gunicorn>=22.0,<24.0
+# Time zone data, so Philippine time (Asia/Manila) works on any server.
+tzdata>=2024.1

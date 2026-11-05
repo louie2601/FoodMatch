@@ -1,0 +1,48 @@
+{% load static %}
+<div class="flex items-center gap-3">
+{% include 'core/_notification_bell.html' %}
+<div class="relative" data-account-menu>
+  <button
+    type="button"
+    data-account-menu-toggle
+    aria-haspopup="menu"
+    aria-expanded="false"
+    class="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-2 text-left shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-4 {% if menu_super %}focus:ring-emerald-100{% else %}focus:ring-emerald-100{% endif %}"
+  >
+    <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br {% if menu_super %}from-emerald-100 to-green-200 text-emerald-900{% else %}from-emerald-100 to-teal-200 text-emerald-900{% endif %} text-lg font-black">{{ menu_name|slice:":1"|upper }}</span>
+    <span class="hidden sm:block">
+      <span class="block font-semibold leading-tight text-slate-900">{{ menu_name }}</span>
+      <span class="block text-sm leading-tight text-slate-500">{{ menu_role }}</span>
+    </span>
+    <svg data-account-menu-chevron class="h-4 w-4 shrink-0 text-slate-500 transition-transform duration-200" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m6 9 6 6 6-6"></path>
+    </svg>
+  </button>
+
+  <div
+    data-account-menu-panel
+    role="menu"
+    class="absolute right-0 z-50 mt-2 hidden w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white py-2 shadow-[0_20px_50px_rgba(15,23,42,0.18)]"
+  >
+    <div class="border-b border-slate-100 px-4 pb-3 pt-1 sm:hidden">
+      <p class="font-semibold text-slate-900">{{ menu_name }}</p>
+      <p class="text-sm text-slate-500">{{ menu_role }}</p>
+    </div>
+
+    <a role="menuitem" href="{% url 'profile' %}" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold {% if request.resolver_match.url_name == 'profile' %}{% if menu_super %}bg-emerald-50 text-emerald-800{% else %}bg-emerald-50 text-emerald-800{% endif %}{% else %}text-slate-700 hover:bg-slate-50{% endif %}">
+      <svg class="h-5 w-5 text-slate-500" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+      Profile
+    </a>
+    <a role="menuitem" href="{% url 'change_password' %}" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold {% if request.resolver_match.url_name == 'change_password' %}{% if menu_super %}bg-emerald-50 text-emerald-800{% else %}bg-emerald-50 text-emerald-800{% endif %}{% else %}text-slate-700 hover:bg-slate-50{% endif %}">
+      <svg class="h-5 w-5 text-slate-500" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>
+      Change Password
+    </a>
+    <div class="my-1 border-t border-slate-100"></div>
+    <a role="menuitem" href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-rose-600 hover:bg-rose-50">
+      <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="m16 17 5-5-5-5"></path><path d="M21 12H9"></path></svg>
+      Logout
+    </a>
+  </div>
+</div>
+</div>
+<script src="{% static 'core/js/pages/account-menu.js' %}"></script>

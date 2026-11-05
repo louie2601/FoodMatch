@@ -1,0 +1,8 @@
+{% if request.user.is_authenticated %}
+  <a href="{% url 'dashboard_redirect' %}" class="rounded-full bg-gradient-to-r from-emerald-500 to-green-600 px-6 py-3 font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:from-emerald-600 hover:to-green-700">
+    {% if request.user.is_staff or request.user.is_superuser %}Open Admin Dashboard{% else %}Open My Dashboard{% endif %}
+  </a>
+{% else %}
+  <a href="{% url 'register' %}" class="rounded-full bg-gradient-to-r from-emerald-500 to-green-600 px-6 py-3 font-semibold text-white shadow-lg shadow-emerald-900/30 transition hover:from-emerald-600 hover:to-green-700">Create Student Account</a>
+  <a href="{% url 'login' %}" class="rounded-full border border-white/40 bg-white/10 px-6 py-3 font-semibold text-white backdrop-blur transition hover:bg-white/20">Log in</a>
+{% endif %}

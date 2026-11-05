@@ -1,0 +1,389 @@
+{% load core_extras %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Match | Manage Submissions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <div data-app-layout class="min-h-screen lg:grid lg:grid-cols-[280px_1fr]">
+      <aside data-app-sidebar class="sticky top-0 max-h-screen overflow-y-auto z-30 {% if is_super_admin %}bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900{% else %}bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900{% endif %} px-5 py-6 text-white shadow-2xl">
+        <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <img src="{% static 'core/images/Logo.png' %}" alt="Food Match Logo" class="h-14 w-14 rounded-full border border-white/15 bg-white object-cover" />
+          <div>
+            <p class="text-2xl font-bold tracking-tight">FOOD <span class="{% if is_super_admin %}text-green-400{% else %}text-emerald-400{% endif %}">MATCH</span></p>
+            <p class="text-xs uppercase tracking-[0.25em] {% if is_super_admin %}text-emerald-100/80{% else %}text-emerald-100/80{% endif %}">
+              {% if is_super_admin %}Super Admin Portal{% else %}Admin Portal{% endif %}
+            </p>
+          </div>
+        </div>
+
+        {% include 'core/_nav_admin.html' %}
+      </aside>
+
+      <main class="overflow-hidden">
+        <div class="relative z-40 border-b border-slate-200 bg-white/85 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
+          {% include 'core/_sidebar_toggle.html' %}
+          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.2em] {% if is_super_admin %}text-emerald-700{% else %}text-emerald-700{% endif %}">
+                {% if is_super_admin %}Super Admin Review{% else %}Submissions Queue{% endif %}
+              </p>
+              <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">Manage Submissions</h1>
+              <p class="mt-1 text-sm text-slate-500">Review uploaded research studies. Approved records stay in the system repository and become available for similarity checking.</p>
+            </div>
+            <div class="flex items-center gap-4 self-end md:self-auto">
+              <p class="hidden text-lg font-semibold text-slate-900 sm:block">Welcome, {{ admin_name }}</p>
+              {% include 'core/_account_menu.html' with menu_name=admin_name menu_role=admin_role menu_super=is_super_admin %}
+            </div>
+          </div>
+        </div>
+
+        <section class="space-y-5 px-5 py-6 sm:px-8">
+          {% if action_message %}
+            <div role="status" class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 shadow-sm">{{ action_message }}</div>
+          {% endif %}
+          {% if action_error %}
+            <div role="alert" class="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 shadow-sm">{{ action_error }}</div>
+          {% endif %}
+
+          <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)] sm:p-8">
+            <div class="flex flex-wrap items-end justify-between gap-4 border-b border-slate-100 pb-5">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-[0.2em] text-emerald-700">All Submissions</p>
+                <h3 class="mt-1 text-2xl font-black tracking-tight text-slate-900">Research Submissions</h3>
+              </div>
+              <div class="flex flex-wrap items-center gap-3">
+                {% if counts.pending %}
+                  <a href="?status=pending" class="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-800 shadow-sm transition hover:bg-amber-100">
+                    <span class="mr-2 inline-block h-2 w-2 rounded-full bg-amber-500"></span>
+                    {{ counts.pending }} waiting for review
+                  </a>
+                {% endif %}
+                <span class="inline-flex items-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm">
+                  <span class="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-500"></span>
+                  {{ counts.all }} total submission{{ counts.all|pluralize }}
+                </span>
+              </div>
+            </div>
+
+            <form method="get" role="search" aria-label="Search submissions" class="mt-5 flex flex-wrap items-end gap-4">
+              <div class="relative min-w-[220px] flex-1">
+                <label for="q" class="mb-1.5 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Search</label>
+                <input
+                  type="text"
+                  id="q"
+                  name="q"
+                  value="{{ search_query }}"
+                  autocomplete="off"
+                  placeholder="Title, group, authors, keywords, or adviser"
+                  class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-600 focus:bg-white focus:ring-4 focus:ring-emerald-100"
+                />
+                <div id="dashboard-search-suggestions-box" class="absolute left-0 right-0 top-full z-20 mt-2 hidden overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl"></div>
+              </div>
+              <div>
+                <label for="sub-status" class="mb-1.5 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Status</label>
+                <select id="sub-status" name="status" class="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                  {% for option in status_options %}
+                    <option value="{% if option.key != 'all' %}{{ option.key }}{% endif %}" {% if status_key == option.key %}selected{% endif %}>{{ option.label }} ({{ option.count }})</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div>
+                <label for="sub-category" class="mb-1.5 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Category</label>
+                <select id="sub-category" name="category" class="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                  <option value="">All categories</option>
+                  {% for cat in categories %}
+                    <option value="{{ cat.pk }}" {% if category_id == cat.pk|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div>
+                <label for="sub-published-year" class="mb-1.5 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Published Year</label>
+                <select id="sub-published-year" name="published_year" class="rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100">
+                  <option value="">All years</option>
+                  {% for year in published_years %}
+                    <option value="{{ year }}" {% if published_year == year|stringformat:"s" %}selected{% endif %}>{{ year }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="flex flex-wrap items-end gap-4">
+                <div>
+                  <label for="sub-submitted-from" class="mb-1.5 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Submitted from</label>
+                  <input type="date" id="sub-submitted-from" name="submitted_from" value="{{ submitted_from }}" class="h-[42px] rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100" />
+                </div>
+                <div>
+                  <label for="sub-submitted-to" class="mb-1.5 block text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Submitted to</label>
+                  <input type="date" id="sub-submitted-to" name="submitted_to" value="{{ submitted_to }}" class="h-[42px] rounded-xl border border-slate-200 bg-white px-3.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100" />
+                </div>
+              </div>
+              <div class="flex items-end gap-3">
+                <button type="submit" class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-800">
+                  Search
+                </button>
+                {% if filters_active %}
+                  <a href="{% url 'admin_manage_submissions' %}" class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
+                    Clear
+                  </a>
+                {% endif %}
+              </div>
+            </form>
+
+            {% if page_obj.paginator.count %}
+              <p class="mt-4 text-sm text-slate-500">
+                Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ page_obj.paginator.count }} {% if filters_active %}matching {% endif %}submission{{ page_obj.paginator.count|pluralize }}
+              </p>
+            {% endif %}
+
+            <div class="mt-4 overflow-x-auto rounded-2xl border border-slate-200">
+              <table class="w-full min-w-[720px] table-fixed text-left">
+                <colgroup>
+                  <col>
+                  <col style="width: 140px">
+                  <col style="width: 150px">
+                  <col style="width: 124px">
+                </colgroup>
+                <thead class="border-b border-slate-200 bg-slate-50">
+                  <tr class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+                    <th scope="col" class="px-4 py-3">Research</th>
+                    <th scope="col" class="px-4 py-3">Submitted</th>
+                    <th scope="col" class="px-4 py-3">Status</th>
+                    <th scope="col" class="px-4 py-3"><span class="sr-only">Actions</span></th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 bg-white">
+                  {% for row in rows %}
+                  <tr
+                    class="transition hover:bg-slate-50"
+                    data-submission-row
+                    data-id="{{ row.id }}"
+                    data-title="{{ row.title }}"
+                    data-student="{{ row.student }}"
+                    data-authors="{{ row.authors }}"
+                    data-adviser="{{ row.adviser }}"
+                    data-abstract="{{ row.abstract }}"
+                    data-keywords="{{ row.keywords }}"
+                    data-category="{{ row.category }}"
+                    data-published="{{ row.published }}"
+                    data-status="{{ row.status }}"
+                    data-status-key="{{ row.status_key }}"
+                    data-submitted="{{ row.submitted_date }}, {{ row.submitted_time }}"
+                    data-reviewed="{{ row.reviewed_date }}"
+                    data-notes="{{ row.notes }}"
+                    data-file-url="{{ row.file_url }}"
+                    data-doc-type="{{ row.doc_type }}"
+                  >
+                    <td class="px-4 py-3">
+                      <p class="line-clamp-2 text-sm font-semibold leading-snug text-slate-900" title="{{ row.title }}">{{ row.title }}</p>
+                      <p class="mt-0.5 truncate text-xs text-slate-500" title="{{ row.student }}">{{ row.student }}{% if row.category %} · {{ row.category }}{% endif %}</p>
+                    </td>
+                    <td class="whitespace-nowrap px-4 py-3">
+                      <p class="text-sm text-slate-700">{{ row.submitted_date }}</p>
+                      <p class="text-xs text-slate-400">{{ row.submitted_time }}</p>
+                    </td>
+                    <td class="px-4 py-3">
+                      <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold {% if row.status_key == 'pending' %}bg-amber-50 text-amber-800 ring-1 ring-amber-200{% elif row.status_key == 'approved' %}bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200{% else %}bg-rose-50 text-rose-700 ring-1 ring-rose-200{% endif %}">
+                        <span class="h-1.5 w-1.5 rounded-full {% if row.status_key == 'pending' %}bg-amber-500{% elif row.status_key == 'approved' %}bg-emerald-500{% else %}bg-rose-500{% endif %}"></span>{{ row.status }}
+                      </span>
+                      {% if row.reviewed_date %}<p class="mt-1 text-xs text-slate-400">{{ row.reviewed_date }}</p>{% endif %}
+                    </td>
+                    <td class="px-4 py-3">
+                      <div class="flex items-center justify-end gap-1">
+                        {% if row.file_url %}
+                        <a
+                          href="{{ row.file_url }}"
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label="Open file"
+                          title="Open file{% if row.doc_type %} ({{ row.doc_type }}){% endif %}"
+                          class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                        >
+                          <svg class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"></path>
+                            <path d="M14 3v5h5"></path>
+                            <path d="M9 13h6"></path>
+                            <path d="M9 17h4"></path>
+                          </svg>
+                        </a>
+                        {% endif %}
+                        {% if row.status_key == 'pending' %}
+                        <button
+                          type="button"
+                          data-open-submission
+                          class="inline-flex h-8 items-center justify-center rounded-lg bg-emerald-600 px-3 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-1"
+                        >
+                          Review
+                        </button>
+                        {% else %}
+                        <button
+                          type="button"
+                          data-open-submission
+                          aria-label="View details"
+                          title="View details"
+                          class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                        >
+                          <svg class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+                            <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path>
+                          </svg>
+                        </button>
+                        {% endif %}
+                      </div>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="4" class="px-6 py-14 text-center">
+                      {% if search_query or category_id or published_year or submitted_from or submitted_to %}
+                        <p class="text-base font-bold text-slate-900">No submissions matched your search</p>
+                        <p class="mt-1 text-sm text-slate-500">Try other words or a wider date range.</p>
+                        <a href="{% url 'admin_manage_submissions' %}" class="mt-4 inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">Clear search</a>
+                      {% elif status_key == 'pending' %}
+                        <p class="text-base font-bold text-slate-900">Nothing is waiting for review</p>
+                        <p class="mt-1 text-sm text-slate-500">New student submissions will appear here.</p>
+                      {% elif status_key == 'approved' %}
+                        <p class="text-base font-bold text-slate-900">No approved submissions yet</p>
+                      {% elif status_key == 'rejected' %}
+                        <p class="text-base font-bold text-slate-900">No rejected submissions</p>
+                      {% else %}
+                        <p class="text-base font-bold text-slate-900">No submissions yet</p>
+                        <p class="mt-1 text-sm text-slate-500">Student submissions will appear here for review.</p>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            {% if page_obj.has_other_pages %}
+              <nav aria-label="Submission pages" class="mt-5 flex items-center justify-between gap-3">
+                {% if page_obj.has_previous %}
+                  <a href="?{% if filter_params %}{{ filter_params }}&{% endif %}page={{ page_obj.previous_page_number }}" class="inline-flex items-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">Previous</a>
+                {% else %}
+                  <span></span>
+                {% endif %}
+                <span class="text-xs font-semibold text-slate-500">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                {% if page_obj.has_next %}
+                  <a href="?{% if filter_params %}{{ filter_params }}&{% endif %}page={{ page_obj.next_page_number }}" class="inline-flex items-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">Next</a>
+                {% else %}
+                  <span></span>
+                {% endif %}
+              </nav>
+            {% endif %}
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <div
+      id="submissionModal"
+      class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="submissionModalTitle"
+      aria-hidden="true"
+    >
+      <div data-close-submission-modal class="fixed inset-0 bg-slate-950/45 backdrop-blur-[2px]" aria-hidden="true"></div>
+      <div class="relative flex max-h-full w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.18)] ring-1 ring-slate-200">
+        <header class="flex flex-none items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
+          <div class="min-w-0">
+            <span id="submissionModalStatus" class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"></span>
+            <h2 id="submissionModalTitle" class="mt-2 text-lg font-black leading-snug tracking-tight text-slate-900"></h2>
+            <p id="submissionModalMeta" class="mt-1 text-sm text-slate-500"></p>
+          </div>
+          <button
+            type="button"
+            data-close-submission-modal
+            aria-label="Close"
+            class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+          >
+            <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+        </header>
+
+        <div class="min-h-0 flex-1 space-y-5 overflow-y-auto px-6 py-5">
+          <dl class="grid grid-cols-1 gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
+            <div>
+              <dt class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Authors</dt>
+              <dd id="submissionModalAuthors" class="mt-0.5 text-slate-800"></dd>
+            </div>
+            <div>
+              <dt class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Adviser</dt>
+              <dd id="submissionModalAdviser" class="mt-0.5 text-slate-800"></dd>
+            </div>
+            <div>
+              <dt class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Category</dt>
+              <dd id="submissionModalCategory" class="mt-0.5 text-slate-800"></dd>
+            </div>
+            <div>
+              <dt class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Published</dt>
+              <dd id="submissionModalPublished" class="mt-0.5 text-slate-800"></dd>
+            </div>
+            <div class="sm:col-span-2">
+              <dt class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Keywords</dt>
+              <dd id="submissionModalKeywords" class="mt-0.5 text-slate-800"></dd>
+            </div>
+          </dl>
+
+          <div>
+            <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Abstract</p>
+            <p id="submissionModalAbstract" class="mt-1.5 whitespace-pre-line text-sm leading-6 text-slate-700"></p>
+          </div>
+
+          <a
+            id="submissionModalFile"
+            href="#"
+            target="_blank"
+            rel="noreferrer"
+            class="hidden w-fit items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"></path>
+              <path d="M14 3v5h5"></path>
+            </svg>
+            <span id="submissionModalFileText">Open uploaded file</span>
+          </a>
+
+          <div id="submissionModalNotesWrap" class="hidden rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+            <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Reviewer notes</p>
+            <p id="submissionModalNotes" class="mt-1 whitespace-pre-line text-sm text-slate-700"></p>
+          </div>
+        </div>
+
+        <form id="submissionReviewForm" method="post" class="hidden flex-none border-t border-slate-100 bg-slate-50/70 px-6 py-4">
+          {% csrf_token %}
+          <input type="hidden" name="submission_id" id="submissionReviewId" value="" />
+          <label for="submissionReviewNotes" class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">Notes for the student (optional)</label>
+          <textarea
+            id="submissionReviewNotes"
+            name="admin_notes"
+            rows="2"
+            placeholder="e.g. what to fix before resubmitting"
+            class="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-600 focus:ring-4 focus:ring-emerald-100"
+          ></textarea>
+          <div class="mt-3 flex flex-wrap justify-end gap-2">
+            <button type="submit" name="action" value="reject" class="inline-flex items-center justify-center rounded-xl border border-rose-200 bg-white px-4 py-2 text-sm font-semibold text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-50">Reject</button>
+            <button type="submit" name="action" value="approve" class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:from-emerald-700 hover:to-green-800">Approve</button>
+          </div>
+        </form>
+
+        <footer id="submissionModalFooter" class="flex flex-none justify-end border-t border-slate-100 px-6 py-4">
+          <button type="button" data-close-submission-modal class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">Close</button>
+        </footer>
+      </div>
+    </div>
+
+    {{ search_suggestions|json_script:"dashboard-search-suggestions-data" }}
+    <script src="{% static 'core/js/search-suggestions.js' %}"></script>
+    <script src="{% static 'core/js/pages/admin-manage-submissions.js' %}"></script>
+
+    <script src="{% static 'core/js/sidebar-groups.js' %}"></script>
+  </body>
+</html>

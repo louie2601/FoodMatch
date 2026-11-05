@@ -1,0 +1,365 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Match | {{ page_title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <div data-app-layout class="min-h-screen lg:grid lg:grid-cols-[280px_1fr]">
+      <aside data-app-sidebar class="sticky top-0 max-h-screen overflow-y-auto z-30 bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900 px-5 py-6 text-white shadow-2xl">
+        <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <img
+            src="{% static 'core/images/Logo.png' %}"
+            alt="Food Match Logo"
+            class="h-14 w-14 rounded-full border border-white/15 bg-white object-cover"
+          />
+          <div>
+            <p class="text-2xl font-bold tracking-tight">
+              FOOD <span class="{% if is_super_admin %}text-green-400{% else %}text-emerald-400{% endif %}">MATCH</span>
+            </p>
+            <p class="text-xs uppercase tracking-[0.25em] text-emerald-100/80">
+              {% if is_super_admin %}Super Admin Portal{% else %}Admin Portal{% endif %}
+            </p>
+          </div>
+        </div>
+
+        {% include 'core/_nav_admin.html' %}
+      </aside>
+
+      <main class="overflow-hidden">
+        <div class="relative z-40 border-b border-slate-200 bg-white/85 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
+          {% include 'core/_sidebar_toggle.html' %}
+          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 class="text-2xl font-bold tracking-tight text-slate-900">
+                {% if is_super_admin %}Super Admin Dashboard{% else %}Dashboard{% endif %}
+              </h1>
+              <p class="mt-1 text-sm text-slate-500">
+                {% if is_super_admin %}Full control over users, submissions, repository, and research tools.{% else %}Manage users and submissions.{% endif %}
+              </p>
+            </div>
+
+            <div class="flex items-center gap-4 self-end md:self-auto">
+              {% include 'core/_account_menu.html' with menu_name=admin_name menu_role=admin_role menu_super=is_super_admin %}
+            </div>
+          </div>
+        </div>
+
+        <section class="mx-auto max-w-[1400px] space-y-6 px-5 py-6 sm:px-8">
+          {% comment %} Page header: greeting, period filter and quick actions {% endcomment %}
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p class="text-sm font-medium text-slate-500">{{ today|date:"l, F j, Y" }}</p>
+              <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">Welcome back, {{ admin_first_name }}</h2>
+              <p class="mt-1 text-sm text-slate-600">Here is what is happening across FOOD MATCH.</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <form method="get" class="flex items-center">
+                <label for="dashboardRange" class="sr-only">Period</label>
+                <select
+                  id="dashboardRange"
+                  name="range"
+                  data-auto-submit
+                  class="h-10 rounded-xl border border-slate-200 bg-white pl-3 pr-9 text-sm font-medium text-slate-700 shadow-sm focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100"
+                >
+                  {% for value, label in range_choices %}
+                    <option value="{{ value }}"{% if value == range_days %} selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+                <noscript><button type="submit" class="ml-2 h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold">Apply</button></noscript>
+              </form>
+              {% if can.reports %}
+                <a href="{% url 'admin_reports' %}" class="inline-flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                  Reports &amp; Export
+                </a>
+              {% endif %}
+              {% if can.research_repository and can.add_research %}
+                <a href="{% url 'admin_repository_add' %}" class="inline-flex h-10 items-center gap-2 rounded-xl bg-emerald-700 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                  Add Research
+                </a>
+              {% endif %}
+            </div>
+          </div>
+
+          {% comment %} KPI cards {% endcomment %}
+          <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {% for kpi in kpis %}
+              {% if kpi.url %}<a href="{{ kpi.url }}" class="group block rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-emerald-300 hover:shadow-md">{% else %}<div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">{% endif %}
+                <div class="flex items-start justify-between gap-3">
+                  <p class="text-sm font-medium text-slate-500">{{ kpi.label }}</p>
+                  <span class="flex h-10 w-10 flex-none items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                      {% if kpi.key == "users" %}
+                        <path d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/>
+                      {% elif kpi.key == "repository" %}
+                        <path d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/>
+                      {% elif kpi.key == "pending" %}
+                        <path d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                      {% else %}
+                        <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+                      {% endif %}
+                    </svg>
+                  </span>
+                </div>
+                <p class="mt-3 text-3xl font-bold tracking-tight text-slate-900">{{ kpi.value }}</p>
+                <div class="mt-3 flex items-center gap-2 text-xs">
+                  {% if kpi.delta_label %}
+                    {% if kpi.delta %}
+                      <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-700 ring-1 ring-emerald-100">
+                        <svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 15.75 12 8.25l7.5 7.5"/></svg>
+                        {{ kpi.delta }} {{ kpi.delta_label }}
+                      </span>
+                    {% else %}
+                      <span class="inline-flex rounded-full bg-slate-100 px-2 py-0.5 font-semibold text-slate-600">No change</span>
+                    {% endif %}
+                    <span class="text-slate-500">{{ range_label|lower }}</span>
+                  {% else %}
+                    <span class="font-medium {% if kpi.warn %}text-amber-700{% else %}text-slate-500{% endif %}">{{ kpi.note }}</span>
+                  {% endif %}
+                </div>
+              {% if kpi.url %}</a>{% else %}</div>{% endif %}
+            {% endfor %}
+          </div>
+
+          {% comment %} Trend chart + attention list {% endcomment %}
+          <div class="grid gap-4 xl:grid-cols-3">
+            <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-2">
+              <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h3 class="text-base font-semibold text-slate-900">Submissions &amp; Approvals</h3>
+                  <p class="mt-0.5 text-sm text-slate-500">Research submitted and approved per month, last {{ trend_months }} months</p>
+                </div>
+                <div class="flex items-center gap-4 text-xs font-medium text-slate-600">
+                  <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-sm bg-emerald-300"></span>Submitted</span>
+                  <span class="inline-flex items-center gap-1.5"><span class="h-2.5 w-2.5 rounded-sm bg-emerald-700"></span>Approved</span>
+                </div>
+              </div>
+              <div class="relative mt-4 h-72">
+                <canvas id="chartDashboardTrend" role="img" aria-label="Column chart of research submitted and approved per month"></canvas>
+              </div>
+            </section>
+
+            <section class="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <div class="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
+                <div>
+                  <h3 class="text-base font-semibold text-slate-900">Needs Your Attention</h3>
+                  <p class="mt-0.5 text-sm text-slate-500">Items waiting on an admin</p>
+                </div>
+                {% if attention_open %}
+                  <span class="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-amber-200">{{ attention_open }} open</span>
+                {% else %}
+                  <span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">All clear</span>
+                {% endif %}
+              </div>
+              <ul class="flex-1 divide-y divide-slate-100">
+                {% for item in attention %}
+                  <li>
+                    {% if item.url %}<a href="{{ item.url }}" class="flex items-center gap-3 px-5 py-3.5 transition hover:bg-slate-50">{% else %}<div class="flex items-center gap-3 px-5 py-3.5">{% endif %}
+                      <span class="flex h-8 w-8 flex-none items-center justify-center rounded-lg
+                        {% if not item.count %}bg-slate-50 text-slate-400
+                        {% elif item.tone == 'critical' %}bg-rose-50 text-rose-600
+                        {% elif item.tone == 'warning' %}bg-amber-50 text-amber-600
+                        {% else %}bg-slate-100 text-slate-600{% endif %}">
+                        {% if item.count and item.tone != 'neutral' %}
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"/></svg>
+                        {% else %}
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="m4.5 12.75 6 6 9-13.5"/></svg>
+                        {% endif %}
+                      </span>
+                      <span class="min-w-0 flex-1">
+                        <span class="block text-sm font-medium {% if item.count %}text-slate-900{% else %}text-slate-500{% endif %}">{{ item.label }}</span>
+                        {% if item.detail %}<span class="block truncate text-xs text-slate-500">{{ item.detail }}</span>{% endif %}
+                      </span>
+                      <span class="min-w-[2rem] rounded-full px-2 py-0.5 text-center text-sm font-semibold
+                        {% if not item.count %}text-slate-400
+                        {% elif item.tone == 'critical' %}bg-rose-50 text-rose-700
+                        {% elif item.tone == 'warning' %}bg-amber-50 text-amber-800
+                        {% else %}bg-slate-100 text-slate-700{% endif %}">{{ item.count }}</span>
+                      {% if item.url %}
+                        <svg class="h-4 w-4 flex-none text-slate-400" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+                      {% endif %}
+                    {% if item.url %}</a>{% else %}</div>{% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </section>
+          </div>
+
+          {% comment %} Breakdown cards {% endcomment %}
+          <div class="grid gap-4 lg:grid-cols-3">
+            <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <h3 class="text-base font-semibold text-slate-900">Similarity Results</h3>
+                  <p class="mt-0.5 text-sm text-slate-500">{{ checks_total }} check{{ checks_total|pluralize }} · {{ range_label|lower }}</p>
+                </div>
+              </div>
+              {% if checks_total %}
+                <div class="mt-4 flex h-2.5 overflow-hidden rounded-full bg-slate-100" role="img" aria-label="Share of similarity checks by level">
+                  {% for row in similarity_breakdown %}
+                    {% if row.count %}<span class="h-full {% if row.key == 'low' %}bg-emerald-500{% elif row.key == 'moderate' %}bg-amber-400{% else %}bg-rose-500{% endif %}" style="width: {{ row.pct }}%"></span>{% endif %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+              <ul class="mt-4 space-y-3">
+                {% for row in similarity_breakdown %}
+                  <li class="flex items-center justify-between gap-3 text-sm">
+                    <span class="flex items-center gap-2 text-slate-700">
+                      <span class="h-2.5 w-2.5 rounded-full {% if row.key == 'low' %}bg-emerald-500{% elif row.key == 'moderate' %}bg-amber-400{% else %}bg-rose-500{% endif %}"></span>
+                      {{ row.label }} <span class="text-xs text-slate-400">{{ row.range }}</span>
+                    </span>
+                    <span class="font-semibold text-slate-900">{{ row.count }} <span class="ml-1 text-xs font-medium text-slate-500">{{ row.pct }}%</span></span>
+                  </li>
+                {% endfor %}
+              </ul>
+              {% if not checks_total %}
+                <p class="mt-4 rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-500">No similarity checks were run in this period.</p>
+              {% endif %}
+            </section>
+
+            <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h3 class="text-base font-semibold text-slate-900">Top Food Categories</h3>
+              <p class="mt-0.5 text-sm text-slate-500">Studies in the repository</p>
+              <ul class="mt-4 space-y-3">
+                {% for row in top_categories %}
+                  <li>
+                    <div class="flex items-center justify-between gap-3 text-sm">
+                      <span class="truncate text-slate-700" title="{{ row.label }}">{{ row.label }}</span>
+                      <span class="font-semibold text-slate-900">{{ row.count }}</span>
+                    </div>
+                    <div class="mt-1.5 h-2 rounded-full bg-slate-100"><div class="h-2 rounded-full bg-emerald-600" style="width: {{ row.pct }}%"></div></div>
+                  </li>
+                {% empty %}
+                  <li class="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-500">No studies in the repository yet.</li>
+                {% endfor %}
+              </ul>
+            </section>
+
+            <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h3 class="text-base font-semibold text-slate-900">Users by Role</h3>
+              <p class="mt-0.5 text-sm text-slate-500">{{ user_total }} account{{ user_total|pluralize }}</p>
+              <ul class="mt-4 space-y-3">
+                {% for row in user_breakdown %}
+                  <li>
+                    <div class="flex items-center justify-between gap-3 text-sm">
+                      <span class="text-slate-700">{{ row.label }}</span>
+                      <span class="font-semibold text-slate-900">{{ row.count }} <span class="ml-1 text-xs font-medium text-slate-500">{{ row.pct }}%</span></span>
+                    </div>
+                    <div class="mt-1.5 h-2 rounded-full bg-slate-100"><div class="h-2 rounded-full {% if forloop.counter == 1 %}bg-emerald-600{% elif forloop.counter == 2 %}bg-emerald-400{% else %}bg-emerald-800{% endif %}" style="width: {{ row.pct }}%"></div></div>
+                  </li>
+                {% endfor %}
+              </ul>
+            </section>
+          </div>
+
+          {% comment %} Recent activity + recent submissions {% endcomment %}
+          <div class="grid gap-4 xl:grid-cols-2">
+            <section class="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <div class="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
+                <h3 class="text-base font-semibold text-slate-900">Recent Activity</h3>
+                {% if can.system_logs %}<a href="{% url 'admin_system_logs' %}?type=activity" class="text-sm font-semibold text-emerald-700 hover:text-emerald-800">View all</a>{% endif %}
+              </div>
+              <ul class="flex-1 divide-y divide-slate-100">
+                {% for item in recent_activity %}
+                  <li class="flex items-start gap-3 px-5 py-3">
+                    <span class="mt-0.5 w-20 flex-none text-xs text-slate-500">
+                      <span class="block font-medium text-slate-700">{{ item.time|date:"g:i A" }}</span>
+                      {{ item.time|date:"M j" }}
+                    </span>
+                    <span class="min-w-0 flex-1">
+                      <span class="flex flex-wrap items-center gap-2">
+                        <span class="text-sm font-medium text-slate-900">{{ item.user_name }}</span>
+                        {% if item.failed %}
+                          <span class="rounded-full bg-rose-50 px-2 py-0.5 text-[11px] font-semibold text-rose-700 ring-1 ring-rose-100">Failed sign-in</span>
+                        {% elif item.log_type == 'Login' %}
+                          <span class="rounded-full bg-sky-50 px-2 py-0.5 text-[11px] font-semibold text-sky-700 ring-1 ring-sky-100">Login</span>
+                        {% elif item.log_type == 'Logout' %}
+                          <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600 ring-1 ring-slate-200">Logout</span>
+                        {% else %}
+                          <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-emerald-100">Activity</span>
+                        {% endif %}
+                      </span>
+                      <span class="mt-0.5 block truncate text-sm text-slate-600" title="{{ item.action }}">{{ item.action }}</span>
+                    </span>
+                  </li>
+                {% empty %}
+                  <li class="px-5 py-10 text-center text-sm text-slate-500">No activity recorded yet.</li>
+                {% endfor %}
+              </ul>
+            </section>
+
+            <section class="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <div class="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
+                <h3 class="text-base font-semibold text-slate-900">Recent Submissions</h3>
+                {% if can.manage_submissions %}<a href="{% url 'admin_manage_submissions' %}" class="text-sm font-semibold text-emerald-700 hover:text-emerald-800">View all</a>{% endif %}
+              </div>
+              <div class="flex-1 overflow-x-auto">
+                <table class="w-full min-w-[28rem] table-fixed text-left text-sm">
+                  <colgroup>
+                    <col class="w-[42%]" /><col class="w-[25%]" /><col class="w-[19%]" /><col class="w-[14%]" />
+                  </colgroup>
+                  <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+                    <tr>
+                      <th scope="col" class="px-5 py-3 font-semibold">Title</th>
+                      <th scope="col" class="px-3 py-3 font-semibold">Submitted by</th>
+                      <th scope="col" class="px-3 py-3 font-semibold">Status</th>
+                      <th scope="col" class="px-4 py-3 text-right font-semibold">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100">
+                    {% for row in recent_submissions %}
+                      <tr class="hover:bg-slate-50">
+                        <td class="px-5 py-3"><span class="block truncate font-medium text-slate-900" title="{{ row.title }}">{{ row.title }}</span></td>
+                        <td class="px-3 py-3"><span class="block truncate text-slate-600" title="{{ row.submitted_by }}">{{ row.submitted_by }}</span></td>
+                        <td class="px-3 py-3">
+                          {% if row.status == "Approved" %}
+                            <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">Approved</span>
+                          {% elif row.status == "Rejected" %}
+                            <span class="rounded-full bg-rose-50 px-2 py-0.5 text-xs font-semibold text-rose-700 ring-1 ring-rose-100">Rejected</span>
+                          {% else %}
+                            <span class="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-800 ring-1 ring-amber-200">{{ row.status }}</span>
+                          {% endif %}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-3 text-right text-slate-500" title="{{ row.date|date:'M j, Y g:i A' }}">{{ row.date|date:"M j" }}</td>
+                      </tr>
+                    {% empty %}
+                      <tr><td colspan="4" class="px-5 py-10 text-center text-sm text-slate-500">No submissions yet.</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+
+          {% if system_health %}
+            <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h3 class="text-base font-semibold text-slate-900">System Health</h3>
+              <dl class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {% for item in system_health %}
+                  <div class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-3">
+                    <span class="h-2.5 w-2.5 flex-none rounded-full {% if item.ok %}bg-emerald-500{% else %}bg-amber-400{% endif %}" aria-hidden="true"></span>
+                    <div class="min-w-0">
+                      <dt class="text-xs font-medium text-slate-500">{{ item.label }}</dt>
+                      <dd class="truncate text-sm font-semibold text-slate-900">{{ item.value }}</dd>
+                    </div>
+                  </div>
+                {% endfor %}
+              </dl>
+            </section>
+          {% endif %}
+        </section>
+      </main>
+    </div>
+
+    <script src="{% static 'core/js/sidebar-groups.js' %}"></script>
+    {{ chart_data|json_script:"dashboardChartData" }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="{% static 'core/js/pages/admin-dashboard.js' %}"></script>
+  </body>
+</html>

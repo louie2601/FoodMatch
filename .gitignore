@@ -17,8 +17,15 @@ __pycache__/
 # Django static files
 staticfiles/
 
+# Uploaded files (students' research papers, images) — data, not code
+media/
+
+# Secrets / credentials
+secrets/
+
 # macOS
 *.DS_Store
 
 # VS Code
 .vscode/
+.env.backup-*

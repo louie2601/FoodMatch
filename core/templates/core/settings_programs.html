@@ -1,0 +1,199 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Match | {{ page_title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <div data-app-layout class="min-h-screen lg:grid lg:grid-cols-[280px_1fr]">
+      <aside data-app-sidebar class="sticky top-0 max-h-screen overflow-y-auto z-30 bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900 px-5 py-6 text-white shadow-2xl">
+        <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <img src="{% static 'core/images/Logo.png' %}" alt="Food Match Logo" class="h-14 w-14 rounded-full border border-white/15 bg-white object-cover" />
+          <div>
+            <p class="text-2xl font-bold tracking-tight">FOOD <span class="{% if is_super_admin %}text-green-400{% else %}text-emerald-400{% endif %}">MATCH</span></p>
+            <p class="text-xs uppercase tracking-[0.25em] text-emerald-100/80">{% if is_super_admin %}Super Admin Portal{% else %}Admin Portal{% endif %}</p>
+          </div>
+        </div>
+        {% include 'core/_nav_admin.html' %}
+      </aside>
+
+      <main class="overflow-hidden">
+        <div class="relative z-40 border-b border-slate-200 bg-white/85 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
+          {% include 'core/_sidebar_toggle.html' %}
+          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 class="text-2xl font-bold tracking-tight text-slate-900">Programs &amp; Colleges</h1>
+              <p class="mt-1 text-sm text-slate-500">The colleges and programs people pick when they sign up.</p>
+            </div>
+            <div class="flex items-center gap-4 self-end md:self-auto">
+              {% include 'core/_account_menu.html' with menu_name=admin_name menu_role=admin_role menu_super=is_super_admin %}
+            </div>
+          </div>
+        </div>
+
+        <section class="mx-auto max-w-[1100px] space-y-5 px-5 py-6 sm:px-8">
+          <p class="rounded-2xl border border-sky-100 bg-sky-50 px-4 py-3 text-sm text-sky-900">
+            Programs are listed under their college. Deactivating an item hides it from the sign-up choices. Existing accounts keep it, and renaming updates those accounts too.
+          </p>
+
+          {% comment %} Add controls {% endcomment %}
+          <div class="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <form method="post" class="flex flex-col gap-2 sm:flex-row">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="add_college" />
+              <label class="sr-only" for="newCollegeName">New college name</label>
+              <input id="newCollegeName" name="name" maxlength="120" required placeholder="New college"
+                class="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100" />
+              <button type="submit" class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800">Add college</button>
+            </form>
+            <form method="post" class="flex flex-col gap-2 sm:flex-row">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="add_program" />
+              <label class="sr-only" for="newProgramCollege">College</label>
+              <select id="newProgramCollege" name="college_id" required class="min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100 sm:max-w-[45%]">
+                <option value="">Select college</option>
+                {% for college in college_options %}<option value="{{ college.pk }}">{{ college.name }}</option>{% endfor %}
+              </select>
+              <label class="sr-only" for="newProgramName">New program name</label>
+              <input id="newProgramName" name="name" maxlength="255" required placeholder="New program under that college"
+                class="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100" />
+              <button type="submit" class="rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800">Add program</button>
+            </form>
+          </div>
+
+          {% comment %} One table: each college, with its programs beneath {% endcomment %}
+          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="border-b border-slate-100 px-5 py-3 text-sm text-slate-500">
+              {{ college_count }} college{{ college_count|pluralize }} · {{ program_count }} program{{ program_count|pluralize }}
+            </div>
+
+            <ul class="divide-y divide-slate-100">
+              {% for group in groups %}
+                <li class="bg-slate-50/70 px-5 py-3">
+                  <form method="post" class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="edit_college" />
+                    <input type="hidden" name="college_id" value="{{ group.college.pk }}" />
+                    <input name="name" value="{{ group.college.name }}" maxlength="120" required aria-label="College name"
+                      class="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-2 py-1 text-sm font-bold text-slate-900 hover:border-slate-200 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-100" />
+                    <div class="flex flex-wrap items-center gap-2">
+                      <span class="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-slate-600 ring-1 ring-slate-200">{{ group.programs|length }} program{{ group.programs|length|pluralize }}</span>
+                      {% if group.college.is_active %}
+                        <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">Active</span>
+                      {% else %}
+                        <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-500 ring-1 ring-slate-200">Inactive</span>
+                      {% endif %}
+                      <button type="submit" class="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">Save</button>
+                    </div>
+                  </form>
+                  <form method="post" class="mt-1 text-right">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="toggle_college" />
+                    <input type="hidden" name="college_id" value="{{ group.college.pk }}" />
+                    <button type="submit" class="text-xs font-semibold {% if group.college.is_active %}text-rose-700 hover:text-rose-800{% else %}text-emerald-700 hover:text-emerald-800{% endif %}">
+                      {% if group.college.is_active %}Deactivate college{% else %}Activate college{% endif %}
+                    </button>
+                  </form>
+                </li>
+
+                {% for program in group.programs %}
+                  <li class="px-5 py-3 pl-10">
+                    <form method="post" class="flex flex-col gap-2 lg:flex-row lg:items-center">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="edit_program" />
+                      <input type="hidden" name="program_id" value="{{ program.pk }}" />
+                      <span class="text-slate-300" aria-hidden="true">↳</span>
+                      <input name="name" value="{{ program.name }}" maxlength="255" required aria-label="Program name"
+                        class="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-2 py-1 text-sm text-slate-800 hover:border-slate-200 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-100 {% if not program.is_active %}text-slate-400 line-through{% endif %}" />
+                      <div class="flex flex-wrap items-center gap-2">
+                        <label class="sr-only" for="program-college-{{ program.pk }}">College</label>
+                        <select id="program-college-{{ program.pk }}" name="college_id" class="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100">
+                          <option value="">No college</option>
+                          {% for option in college_options %}<option value="{{ option.pk }}"{% if program.college_id == option.pk %} selected{% endif %}>{{ option.name|truncatechars:40 }}</option>{% endfor %}
+                        </select>
+                        <button type="submit" class="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">Save</button>
+                        {% if program.is_active %}
+                          <span class="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 ring-1 ring-emerald-100">Active</span>
+                        {% else %}
+                          <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-500 ring-1 ring-slate-200">Inactive</span>
+                        {% endif %}
+                      </div>
+                    </form>
+                    <form method="post" class="mt-1 text-right">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="toggle_program" />
+                      <input type="hidden" name="program_id" value="{{ program.pk }}" />
+                      <button type="submit" class="text-xs font-semibold {% if program.is_active %}text-rose-700 hover:text-rose-800{% else %}text-emerald-700 hover:text-emerald-800{% endif %}">
+                        {% if program.is_active %}Deactivate{% else %}Activate{% endif %}
+                      </button>
+                    </form>
+                  </li>
+                {% empty %}
+                  <li class="px-5 py-3 pl-10 text-xs italic text-slate-500">No programs under this college yet.</li>
+                {% endfor %}
+                {% if group.college.is_active %}
+                  <li class="px-5 py-3 pl-10">
+                    <form method="post" class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="add_program" />
+                      <input type="hidden" name="college_id" value="{{ group.college.pk }}" />
+                      <span class="text-emerald-500" aria-hidden="true">+</span>
+                      <label class="sr-only" for="add-under-{{ group.college.pk }}">Add a program under {{ group.college.name }}</label>
+                      <input id="add-under-{{ group.college.pk }}" name="name" maxlength="255" required placeholder="Add a program under this college"
+                        class="min-w-0 flex-1 rounded-lg border border-dashed border-slate-300 bg-white px-2 py-1 text-sm focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100" />
+                      <button type="submit" class="rounded-lg bg-emerald-700 px-2.5 py-1 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-800">Add</button>
+                    </form>
+                  </li>
+                {% endif %}
+              {% endfor %}
+
+              {% if unassigned_programs %}
+                <li class="bg-amber-50/70 px-5 py-3">
+                  <span class="text-xs font-bold uppercase tracking-[0.14em] text-amber-800">No college assigned</span>
+                </li>
+                {% for program in unassigned_programs %}
+                  <li class="px-5 py-3 pl-10">
+                    <form method="post" class="flex flex-col gap-2 lg:flex-row lg:items-center">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="edit_program" />
+                      <input type="hidden" name="program_id" value="{{ program.pk }}" />
+                      <span class="text-slate-300" aria-hidden="true">↳</span>
+                      <input name="name" value="{{ program.name }}" maxlength="255" required aria-label="Program name"
+                        class="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-2 py-1 text-sm text-slate-800 hover:border-slate-200 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-100" />
+                      <div class="flex flex-wrap items-center gap-2">
+                        <label class="sr-only" for="unassigned-college-{{ program.pk }}">College</label>
+                        <select id="unassigned-college-{{ program.pk }}" name="college_id" class="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100">
+                          <option value="">No college</option>
+                          {% for option in college_options %}<option value="{{ option.pk }}">{{ option.name|truncatechars:40 }}</option>{% endfor %}
+                        </select>
+                        <button type="submit" class="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">Save</button>
+                      </div>
+                    </form>
+                    <form method="post" class="mt-1 text-right">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="toggle_program" />
+                      <input type="hidden" name="program_id" value="{{ program.pk }}" />
+                      <button type="submit" class="text-xs font-semibold {% if program.is_active %}text-rose-700 hover:text-rose-800{% else %}text-emerald-700 hover:text-emerald-800{% endif %}">
+                        {% if program.is_active %}Deactivate{% else %}Activate{% endif %}
+                      </button>
+                    </form>
+                  </li>
+                {% endfor %}
+              {% endif %}
+
+              {% if not groups and not unassigned_programs %}
+                <li class="px-5 py-10 text-center text-sm text-slate-500">No colleges or programs yet. Add a college above to start.</li>
+              {% endif %}
+            </ul>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    {% include 'core/_result_modal.html' with message=action_message error=action_error %}
+    <script src="{% static 'core/js/sidebar-groups.js' %}"></script>
+  </body>
+</html>

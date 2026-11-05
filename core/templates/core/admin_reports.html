@@ -1,0 +1,260 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Match | Reports &amp; Export</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <div data-app-layout class="min-h-screen lg:grid lg:grid-cols-[280px_1fr]">
+      <aside data-app-sidebar class="sticky top-0 max-h-screen overflow-y-auto z-30 bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900 px-5 py-6 text-white shadow-2xl">
+        <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <img
+            src="{% static 'core/images/Logo.png' %}"
+            alt="Food Match Logo"
+            class="h-14 w-14 rounded-full border border-white/15 bg-white object-cover"
+          />
+          <div>
+            <p class="text-2xl font-bold tracking-tight">
+              FOOD <span class="text-emerald-400">MATCH</span>
+            </p>
+            <p class="text-xs uppercase tracking-[0.25em] text-emerald-100/80">{% if is_super_admin %}Super Admin Portal{% else %}Admin Portal{% endif %}</p>
+          </div>
+        </div>
+
+        {% include 'core/_nav_admin.html' %}
+      </aside>
+
+      <main class="overflow-hidden">
+        <div class="relative z-40 border-b border-slate-200 bg-white/85 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
+          {% include 'core/_sidebar_toggle.html' %}
+          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Data Export</p>
+              <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">Reports &amp; Export</h1>
+            </div>
+
+            <div class="flex items-center gap-4 self-end md:self-auto">
+              <p class="hidden text-lg font-semibold text-slate-900 sm:block">
+                Welcome, {{ admin_name }}
+              </p>
+              {% include 'core/_account_menu.html' with menu_name=admin_name menu_role=admin_role menu_super=is_super_admin %}
+            </div>
+          </div>
+        </div>
+
+        <section class="space-y-6 px-5 py-6 sm:px-8">
+          <div class="rounded-[2rem] border border-white/60 bg-white/75 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur sm:p-8">
+            <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">Overview</p>
+                <h2 class="mt-2 text-3xl font-black tracking-tight text-slate-900">System Reports</h2>
+                <p class="mt-2 max-w-3xl text-sm text-slate-600 sm:text-base">
+                  Submission activity, similarity results, and repository coverage at a glance. Hover a chart for exact values, or open its data table.
+                </p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <a href="{% url 'admin_export_submissions_csv' %}" class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12m0 0-4-4m4 4 4-4M4 20h16"></path></svg>
+                  Submissions CSV
+                </a>
+                <a href="{% url 'admin_export_repository_csv' %}" class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12m0 0-4-4m4 4 4-4M4 20h16"></path></svg>
+                  Repository CSV
+                </a>
+                <a href="{% url 'admin_export_users_csv' %}" class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12m0 0-4-4m4 4 4-4M4 20h16"></path></svg>
+                  Users CSV
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {% comment %} HEADLINE NUMBERS {% endcomment %}
+          <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div class="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Total Submissions</p>
+              <p class="mt-2 text-4xl font-black text-slate-900">{{ kpi.total_submissions }}</p>
+              <p class="mt-1 text-sm text-slate-500">{{ kpi.pending_submissions }} awaiting review</p>
+            </div>
+            <div class="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Approval Rate</p>
+              <p class="mt-2 text-4xl font-black text-slate-900">{% if kpi.approval_rate is not None %}{{ kpi.approval_rate }}%{% else %}—{% endif %}</p>
+              <p class="mt-1 text-sm text-slate-500">of {{ kpi.reviewed_total }} reviewed submission{{ kpi.reviewed_total|pluralize }}</p>
+            </div>
+            <div class="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Repository Studies</p>
+              <p class="mt-2 text-4xl font-black text-slate-900">{{ kpi.repository_total }}</p>
+              <p class="mt-1 text-sm text-slate-500">indexed for similarity checking</p>
+            </div>
+            <div class="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Average Similarity</p>
+              <p class="mt-2 text-4xl font-black text-slate-900">{% if kpi.average_similarity is not None %}{{ kpi.average_similarity }}%{% else %}—{% endif %}</p>
+              <p class="mt-1 flex items-center gap-1.5 text-sm text-slate-500">
+                {% if kpi.high_checks %}
+                  <svg class="h-4 w-4 shrink-0 text-red-600" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path></svg>
+                  <span>{{ kpi.high_checks }} high-similarity of {{ kpi.total_checks }} check{{ kpi.total_checks|pluralize }}</span>
+                {% else %}
+                  <span>across {{ kpi.total_checks }} check{{ kpi.total_checks|pluralize }}</span>
+                {% endif %}
+              </p>
+            </div>
+          </div>
+
+          {% comment %} SUBMISSIONS OVER TIME {% endcomment %}
+          <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+            <h3 class="text-lg font-bold text-slate-900">Submissions per Month</h3>
+            <p class="mt-1 text-sm text-slate-500">Last {{ months_shown }} months, split by review status.</p>
+            <div class="relative mt-5 h-80">
+              <canvas id="chartSubmissionsByMonth" role="img" aria-label="Stacked column chart of research submissions per month by status"></canvas>
+            </div>
+            <details class="mt-4 group">
+              <summary class="cursor-pointer text-sm font-semibold text-emerald-700 hover:text-emerald-800">Show data table</summary>
+              <div class="mt-3 overflow-x-auto rounded-xl border border-slate-200">
+                <table class="min-w-full text-left text-sm">
+                  <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+                    <tr>
+                      <th class="px-4 py-2 font-semibold">Month</th>
+                      {% for label in status_labels %}<th class="px-4 py-2 text-right font-semibold">{{ label }}</th>{% endfor %}
+                      <th class="px-4 py-2 text-right font-semibold">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 tabular-nums text-slate-700">
+                    {% for row in submissions_month_rows %}
+                      <tr>
+                        <td class="px-4 py-2">{{ row.label }}</td>
+                        {% for value in row.values %}<td class="px-4 py-2 text-right">{{ value }}</td>{% endfor %}
+                        <td class="px-4 py-2 text-right font-semibold text-slate-900">{{ row.total }}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </section>
+
+          <div class="grid gap-6 xl:grid-cols-2">
+            {% comment %} SIMILARITY LEVELS {% endcomment %}
+            <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+              <h3 class="text-lg font-bold text-slate-900">Similarity Check Results</h3>
+              <p class="mt-1 text-sm text-slate-500">Number of checks by top similarity level.</p>
+              {% if kpi.total_checks %}
+                <div class="relative mt-5 h-72">
+                  <canvas id="chartSimilarityLevels" role="img" aria-label="Column chart of similarity checks by level"></canvas>
+                </div>
+              {% else %}
+                <p class="mt-5 rounded-xl border border-dashed border-slate-200 px-4 py-10 text-center text-sm text-slate-500">No similarity checks have been run yet.</p>
+              {% endif %}
+              <details class="mt-4">
+                <summary class="cursor-pointer text-sm font-semibold text-emerald-700 hover:text-emerald-800">Show data table</summary>
+                <div class="mt-3 overflow-x-auto rounded-xl border border-slate-200">
+                  <table class="min-w-full text-left text-sm">
+                    <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+                      <tr><th class="px-4 py-2 font-semibold">Level</th><th class="px-4 py-2 text-right font-semibold">Checks</th></tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 tabular-nums text-slate-700">
+                      {% for level in similarity_levels %}
+                        <tr><td class="px-4 py-2">{{ level.label }}</td><td class="px-4 py-2 text-right">{{ level.count }}</td></tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            </section>
+
+            {% comment %} SUBMISSIONS BY COLLEGE {% endcomment %}
+            <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+              <h3 class="text-lg font-bold text-slate-900">Submissions by College</h3>
+              <p class="mt-1 text-sm text-slate-500">All submissions, grouped by the submitting student's college.</p>
+              {% if kpi.total_submissions %}
+                <div class="relative mt-5 h-72">
+                  <canvas id="chartSubmissionsByCollege" role="img" aria-label="Bar chart of submissions by college"></canvas>
+                </div>
+              {% else %}
+                <p class="mt-5 rounded-xl border border-dashed border-slate-200 px-4 py-10 text-center text-sm text-slate-500">No submissions yet.</p>
+              {% endif %}
+              <details class="mt-4">
+                <summary class="cursor-pointer text-sm font-semibold text-emerald-700 hover:text-emerald-800">Show data table</summary>
+                <div class="mt-3 overflow-x-auto rounded-xl border border-slate-200">
+                  <table class="min-w-full text-left text-sm">
+                    <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+                      <tr><th class="px-4 py-2 font-semibold">College</th><th class="px-4 py-2 text-right font-semibold">Submissions</th></tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 tabular-nums text-slate-700">
+                      {% for college in submissions_by_college %}
+                        <tr><td class="px-4 py-2">{{ college.full_label }}</td><td class="px-4 py-2 text-right">{{ college.count }}</td></tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            </section>
+
+            {% comment %} RESEARCH BY CATEGORY {% endcomment %}
+            <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+              <h3 class="text-lg font-bold text-slate-900">Research by Food Category</h3>
+              <p class="mt-1 text-sm text-slate-500">Studies in the repository, most-covered categories first.</p>
+              {% if research_by_category %}
+                <div class="relative mt-5" style="height: {{ category_chart_height }}px;">
+                  <canvas id="chartResearchByCategory" role="img" aria-label="Bar chart of repository studies by food category"></canvas>
+                </div>
+              {% else %}
+                <p class="mt-5 rounded-xl border border-dashed border-slate-200 px-4 py-10 text-center text-sm text-slate-500">The repository is empty.</p>
+              {% endif %}
+              <details class="mt-4">
+                <summary class="cursor-pointer text-sm font-semibold text-emerald-700 hover:text-emerald-800">Show data table</summary>
+                <div class="mt-3 overflow-x-auto rounded-xl border border-slate-200">
+                  <table class="min-w-full text-left text-sm">
+                    <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+                      <tr><th class="px-4 py-2 font-semibold">Category</th><th class="px-4 py-2 text-right font-semibold">Studies</th></tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 tabular-nums text-slate-700">
+                      {% for category in research_by_category %}
+                        <tr><td class="px-4 py-2">{{ category.label }}</td><td class="px-4 py-2 text-right">{{ category.count }}</td></tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            </section>
+
+            {% comment %} REPOSITORY BY PUBLISHED YEAR {% endcomment %}
+            <section class="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+              <h3 class="text-lg font-bold text-slate-900">Repository by Published Year</h3>
+              <p class="mt-1 text-sm text-slate-500">How the collection has grown, by each study's publication year.</p>
+              {% if repository_by_year %}
+                <div class="relative mt-5 h-72">
+                  <canvas id="chartRepositoryByYear" role="img" aria-label="Column chart of repository studies by published year"></canvas>
+                </div>
+              {% else %}
+                <p class="mt-5 rounded-xl border border-dashed border-slate-200 px-4 py-10 text-center text-sm text-slate-500">No studies have a published year yet.</p>
+              {% endif %}
+              <details class="mt-4">
+                <summary class="cursor-pointer text-sm font-semibold text-emerald-700 hover:text-emerald-800">Show data table</summary>
+                <div class="mt-3 overflow-x-auto rounded-xl border border-slate-200">
+                  <table class="min-w-full text-left text-sm">
+                    <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+                      <tr><th class="px-4 py-2 font-semibold">Year</th><th class="px-4 py-2 text-right font-semibold">Studies</th></tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 tabular-nums text-slate-700">
+                      {% for year in repository_by_year %}
+                        <tr><td class="px-4 py-2">{{ year.label }}</td><td class="px-4 py-2 text-right">{{ year.count }}</td></tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="{% static 'core/js/sidebar-groups.js' %}"></script>
+    {{ chart_data|json_script:"reportsChartData" }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="{% static 'core/js/pages/admin-reports-2.js' %}"></script>
+  </body>
+</html>

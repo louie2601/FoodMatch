@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 2300" width="1100" height="2300" font-family="Segoe UI, Arial, Helvetica, sans-serif" role="img" aria-label="System Flowchart of FOOD MATCH">
+<title>System Flowchart of FOOD MATCH</title>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10z" fill="#334155"/></marker>
+  <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10z" fill="#047857"/></marker>
+  
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="550.0" y="40.0" font-size="22" font-weight="bold" fill="#0f172a" text-anchor="middle">System Flowchart of FOOD MATCH</text>
+<text x="550.0" y="64.0" font-size="14" font-weight="normal" fill="#475569" text-anchor="middle">From sign-in to an approved study in the repository</text>
+<rect x="460.0" y="99.0" width="180.0" height="52.0" rx="26" fill="#047857" stroke="#047857" stroke-width="1.5"/>
+<text x="550.0" y="131.0" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle">Start</text>
+<rect x="420.0" y="221.0" width="260.0" height="64.0" rx="4" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="550.0" y="258.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Open the FOOD MATCH website</text>
+<path d="M550 333.0 L665.0 381 L550 429.0 L435.0 381 Z" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+<text x="550.0" y="377.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Has an</text>
+<text x="550.0" y="395.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">account?</text>
+<rect x="770.0" y="349.0" width="260.0" height="64.0" rx="4" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="900.0" y="377.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Register research group</text>
+<text x="900.0" y="395.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">(members, program, college)</text>
+<path d="M433.0 477 H685.0 L667.0 541 H415.0 Z" fill="#f0f9ff" stroke="#0369a1" stroke-width="1.8"/>
+<text x="550.0" y="505.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Enter username</text>
+<text x="550.0" y="523.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">and password</text>
+<path d="M550 589.0 L665.0 637 L550 685.0 L435.0 637 Z" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+<text x="550.0" y="633.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Valid and active</text>
+<text x="550.0" y="651.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">account?</text>
+<rect x="770.0" y="605.0" width="260.0" height="64.0" rx="4" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="900.0" y="633.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Show error or</text>
+<text x="900.0" y="651.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">deactivated-account notice</text>
+<path d="M550 717.0 L665.0 765 L550 813.0 L435.0 765 Z" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+<text x="550.0" y="770.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">User role?</text>
+<path d="M433.0 861 H685.0 L667.0 925 H415.0 Z" fill="#f0f9ff" stroke="#0369a1" stroke-width="1.8"/>
+<text x="550.0" y="898.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Upload research PDF</text>
+<rect x="420.0" y="989.0" width="260.0" height="64.0" rx="4" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="550.0" y="1017.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Run similarity check</text>
+<text x="550.0" y="1035.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">(TF-IDF + cosine similarity)</text>
+<path d="M433.0 1117 H685.0 L667.0 1181 H415.0 Z" fill="#f0f9ff" stroke="#0369a1" stroke-width="1.8"/>
+<text x="550.0" y="1145.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Display top 5 matches</text>
+<text x="550.0" y="1163.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">and similarity scores</text>
+<path d="M550 1229.0 L665.0 1277 L550 1325.0 L435.0 1277 Z" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+<text x="550.0" y="1273.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">All matches</text>
+<text x="550.0" y="1291.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">≤ 30%?</text>
+<rect x="770.0" y="1245.0" width="260.0" height="64.0" rx="4" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="900.0" y="1282.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Revise the paper</text>
+<path d="M433.0 1373 H685.0 L667.0 1437 H415.0 Z" fill="#f0f9ff" stroke="#0369a1" stroke-width="1.8"/>
+<text x="550.0" y="1401.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Submit research</text>
+<text x="550.0" y="1419.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">with details and file</text>
+<rect x="420.0" y="1501.0" width="260.0" height="64.0" rx="4" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="550.0" y="1529.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Save as Pending and</text>
+<text x="550.0" y="1547.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">notify Admins</text>
+<rect x="420.0" y="1629.0" width="260.0" height="64.0" rx="4" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="550.0" y="1657.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Admin reviews the</text>
+<text x="550.0" y="1675.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">submission</text>
+<path d="M550 1741.0 L665.0 1789 L550 1837.0 L435.0 1789 Z" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+<text x="550.0" y="1794.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Approve?</text>
+<rect x="770.0" y="1757.0" width="260.0" height="64.0" rx="4" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="900.0" y="1785.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Reject with notes and</text>
+<text x="900.0" y="1803.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">notify the group</text>
+<rect x="420.0" y="1885.0" width="260.0" height="64.0" rx="4" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="550.0" y="1913.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Add study to the</text>
+<text x="550.0" y="1931.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">research repository</text>
+<rect x="420.0" y="2013.0" width="260.0" height="64.0" rx="4" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="550.0" y="2041.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Notify the group</text>
+<text x="550.0" y="2059.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">of the approval</text>
+<rect x="460.0" y="2147.0" width="180.0" height="52.0" rx="26" fill="#047857" stroke="#047857" stroke-width="1.5"/>
+<text x="550.0" y="2179.0" font-size="16" font-weight="bold" fill="#ffffff" text-anchor="middle">End</text>
+<rect x="60.0" y="861.0" width="230.0" height="64.0" rx="4" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="175.0" y="898.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Open admin portal</text>
+<path d="M175 973.0 L275.0 1021 L175 1069.0 L75.0 1021 Z" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+<text x="175.0" y="1017.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Module</text>
+<text x="175.0" y="1035.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">granted?</text>
+<rect x="60.0" y="1117.0" width="230.0" height="64.0" rx="4" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="175.0" y="1154.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Show Access Denied</text>
+<rect x="60.0" y="1373.0" width="230.0" height="64.0" rx="4" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="175.0" y="1401.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Open Manage</text>
+<text x="175.0" y="1419.0" font-size="14" font-weight="normal" fill="#0f172a" text-anchor="middle">Submissions</text>
+<path d="M550 151 V221" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 285 V333" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 429 V477" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 541 V589" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 685 V717" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 813 V861" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 925 V989" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 1053 V1117" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 1181 V1229" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 1325 V1373" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 1437 V1501" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 1565 V1629" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 1693 V1741" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 1837 V1885" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 1949 V2013" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M550 2077 V2147" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="560.0" y="451.0" font-size="13" font-weight="bold" fill="#047857" text-anchor="start">Yes</text>
+<text x="560.0" y="707.0" font-size="13" font-weight="bold" fill="#047857" text-anchor="start">Yes</text>
+<text x="560.0" y="835.0" font-size="13" font-weight="bold" fill="#047857" text-anchor="start">Student</text>
+<text x="560.0" y="1347.0" font-size="13" font-weight="bold" fill="#047857" text-anchor="start">Yes</text>
+<text x="560.0" y="1859.0" font-size="13" font-weight="bold" fill="#047857" text-anchor="start">Yes</text>
+<path d="M665 381 H770" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="675.0" y="373.0" font-size="13" font-weight="bold" fill="#b91c1c" text-anchor="start">No</text>
+<path d="M900 413 V509 H685" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M665 637 H770" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="675.0" y="629.0" font-size="13" font-weight="bold" fill="#b91c1c" text-anchor="start">No</text>
+<path d="M900 605 V527 H675" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M665 1277 H770" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="675.0" y="1269.0" font-size="13" font-weight="bold" fill="#b91c1c" text-anchor="start">No</text>
+<path d="M900 1245 V893 H685" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M665 1789 H770" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="675.0" y="1781.0" font-size="13" font-weight="bold" fill="#b91c1c" text-anchor="start">No</text>
+<path d="M900 1757 V1309" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M435 765 H175 V861" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="420.0" y="757.0" font-size="13" font-weight="bold" fill="#047857" text-anchor="end">Admin / Super Admin</text>
+<path d="M175 925 V973" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M175 1069 V1117" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="185.0" y="1091.0" font-size="13" font-weight="bold" fill="#b91c1c" text-anchor="start">No</text>
+<path d="M275 1021 H335 V1405 H290" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="283.0" y="1013.0" font-size="13" font-weight="bold" fill="#047857" text-anchor="start">Yes</text>
+<path d="M175 1437 V1661 H420" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path d="M175 1181 V1247 H35 V2173 H460" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arrow)"/>
+<text x="40.0" y="2220.0" font-size="13" font-weight="bold" fill="#475569" text-anchor="start">Symbols</text>
+<rect x="40.0" y="2234.0" width="70.0" height="26.0" rx="13" fill="#047857" stroke="#047857" stroke-width="1.5"/>
+<text x="120.0" y="2252.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Start / End</text>
+<rect x="230.0" y="2234.0" width="70.0" height="26.0" rx="3" fill="#ffffff" stroke="#334155" stroke-width="1.5"/>
+<text x="310.0" y="2252.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Process</text>
+<path d="M412 2234 H480 L470 2260 H402 Z" fill="#f0f9ff" stroke="#0369a1" stroke-width="1.5"/>
+<text x="492.0" y="2252.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Input / Output</text>
+<path d="M640 2230 L676 2247 L640 2264 L604 2247 Z" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+<text x="688.0" y="2252.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Decision</text>
+</svg>

@@ -1,0 +1,189 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Food Match | Login{% endblock %}
+
+{% block content %}
+<section class="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-slate-100 px-4 py-8 md:px-6 md:py-12">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.14),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(15,23,42,0.08),_transparent_30%)]"></div>
+  <div class="mx-auto max-w-5xl">
+    <div class="relative grid overflow-hidden rounded-[2rem] border border-white/70 bg-white/80 shadow-[0_24px_80px_rgba(15,23,42,0.14)] backdrop-blur lg:grid-cols-[1fr_1.05fr]">
+      <div
+        class="relative min-h-[280px] overflow-hidden bg-slate-900 lg:min-h-[600px]"
+        style="background-image: url('{% static "core/images/Homebg.jpg" %}'); background-size: cover; background-position: center;"
+      >
+        <div class="absolute inset-0 bg-gradient-to-br from-slate-950/85 via-slate-900/65 to-emerald-900/55"></div>
+        <div class="relative flex h-full flex-col justify-between p-6 text-white sm:p-7 lg:p-8">
+          <div class="flex items-center gap-4">
+            <img
+              src="{% static 'core/images/Logo.png' %}"
+              alt="Food Match Logo"
+              class="h-14 w-14 rounded-full border border-white/60 bg-white object-cover shadow-lg shadow-black/20 sm:h-16 sm:w-16"
+            />
+            <div class="flex items-baseline gap-2">
+              <span class="text-3xl font-semibold tracking-wide text-white">FOOD</span>
+              <span class="text-3xl font-bold tracking-wide text-green-500">MATCH</span>
+            </div>
+          </div>
+
+          <div class="max-w-sm space-y-4 pb-4 lg:pb-8">
+            <span class="inline-flex rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">
+              Smart Food Research
+            </span>
+            <p class="text-2xl font-semibold leading-tight sm:text-[1.9rem]">
+              Detect, Analyze, Discover
+            </p>
+            <p class="max-w-xs text-base leading-relaxed text-white/90">
+              Powering food research with AI.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center bg-white/70 px-6 py-8 sm:px-8 lg:px-10">
+        <div class="mx-auto w-full max-w-sm">
+          <div class="mb-8">
+            <span class="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700 ring-1 ring-emerald-100">
+              Sign In
+            </span>
+            <h1 class="mt-4 text-3xl font-bold tracking-tight text-slate-950 sm:text-[2rem]">Welcome Back!</h1>
+            <p class="mt-2 text-base text-slate-600">Login to continue to your Food Match account.</p>
+          </div>
+
+          {% for message in messages %}
+            <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 shadow-sm">{{ message }}</div>
+          {% endfor %}
+
+          {% if form.non_field_errors %}
+            <div class="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 shadow-sm">
+              {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div
+            id="loginLockNotice"
+            data-lock-seconds="{{ lock_seconds_remaining }}"
+            role="alert"
+            aria-live="polite"
+            class="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-sm{% if not lock_seconds_remaining %} hidden{% endif %}"
+          >
+            Too many failed attempts. Please wait <span id="loginLockCountdown" class="font-bold">{{ lock_seconds_remaining }}</span> second<span id="loginLockPlural">{% if lock_seconds_remaining != 1 %}s{% endif %}</span> before trying again.
+          </div>
+
+          <form method="post" class="space-y-6" id="loginForm">
+            {% csrf_token %}
+
+            <div>
+              <label for="{{ form.username.id_for_label }}" class="mb-2 block text-xl font-semibold text-slate-900">
+                {{ form.username.label }}<span class="ml-1 text-red-600">*</span>
+              </label>
+              {{ form.username }}
+              {% if form.username.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.username.errors|join:", " }}</p>
+              {% endif %}
+            </div>
+
+            <div>
+              <label for="{{ form.password.id_for_label }}" class="mb-2 block text-xl font-semibold text-slate-900">
+                {{ form.password.label }}<span class="ml-1 text-red-600">*</span>
+              </label>
+              <div class="relative">
+                {{ form.password }}
+                <button
+                  type="button"
+                  class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700"
+                  aria-label="Toggle password visibility"
+                  data-password-toggle
+                >
+                  <svg
+                    class="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1.8"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M4 20 20 4"></path>
+                  </svg>
+                </button>
+              </div>
+              {% if form.password.errors %}
+                <p class="mt-2 text-sm text-red-600">{{ form.password.errors|join:", " }}</p>
+              {% endif %}
+            </div>
+
+            <div class="flex flex-col gap-3 text-base text-slate-900 sm:flex-row sm:items-center sm:justify-between">
+              <label for="{{ form.remember_me.id_for_label }}" class="flex items-center gap-3">
+                {{ form.remember_me }}
+                <span>{{ form.remember_me.label }}</span>
+              </label>
+              {% if show_forgot_password %}
+                <a href="{% url 'forgot_password' %}" class="text-slate-800 transition hover:text-green-700">Forgot Password?</a>
+              {% endif %}
+            </div>
+
+            <button
+              type="submit"
+              id="loginSubmit"
+              class="w-full rounded-2xl bg-gradient-to-r from-emerald-600 to-green-700 px-5 py-3 text-xl font-semibold text-white shadow-lg shadow-emerald-200 transition duration-200 hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-800 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+            >
+              <span data-login-label>Login</span>
+            </button>
+          </form>
+
+          <p class="mt-6 text-base text-slate-700">
+            Don't have an account?
+            <a href="{% url 'register' %}" class="font-semibold text-emerald-700 hover:text-emerald-800">Register here</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if deactivated_notice %}
+  <div data-deactivated-modal class="fixed inset-0 z-[60] flex items-center justify-center px-4 py-6" role="alertdialog" aria-modal="true" aria-labelledby="deactivatedTitle" aria-describedby="deactivatedBody">
+    <div data-close-deactivated class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"></div>
+    <div class="relative z-10 w-full max-w-md overflow-hidden rounded-[1.5rem] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.35)]">
+      <div class="h-1 bg-gradient-to-r from-rose-500 via-red-500 to-rose-600"></div>
+      <div class="px-6 pt-6 pb-5 text-center">
+        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-rose-50 text-rose-600 ring-8 ring-rose-50/60">
+          <svg class="h-8 w-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="m5.6 5.6 12.8 12.8"></path>
+          </svg>
+        </div>
+        <h2 id="deactivatedTitle" class="mt-4 text-xl font-black tracking-tight text-slate-900">Your account is deactivated</h2>
+        <div id="deactivatedBody">
+          <p class="mt-2 text-sm text-slate-600">
+            You can't sign in right now{% if deactivated_notice.date %}; this account was deactivated on {{ deactivated_notice.date }}{% endif %}.
+          </p>
+          {% if deactivated_notice.reason %}
+            <div class="mt-4 rounded-xl border border-rose-100 bg-rose-50/70 px-4 py-3 text-left">
+              <p class="text-[11px] font-bold uppercase tracking-[0.16em] text-rose-700">Reason</p>
+              <p class="mt-1 whitespace-pre-line text-sm text-slate-800">{{ deactivated_notice.reason }}</p>
+            </div>
+          {% endif %}
+          <p class="mt-4 text-sm text-slate-600">
+            If you think this is a mistake, contact
+            {% if contact_email %}<a href="mailto:{{ contact_email }}" class="font-semibold text-emerald-700 hover:text-emerald-800">{{ contact_email }}</a>{% else %}the research office{% endif %}.
+          </p>
+        </div>
+      </div>
+      <div class="flex justify-end border-t border-slate-100 bg-slate-50/60 px-6 py-3">
+        <button type="button" data-close-deactivated class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-emerald-200 transition hover:-translate-y-0.5">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+  <script src="{% static 'core/js/pages/login-1.js' %}"></script>
+{% endif %}
+
+<script src="{% static 'core/js/pages/login-2.js' %}"></script>
+{% endblock %}

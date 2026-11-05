@@ -1,0 +1,286 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1780 1380" width="1780" height="1380" font-family="Segoe UI, Arial, Helvetica, sans-serif" role="img" aria-label="Entity Relationship Diagram of FOOD MATCH">
+<title>Entity Relationship Diagram of FOOD MATCH</title>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10z" fill="#334155"/></marker>
+  <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10z" fill="#047857"/></marker>
+  
+  <marker id="one" viewBox="0 0 24 20" refX="24" refY="10" markerWidth="24" markerHeight="20" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+    <path d="M10 2V18M15 2V18" stroke="#334155" stroke-width="1.6" fill="none"/></marker>
+  <marker id="zero-one" viewBox="0 0 24 20" refX="24" refY="10" markerWidth="24" markerHeight="20" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+    <circle cx="8" cy="10" r="4.5" fill="#ffffff" stroke="#334155" stroke-width="1.6"/><path d="M17 2V18" stroke="#334155" stroke-width="1.6"/></marker>
+  <marker id="zero-many" viewBox="0 0 24 20" refX="24" refY="10" markerWidth="24" markerHeight="20" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+    <circle cx="6" cy="10" r="4.5" fill="#ffffff" stroke="#334155" stroke-width="1.6"/><path d="M12 10L24 2M12 10L24 10M12 10L24 18" stroke="#334155" stroke-width="1.6" fill="none"/></marker>
+  <marker id="one-many" viewBox="0 0 24 20" refX="24" refY="10" markerWidth="24" markerHeight="20" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+    <path d="M8 2V18" stroke="#334155" stroke-width="1.6"/><path d="M12 10L24 2M12 10L24 10M12 10L24 18" stroke="#334155" stroke-width="1.6" fill="none"/></marker>
+
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="890.0" y="40.0" font-size="22" font-weight="bold" fill="#0f172a" text-anchor="middle">Entity Relationship Diagram of FOOD MATCH</text>
+<text x="890.0" y="64.0" font-size="14" font-weight="normal" fill="#475569" text-anchor="middle">Main database tables and their relationships (crow&#x27;s foot notation)</text>
+<rect x="755.0" y="470.0" width="250.0" height="251.0" rx="6" fill="#ffffff" stroke="#0f172a" stroke-width="1.8"/>
+<path d="M755 504 V476 Q755 470 761 470 H999 Q1005 470 1005 476 V504 Z" fill="#0f172a"/>
+<text x="880.0" y="492.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">USER</text>
+<text x="765.0" y="519.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="795.0" y="519.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="795.0" y="538.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">username</text>
+<text x="795.0" y="557.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">email</text>
+<text x="795.0" y="576.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">password (hash)</text>
+<text x="795.0" y="595.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">first_name</text>
+<text x="795.0" y="614.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">last_name</text>
+<text x="795.0" y="633.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">is_active</text>
+<text x="795.0" y="652.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">is_staff (Admin)</text>
+<text x="795.0" y="671.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">is_superuser</text>
+<text x="795.0" y="690.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">date_joined</text>
+<text x="795.0" y="709.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">last_login</text>
+<rect x="40.0" y="100.0" width="250.0" height="175.0" rx="6" fill="#ffffff" stroke="#047857" stroke-width="1.8"/>
+<path d="M40 134 V106 Q40 100 46 100 H284 Q290 100 290 106 V134 Z" fill="#047857"/>
+<text x="165.0" y="122.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">REGISTRATION_PROFILE</text>
+<text x="50.0" y="149.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="80.0" y="149.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="50.0" y="168.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="80.0" y="168.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">user_id</text>
+<text x="80.0" y="187.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">middle_name</text>
+<text x="80.0" y="206.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">login_as</text>
+<text x="80.0" y="225.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">program</text>
+<text x="80.0" y="244.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">college</text>
+<text x="80.0" y="263.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">group_name</text>
+<rect x="320.0" y="100.0" width="250.0" height="156.0" rx="6" fill="#ffffff" stroke="#047857" stroke-width="1.8"/>
+<path d="M320 134 V106 Q320 100 326 100 H564 Q570 100 570 106 V134 Z" fill="#047857"/>
+<text x="445.0" y="122.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">GROUP_MEMBER</text>
+<text x="330.0" y="149.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="360.0" y="149.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="330.0" y="168.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="360.0" y="168.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">user_id</text>
+<text x="360.0" y="187.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">first_name</text>
+<text x="360.0" y="206.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">middle_name</text>
+<text x="360.0" y="225.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">last_name</text>
+<text x="360.0" y="244.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">position</text>
+<rect x="755.0" y="100.0" width="250.0" height="137.0" rx="6" fill="#ffffff" stroke="#047857" stroke-width="1.8"/>
+<path d="M755 134 V106 Q755 100 761 100 H999 Q1005 100 1005 106 V134 Z" fill="#047857"/>
+<text x="880.0" y="122.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">ACCOUNT_DEACTIVATION</text>
+<text x="765.0" y="149.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="795.0" y="149.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="765.0" y="168.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="795.0" y="168.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">user_id</text>
+<text x="765.0" y="187.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="795.0" y="187.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">deactivated_by</text>
+<text x="795.0" y="206.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">reason</text>
+<text x="795.0" y="225.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">deactivated_at</text>
+<rect x="1040.0" y="100.0" width="250.0" height="175.0" rx="6" fill="#ffffff" stroke="#047857" stroke-width="1.8"/>
+<path d="M1040 134 V106 Q1040 100 1046 100 H1284 Q1290 100 1290 106 V134 Z" fill="#047857"/>
+<text x="1165.0" y="122.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">PASSWORD_RESET_OTP</text>
+<text x="1050.0" y="149.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="1080.0" y="149.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="1050.0" y="168.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="1080.0" y="168.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">user_id</text>
+<text x="1080.0" y="187.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">purpose</text>
+<text x="1080.0" y="206.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">code_hash</text>
+<text x="1080.0" y="225.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">expires_at</text>
+<text x="1080.0" y="244.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">attempts</text>
+<text x="1080.0" y="263.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">used_at</text>
+<rect x="1320.0" y="100.0" width="250.0" height="156.0" rx="6" fill="#ffffff" stroke="#047857" stroke-width="1.8"/>
+<path d="M1320 134 V106 Q1320 100 1326 100 H1564 Q1570 100 1570 106 V134 Z" fill="#047857"/>
+<text x="1445.0" y="122.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">PENDING_USER_INVITE</text>
+<text x="1330.0" y="149.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="1360.0" y="149.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="1330.0" y="168.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="1360.0" y="168.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">created_by</text>
+<text x="1360.0" y="187.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">username</text>
+<text x="1360.0" y="206.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">email</text>
+<text x="1360.0" y="225.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">password_hash</text>
+<text x="1360.0" y="244.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">login_as</text>
+<rect x="40.0" y="470.0" width="270.0" height="327.0" rx="6" fill="#ffffff" stroke="#047857" stroke-width="1.8"/>
+<path d="M40 504 V476 Q40 470 46 470 H304 Q310 470 310 476 V504 Z" fill="#047857"/>
+<text x="175.0" y="492.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">RESEARCH_SUBMISSION</text>
+<text x="50.0" y="519.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="80.0" y="519.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="50.0" y="538.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="80.0" y="538.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">student_id</text>
+<text x="50.0" y="557.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="80.0" y="557.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">food_category_id</text>
+<text x="80.0" y="576.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">title</text>
+<text x="80.0" y="595.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">authors</text>
+<text x="80.0" y="614.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">adviser</text>
+<text x="80.0" y="633.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">abstract</text>
+<text x="80.0" y="652.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">keywords</text>
+<text x="80.0" y="671.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">published_month</text>
+<text x="80.0" y="690.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">published_year</text>
+<text x="80.0" y="709.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">document</text>
+<text x="80.0" y="728.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">status</text>
+<text x="80.0" y="747.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">admin_notes</text>
+<text x="80.0" y="766.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">submitted_at</text>
+<text x="80.0" y="785.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">reviewed_at</text>
+<rect x="40.0" y="900.0" width="270.0" height="251.0" rx="6" fill="#ffffff" stroke="#047857" stroke-width="1.8"/>
+<path d="M40 934 V906 Q40 900 46 900 H304 Q310 900 310 906 V934 Z" fill="#047857"/>
+<text x="175.0" y="922.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">RESEARCH_PAPER</text>
+<text x="50.0" y="949.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="80.0" y="949.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="50.0" y="968.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="80.0" y="968.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">food_category_id</text>
+<text x="80.0" y="987.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">title</text>
+<text x="80.0" y="1006.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">authors</text>
+<text x="80.0" y="1025.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">adviser</text>
+<text x="80.0" y="1044.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">abstract</text>
+<text x="80.0" y="1063.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">keywords</text>
+<text x="80.0" y="1082.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">published_date</text>
+<text x="80.0" y="1101.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">published_month</text>
+<text x="80.0" y="1120.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">published_year</text>
+<text x="80.0" y="1139.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">created_at</text>
+<rect x="400.0" y="900.0" width="250.0" height="137.0" rx="6" fill="#ffffff" stroke="#047857" stroke-width="1.8"/>
+<path d="M400 934 V906 Q400 900 406 900 H644 Q650 900 650 906 V934 Z" fill="#047857"/>
+<text x="525.0" y="922.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">FOOD_CATEGORY</text>
+<text x="410.0" y="949.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="440.0" y="949.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="410.0" y="968.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="440.0" y="968.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">parent_id</text>
+<text x="440.0" y="987.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">name</text>
+<text x="440.0" y="1006.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">image</text>
+<text x="440.0" y="1025.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">created_at</text>
+<rect x="830.0" y="900.0" width="260.0" height="213.0" rx="6" fill="#ffffff" stroke="#047857" stroke-width="1.8"/>
+<path d="M830 934 V906 Q830 900 836 900 H1084 Q1090 900 1090 906 V934 Z" fill="#047857"/>
+<text x="960.0" y="922.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">USER_DELETION_REQUEST</text>
+<text x="840.0" y="949.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="870.0" y="949.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="840.0" y="968.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="870.0" y="968.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">target_user_id</text>
+<text x="840.0" y="987.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="870.0" y="987.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">requested_by</text>
+<text x="840.0" y="1006.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="870.0" y="1006.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">reviewed_by</text>
+<text x="870.0" y="1025.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">reason</text>
+<text x="870.0" y="1044.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">status</text>
+<text x="870.0" y="1063.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">review_notes</text>
+<text x="870.0" y="1082.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">requested_at</text>
+<text x="870.0" y="1101.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">reviewed_at</text>
+<rect x="1220.0" y="480.0" width="260.0" height="213.0" rx="6" fill="#ffffff" stroke="#047857" stroke-width="1.8"/>
+<path d="M1220 514 V486 Q1220 480 1226 480 H1474 Q1480 480 1480 486 V514 Z" fill="#047857"/>
+<text x="1350.0" y="502.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">SIMILARITY_CHECK_RECORD</text>
+<text x="1230.0" y="529.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="1260.0" y="529.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="1230.0" y="548.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="1260.0" y="548.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">user_id</text>
+<text x="1260.0" y="567.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">file_name</text>
+<text x="1260.0" y="586.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">top_score_percent</text>
+<text x="1260.0" y="605.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">top_match_title</text>
+<text x="1260.0" y="624.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">similarity_level</text>
+<text x="1260.0" y="643.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">total_compared</text>
+<text x="1260.0" y="662.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">results_snapshot</text>
+<text x="1260.0" y="681.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">checked_at</text>
+<rect x="1510.0" y="480.0" width="250.0" height="194.0" rx="6" fill="#ffffff" stroke="#047857" stroke-width="1.8"/>
+<path d="M1510 514 V486 Q1510 480 1516 480 H1754 Q1760 480 1760 486 V514 Z" fill="#047857"/>
+<text x="1635.0" y="502.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">NOTIFICATION</text>
+<text x="1520.0" y="529.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="1550.0" y="529.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="1520.0" y="548.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="1550.0" y="548.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">recipient_id</text>
+<text x="1550.0" y="567.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">category</text>
+<text x="1550.0" y="586.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">title</text>
+<text x="1550.0" y="605.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">message</text>
+<text x="1550.0" y="624.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">link</text>
+<text x="1550.0" y="643.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">is_read</text>
+<text x="1550.0" y="662.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">created_at</text>
+<rect x="1220.0" y="790.0" width="260.0" height="175.0" rx="6" fill="#ffffff" stroke="#047857" stroke-width="1.8"/>
+<path d="M1220 824 V796 Q1220 790 1226 790 H1474 Q1480 790 1480 796 V824 Z" fill="#047857"/>
+<text x="1350.0" y="812.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">SYSTEM_LOG</text>
+<text x="1230.0" y="839.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="1260.0" y="839.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="1230.0" y="858.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="1260.0" y="858.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">user_id</text>
+<text x="1260.0" y="877.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">log_type</text>
+<text x="1260.0" y="896.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">action</text>
+<text x="1260.0" y="915.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">ip_address</text>
+<text x="1260.0" y="934.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">user_agent</text>
+<text x="1260.0" y="953.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">created_at</text>
+<rect x="1510.0" y="790.0" width="250.0" height="137.0" rx="6" fill="#ffffff" stroke="#047857" stroke-width="1.8"/>
+<path d="M1510 824 V796 Q1510 790 1516 790 H1754 Q1760 790 1760 796 V824 Z" fill="#047857"/>
+<text x="1635.0" y="812.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">ADMIN_MODULE_ACCESS</text>
+<text x="1520.0" y="839.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="1550.0" y="839.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="1520.0" y="858.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="1550.0" y="858.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">user_id</text>
+<text x="1520.0" y="877.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="1550.0" y="877.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">granted_by</text>
+<text x="1550.0" y="896.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">module</text>
+<text x="1550.0" y="915.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">granted_at</text>
+<rect x="1170.0" y="1080.0" width="240.0" height="156.0" rx="6" fill="#ffffff" stroke="#0369a1" stroke-width="1.8"/>
+<path d="M1170 1114 V1086 Q1170 1080 1176 1080 H1404 Q1410 1080 1410 1086 V1114 Z" fill="#0369a1"/>
+<text x="1290.0" y="1102.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">ANNOUNCEMENT</text>
+<text x="1180.0" y="1129.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="1210.0" y="1129.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="1210.0" y="1148.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">title</text>
+<text x="1210.0" y="1167.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">body</text>
+<text x="1210.0" y="1186.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">publish_date</text>
+<text x="1210.0" y="1205.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">expiry_date</text>
+<text x="1210.0" y="1224.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">is_active</text>
+<rect x="1505.0" y="1080.0" width="240.0" height="137.0" rx="6" fill="#ffffff" stroke="#0369a1" stroke-width="1.8"/>
+<path d="M1505 1114 V1086 Q1505 1080 1511 1080 H1739 Q1745 1080 1745 1086 V1114 Z" fill="#0369a1"/>
+<text x="1625.0" y="1102.0" font-size="13.5" font-weight="bold" fill="#ffffff" text-anchor="middle">ANNOUNCEMENT_IMAGE</text>
+<text x="1515.0" y="1129.0" font-size="10.5" font-weight="bold" fill="#b45309" text-anchor="start">PK</text>
+<text x="1545.0" y="1129.0" font-size="12.5" font-weight="bold" fill="#0f172a" text-anchor="start">id</text>
+<text x="1515.0" y="1148.0" font-size="10.5" font-weight="bold" fill="#0369a1" text-anchor="start">FK</text>
+<text x="1545.0" y="1148.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">announcement_id</text>
+<text x="1545.0" y="1167.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">image</text>
+<text x="1545.0" y="1186.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">alt_text</text>
+<text x="1545.0" y="1205.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">order</text>
+<path d="M780 470 V420 H165.0 V275" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#one)" marker-end="url(#zero-one)"/>
+<rect x="385.7" y="399.5" width="28.6" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="400.0" y="412.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">has</text>
+<path d="M830 470 V390 H445.0 V256" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#one)" marker-end="url(#zero-many)"/>
+<rect x="536.0" y="369.5" width="128.0" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="600.0" y="382.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">has members (max 5)</text>
+<path d="M880.0 470 V237" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#one)" marker-end="url(#zero-one)"/>
+<rect x="883.0" y="347.5" width="109.4" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="888.0" y="360.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">deactivated with</text>
+<path d="M930 470 V390 H1165.0 V275" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#one)" marker-end="url(#zero-many)"/>
+<rect x="1050.2" y="369.5" width="59.7" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1080.0" y="382.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">requests</text>
+<path d="M980 470 V420 H1445.0 V256" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#one)" marker-end="url(#zero-many)"/>
+<rect x="1303.3" y="399.5" width="53.5" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1330.0" y="412.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">creates</text>
+<path d="M1005 543.9 H1220" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#one)" marker-end="url(#zero-many)"/>
+<rect x="1092.6" y="523.4" width="34.8" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1110.0" y="535.9" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">runs</text>
+<path d="M1005 490 H1190 V450 H1635.0 V480" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#one)" marker-end="url(#zero-many)"/>
+<rect x="1330.2" y="429.5" width="59.7" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1360.0" y="442.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">receives</text>
+<path d="M1005 701 H1190 V760 H1635.0 V790" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#one)" marker-end="url(#zero-many)"/>
+<rect x="1364.0" y="739.5" width="72.1" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1400.0" y="752.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">is granted</text>
+<path d="M985 721 V877.5 H1220" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#one)" marker-end="url(#zero-many)"/>
+<rect x="1077.1" y="857.0" width="65.9" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1110.0" y="869.5" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">generates</text>
+<path d="M755 590.99 H310" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#one)" marker-end="url(#zero-many)"/>
+<rect x="493.3" y="570.5" width="53.5" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="520.0" y="583.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">submits</text>
+<path d="M960.0 721 V900" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#one)" marker-end="url(#zero-many)"/>
+<rect x="822.8" y="748.5" width="134.2" height="33.9" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="952.0" y="761.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="end">is target, requester</text>
+<text x="952.0" y="776.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="end">or reviewer of</text>
+<path d="M525.0 900 V860 H242.5 V797" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#zero-one)" marker-end="url(#zero-many)"/>
+<rect x="245.5" y="833.5" width="72.1" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="250.5" y="846.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">classifies</text>
+<path d="M400 968.5 H310" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#zero-one)" marker-end="url(#zero-many)"/>
+<rect x="318.9" y="948.0" width="72.1" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="355.0" y="960.5" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">classifies</text>
+<path d="M650 930 H690 V1067 H525.0 V1037" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#zero-many)" marker-end="url(#zero-one)"/>
+<rect x="691.0" y="966.0" width="103.2" height="33.9" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="696.0" y="978.5" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">parent of</text>
+<text x="696.0" y="993.5" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">(subcategories)</text>
+<path d="M121.0 797 V900" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#arrow)" stroke-dasharray="6 4"/>
+<rect x="124.0" y="840.0" width="121.8" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="129.0" y="852.5" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="start">copied on approval</text>
+<path d="M1410 1150.2 H1505" fill="none" stroke="#334155" stroke-width="1.6" marker-start="url(#one)" marker-end="url(#zero-many)"/>
+<rect x="1427.7" y="1103.7" width="59.7" height="33.9" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1457.5" y="1116.2" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">has</text>
+<text x="1457.5" y="1131.2" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">(max 10)</text>
+<text x="1170.0" y="1255.0" font-size="12" font-weight="normal" fill="#475569" text-anchor="start">Other landing page tables (no relationships): LANDING_SETTINGS, HERO_SLIDE,</text>
+<text x="1170.0" y="1273.0" font-size="12" font-weight="normal" fill="#475569" text-anchor="start">HOW_IT_WORKS_STEP, LANDING_FEATURE, GALLERY_IMAGE, PARTNER_COLLEGE, FAQ_ITEM</text>
+<text x="40.0" y="1310.0" font-size="13" font-weight="bold" fill="#475569" text-anchor="start">Legend</text>
+<path d="M40 1340 H110" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#one)"/>
+<text x="120.0" y="1344.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">exactly one</text>
+<path d="M270 1340 H340" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#zero-one)"/>
+<text x="350.0" y="1344.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">zero or one</text>
+<path d="M500 1340 H570" fill="none" stroke="#334155" stroke-width="1.6" marker-end="url(#zero-many)"/>
+<text x="580.0" y="1344.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">zero or many</text>
+<text x="730.0" y="1344.0" font-size="12.5" font-weight="bold" fill="#475569" text-anchor="start">PK = primary key   FK = foreign key</text>
+</svg>

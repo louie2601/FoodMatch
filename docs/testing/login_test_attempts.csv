@@ -1,0 +1,101 @@
+﻿No.,User role,Attempt,Username typed,Expected,Actual,Result,System response,Time (ms)
+1,Student,Mistyped password,Ln.Student1,Fail,Fail,PASS,Invalid username or password,4262
+2,Student,Correct username and password,Ln.Student1,Success,Success,PASS,/dashboard/student/,844
+3,Student,Correct username and password,Ln.Student2,Success,Success,PASS,/dashboard/student/,834
+4,Student,Correct username and password,Ln.Student3,Success,Success,PASS,/dashboard/student/,852
+5,Student,Correct username and password,Ln.Student4,Success,Success,PASS,/dashboard/student/,834
+6,Student,Mistyped password,Ln.Student5,Fail,Fail,PASS,Invalid username or password,846
+7,Student,Correct username and password,Ln.Student5,Success,Success,PASS,/dashboard/student/,836
+8,Student,Correct username and password,Ln.Student6,Success,Success,PASS,/dashboard/student/,836
+9,Student,Correct username and password,Ln.Student7,Success,Success,PASS,/dashboard/student/,841
+10,Student,Correct username and password,Ln.Student8,Success,Success,PASS,/dashboard/student/,831
+11,Student,Mistyped password,Ln.Student9,Fail,Fail,PASS,Invalid username or password,840
+12,Student,Correct username and password,Ln.Student9,Success,Success,PASS,/dashboard/student/,831
+13,Student,Correct username and password,Ln.Student10,Success,Success,PASS,/dashboard/student/,832
+14,Admin,Correct username and password,Ln.Admin1,Success,Success,PASS,/dashboard/admin/,831
+15,Admin,Correct username and password,Ln.Admin2,Success,Success,PASS,/dashboard/admin/,842
+16,Admin,Mistyped password,Ln.Admin3,Fail,Fail,PASS,Invalid username or password,842
+17,Admin,Correct username and password,Ln.Admin3,Success,Success,PASS,/dashboard/admin/,852
+18,Admin,Correct username and password,Ln.Admin4,Success,Success,PASS,/dashboard/admin/,1117
+19,Admin,Correct username and password,Ln.Admin5,Success,Success,PASS,/dashboard/admin/,870
+20,Super Admin,Correct username and password,Ln.Super1,Success,Success,PASS,/dashboard/admin/,919
+21,Super Admin,Mistyped username,Ln.Suer2,Fail,Fail,PASS,Invalid username or password,903
+22,Super Admin,Correct username and password,Ln.Super2,Success,Success,PASS,/dashboard/admin/,847
+23,Super Admin,Correct username and password,Ln.Super3,Success,Success,PASS,/dashboard/admin/,842
+24,Super Admin,Correct username and password,Ln.Super4,Success,Success,PASS,/dashboard/admin/,832
+25,Super Admin,Correct username and password,Ln.Super5,Success,Success,PASS,/dashboard/admin/,827
+26,Student,Correct username and password,Ln.Student1,Success,Success,PASS,/dashboard/student/,838
+27,Student,Mistyped password,Ln.Student2,Fail,Fail,PASS,Invalid username or password,846
+28,Student,Correct username and password,Ln.Student2,Success,Success,PASS,/dashboard/student/,966
+29,Student,Correct username and password,Ln.Student3,Success,Success,PASS,/dashboard/student/,866
+30,Student,Correct username and password,Ln.Student4,Success,Success,PASS,/dashboard/student/,846
+31,Student,Correct username and password,Ln.Student5,Success,Success,PASS,/dashboard/student/,834
+32,Student,Mistyped password,Ln.Student6,Fail,Fail,PASS,Invalid username or password,868
+33,Student,Correct username and password,Ln.Student6,Success,Success,PASS,/dashboard/student/,973
+34,Student,Correct username and password,Ln.Student7,Success,Success,PASS,/dashboard/student/,864
+35,Student,Correct username and password,Ln.Student8,Success,Success,PASS,/dashboard/student/,864
+36,Student,Correct username and password,Ln.Student9,Success,Success,PASS,/dashboard/student/,832
+37,Student,Mistyped password,Ln.Student10,Fail,Fail,PASS,Invalid username or password,859
+38,Student,Correct username and password,Ln.Student10,Success,Success,PASS,/dashboard/student/,838
+39,Admin,Correct username and password,Ln.Admin1,Success,Success,PASS,/dashboard/admin/,870
+40,Admin,Correct username and password,Ln.Admin2,Success,Success,PASS,/dashboard/admin/,955
+41,Admin,Correct username and password,Ln.Admin3,Success,Success,PASS,/dashboard/admin/,1031
+42,Admin,Mistyped password,Ln.Admin4,Fail,Fail,PASS,Invalid username or password,932
+43,Admin,Correct username and password,Ln.Admin4,Success,Success,PASS,/dashboard/admin/,959
+44,Admin,Correct username and password,Ln.Admin5,Success,Success,PASS,/dashboard/admin/,1036
+45,Super Admin,Correct username and password,Ln.Super1,Success,Success,PASS,/dashboard/admin/,976
+46,Super Admin,Correct username and password,Ln.Super2,Success,Success,PASS,/dashboard/admin/,852
+47,Super Admin,Mistyped username,Ln.Suer3,Fail,Fail,PASS,Invalid username or password,841
+48,Super Admin,Correct username and password,Ln.Super3,Success,Success,PASS,/dashboard/admin/,852
+49,Super Admin,Correct username and password,Ln.Super4,Success,Success,PASS,/dashboard/admin/,830
+50,Super Admin,Correct username and password,Ln.Super5,Success,Success,PASS,/dashboard/admin/,853
+51,Student,Correct username and password,Ln.Student1,Success,Success,PASS,/dashboard/student/,850
+52,Student,Correct username and password,Ln.Student2,Success,Success,PASS,/dashboard/student/,875
+53,Student,Mistyped password,Ln.Student3,Fail,Fail,PASS,Invalid username or password,880
+54,Student,Correct username and password,Ln.Student3,Success,Success,PASS,/dashboard/student/,854
+55,Student,Correct username and password,Ln.Student4,Success,Success,PASS,/dashboard/student/,865
+56,Student,Correct username and password,Ln.Student5,Success,Success,PASS,/dashboard/student/,866
+57,Student,Correct username and password,Ln.Student6,Success,Success,PASS,/dashboard/student/,850
+58,Student,Mistyped password,Ln.Student7,Fail,Fail,PASS,Invalid username or password,897
+59,Student,Correct username and password,Ln.Student7,Success,Success,PASS,/dashboard/student/,863
+60,Student,Correct username and password,Ln.Student8,Success,Success,PASS,/dashboard/student/,905
+61,Student,Correct username and password,Ln.Student9,Success,Success,PASS,/dashboard/student/,869
+62,Student,Correct username and password,Ln.Student10,Success,Success,PASS,/dashboard/student/,938
+63,Admin,Mistyped password,Ln.Admin1,Fail,Fail,PASS,Invalid username or password,929
+64,Admin,Correct username and password,Ln.Admin1,Success,Success,PASS,/dashboard/admin/,880
+65,Admin,Correct username and password,Ln.Admin2,Success,Success,PASS,/dashboard/admin/,1299
+66,Admin,Correct username and password,Ln.Admin3,Success,Success,PASS,/dashboard/admin/,1109
+67,Admin,Correct username and password,Ln.Admin4,Success,Success,PASS,/dashboard/admin/,949
+68,Admin,Mistyped password,Ln.Admin5,Fail,Fail,PASS,Invalid username or password,838
+69,Admin,Correct username and password,Ln.Admin5,Success,Success,PASS,/dashboard/admin/,946
+70,Super Admin,Correct username and password,Ln.Super1,Success,Success,PASS,/dashboard/admin/,804
+71,Super Admin,Correct username and password,Ln.Super2,Success,Success,PASS,/dashboard/admin/,923
+72,Super Admin,Correct username and password,Ln.Super3,Success,Success,PASS,/dashboard/admin/,794
+73,Super Admin,Mistyped username,Ln.Suer4,Fail,Fail,PASS,Invalid username or password,890
+74,Super Admin,Correct username and password,Ln.Super4,Success,Success,PASS,/dashboard/admin/,863
+75,Super Admin,Correct username and password,Ln.Super5,Success,Success,PASS,/dashboard/admin/,923
+76,Student,Correct username and password,Ln.Student1,Success,Success,PASS,/dashboard/student/,1185
+77,Student,Correct username and password,Ln.Student2,Success,Success,PASS,/dashboard/student/,1137
+78,Student,Correct username and password,Ln.Student3,Success,Success,PASS,/dashboard/student/,1132
+79,Student,Mistyped password,Ln.Student4,Fail,Fail,PASS,Invalid username or password,1039
+80,Student,Correct username and password,Ln.Student4,Success,Success,PASS,/dashboard/student/,960
+81,Student,Correct username and password,Ln.Student5,Success,Success,PASS,/dashboard/student/,1050
+82,Student,Correct username and password,Ln.Student6,Success,Success,PASS,/dashboard/student/,1086
+83,Student,Correct username and password,Ln.Student7,Success,Success,PASS,/dashboard/student/,981
+84,Student,Mistyped password,Ln.Student8,Fail,Fail,PASS,Invalid username or password,1012
+85,Student,Correct username and password,Ln.Student8,Success,Success,PASS,/dashboard/student/,905
+86,Student,Correct username and password,Ln.Student9,Success,Success,PASS,/dashboard/student/,865
+87,Student,Correct username and password,Ln.Student10,Success,Success,PASS,/dashboard/student/,999
+88,Admin,Correct username and password,Ln.Admin1,Success,Success,PASS,/dashboard/admin/,956
+89,Admin,Mistyped password,Ln.Admin2,Fail,Fail,PASS,Invalid username or password,934
+90,Admin,Correct username and password,Ln.Admin2,Success,Success,PASS,/dashboard/admin/,950
+91,Admin,Correct username and password,Ln.Admin3,Success,Success,PASS,/dashboard/admin/,1058
+92,Admin,Correct username and password,Ln.Admin4,Success,Success,PASS,/dashboard/admin/,966
+93,Admin,Correct username and password,Ln.Admin5,Success,Success,PASS,/dashboard/admin/,887
+94,Super Admin,Mistyped username,Ln.Suer1,Fail,Fail,PASS,Invalid username or password,961
+95,Super Admin,Correct username and password,Ln.Super1,Success,Success,PASS,/dashboard/admin/,932
+96,Super Admin,Correct username and password,Ln.Super2,Success,Success,PASS,/dashboard/admin/,972
+97,Super Admin,Correct username and password,Ln.Super3,Success,Success,PASS,/dashboard/admin/,1049
+98,Super Admin,Correct username and password,Ln.Super4,Success,Success,PASS,/dashboard/admin/,957
+99,Super Admin,Mistyped username,Ln.Suer5,Fail,Fail,PASS,Invalid username or password,916
+100,Super Admin,Correct username and password,Ln.Super5,Success,Success,PASS,/dashboard/admin/,917

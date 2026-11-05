@@ -1,0 +1,87 @@
+{% load static %}
+{% comment %}
+  Super Admin confirmation. Default (Manage Users delete): 1) reason, 2) the
+  Super Admin's own password. data-mode="approve" | "reject" (Deletion Requests):
+  password only, showing the requesting Admin's reason (data-request-reason,
+  data-requested-by). Any button with [data-delete-confirm] opens it and submits
+  its form (the enclosing form, or the one named by data-delete-confirm-form)
+  with confirm_password (+ deletion_reason) added. The server re-checks — see
+  _confirm_permanent_delete / _confirm_password_only in views.py.
+{% endcomment %}
+<div data-delete-confirm-modal class="fixed inset-0 z-50 hidden items-center justify-center px-4 py-6" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle">
+  <div data-delete-confirm-close class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"></div>
+
+  <div class="relative z-10 w-full max-w-lg overflow-hidden rounded-[1.5rem] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.3)]">
+    <div class="h-1 bg-gradient-to-r from-rose-500 via-red-500 to-orange-500"></div>
+
+    <div class="flex items-start gap-4 px-6 pt-5 pb-4">
+      <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-rose-100 text-rose-600">
+        <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 6h18"></path>
+          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+        </svg>
+      </div>
+      <div class="min-w-0 flex-1">
+        <p data-delete-confirm-eyebrow class="text-[11px] font-bold uppercase tracking-[0.2em] text-rose-700">Permanently Delete Account</p>
+        <h3 id="deleteConfirmTitle" class="mt-0.5 text-xl font-black tracking-tight text-slate-900">
+          <span data-delete-confirm-verb>Delete</span> <span data-delete-confirm-target class="text-rose-700">this account</span>?
+        </h3>
+        <p data-delete-confirm-desc class="mt-1 text-sm text-slate-600">This cannot be undone. The account and its profile are removed permanently.</p>
+      </div>
+    </div>
+
+    {% comment %} Step indicator {% endcomment %}
+    <ol data-delete-confirm-steps class="flex items-center gap-2 px-6 pb-4 text-xs font-semibold">
+      <li data-delete-confirm-stepchip="1" class="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-1 text-rose-700 ring-1 ring-rose-100">
+        <span class="flex h-4 w-4 items-center justify-center rounded-full bg-rose-600 text-[10px] text-white">1</span> Reason
+      </li>
+      <li class="h-px w-6 bg-slate-200" aria-hidden="true"></li>
+      <li data-delete-confirm-stepchip="2" class="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-2.5 py-1 text-slate-500 ring-1 ring-slate-200">
+        <span class="flex h-4 w-4 items-center justify-center rounded-full bg-slate-300 text-[10px] text-white">2</span> Verify password
+      </li>
+    </ol>
+
+    <form data-delete-confirm-step="1" novalidate>
+      <div class="px-6 pb-5">
+        <label for="deleteConfirmReason" data-delete-confirm-reason-label class="block text-sm font-semibold text-slate-700">Reason for deleting this account <span class="text-rose-500">*</span></label>
+        <textarea id="deleteConfirmReason" data-delete-confirm-reason maxlength="500" rows="4" placeholder="e.g. Duplicate account created by mistake."
+          class="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-rose-400 focus:ring-4 focus:ring-rose-100"></textarea>
+        <p data-delete-confirm-reason-error class="mt-1 hidden text-xs font-semibold text-rose-600">Please give a reason.</p>
+        <p class="mt-1 text-xs text-slate-500">Saved in the System Logs. Up to 500 characters.</p>
+      </div>
+      <div class="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50/60 px-6 py-3">
+        <button type="button" data-delete-confirm-close class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">Cancel</button>
+        <button type="submit" class="inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800">
+          Continue
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+        </button>
+      </div>
+    </form>
+
+    <form data-delete-confirm-step="2" class="hidden" novalidate>
+      <div class="px-6 pb-5">
+        <div data-delete-confirm-request-box class="mb-4 hidden rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+          <p class="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Reason from <span data-delete-confirm-requested-by>the Admin</span></p>
+          <p data-delete-confirm-request-reason class="mt-1 whitespace-pre-line text-sm text-slate-800"></p>
+        </div>
+        <label for="deleteConfirmPassword" class="block text-sm font-semibold text-slate-700">Enter your password to confirm <span class="text-rose-500">*</span></label>
+        <input id="deleteConfirmPassword" data-delete-confirm-password type="password" autocomplete="current-password"
+          class="mt-1.5 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-rose-400 focus:ring-4 focus:ring-rose-100" />
+        <p data-delete-confirm-password-error class="mt-1 hidden text-xs font-semibold text-rose-600">Please enter your password.</p>
+        <p class="mt-1 text-xs text-slate-500">This is your own Super Admin password, not the password of the selected account.</p>
+      </div>
+      <div class="flex items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/60 px-6 py-3">
+        <button type="button" data-delete-confirm-back class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.75 19.5 8.25 12l7.5-7.5"/></svg>
+          Back
+        </button>
+        <div class="flex items-center gap-3">
+          <button type="button" data-delete-confirm-close class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">Cancel</button>
+          <button type="submit" data-delete-confirm-submit class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-rose-600 via-red-600 to-orange-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-rose-200 transition hover:-translate-y-0.5">Delete permanently</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="{% static 'core/js/delete-confirm-modal.js' %}"></script>

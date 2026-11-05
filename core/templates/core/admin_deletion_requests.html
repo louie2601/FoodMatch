@@ -1,0 +1,253 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Match | Deletion Requests</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <div data-app-layout class="min-h-screen lg:grid lg:grid-cols-[280px_1fr]">
+      <aside data-app-sidebar class="sticky top-0 max-h-screen overflow-y-auto z-30 bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900 px-5 py-6 text-white shadow-2xl">
+        <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <img
+            src="{% static 'core/images/Logo.png' %}"
+            alt="Food Match Logo"
+            class="h-14 w-14 rounded-full border border-white/15 bg-white object-cover"
+          />
+          <div>
+            <p class="text-2xl font-bold tracking-tight">
+              FOOD <span class="text-emerald-400">MATCH</span>
+            </p>
+            <p class="text-xs uppercase tracking-[0.25em] text-emerald-100/80">
+              Super Admin Portal
+            </p>
+          </div>
+        </div>
+
+        {% include 'core/_nav_admin.html' %}
+      </aside>
+
+      <main class="overflow-hidden">
+        <div class="relative z-40 border-b border-slate-200 bg-white/85 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
+          {% include 'core/_sidebar_toggle.html' %}
+          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">
+                Super Admin Access Control
+              </p>
+              <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">Deletion Requests</h1>
+            </div>
+
+            <div class="flex items-center gap-4 self-end md:self-auto">
+              <p class="hidden text-lg font-semibold text-slate-900 sm:block">
+                Welcome, {{ admin_name }}
+              </p>
+              {% include 'core/_account_menu.html' with menu_name=admin_name menu_role=admin_role menu_super=is_super_admin %}
+            </div>
+          </div>
+        </div>
+
+        <section class="px-5 py-6 sm:px-8">
+          <div class="mx-auto max-w-7xl">
+            <div class="overflow-hidden rounded-[2rem] border border-white/70 bg-white shadow-[0_10px_40px_rgba(15,23,42,0.08)]">
+              <div class="flex flex-col gap-4 border-b border-slate-100 px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+                <div>
+                  <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-100 to-orange-100 text-amber-700">
+                      <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
+                        <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path>
+                        <rect x="9" y="3" width="6" height="4" rx="1"></rect>
+                        <path d="M12 11v4"></path>
+                        <path d="M12 17h.01"></path>
+                      </svg>
+                    </div>
+                    <div>
+                      <h2 class="text-xl font-black tracking-tight text-slate-900">Deletion Requests</h2>
+                      <p class="text-sm text-slate-500">Review student account deletion requests submitted by Staff Admins</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  {% if pending_deletion_count > 0 %}
+                  <span class="inline-flex items-center gap-2 rounded-full bg-amber-100 px-4 py-2 text-sm font-bold text-amber-800 ring-1 ring-amber-200">
+                    <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-amber-500"></span>
+                    {{ pending_deletion_count }} pending
+                  </span>
+                  {% else %}
+                  <span class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-700 ring-1 ring-emerald-200">
+                    <span class="inline-block h-2 w-2 rounded-full bg-emerald-500"></span>
+                    All clear
+                  </span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div id="deletionRequestsWrap" class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-100">
+                  <thead class="bg-slate-50/60">
+                    <tr>
+                      <th scope="col" class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
+                      <th scope="col" class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Target Account</th>
+                      <th scope="col" class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Requested By</th>
+                      <th scope="col" class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Date Requested</th>
+                      <th scope="col" class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Reviewer / Notes</th>
+                      <th scope="col" class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-50">
+                    {% for req in deletion_requests %}
+                    <tr data-deletion-request-row data-request-id="{{ req.id }}" data-request-status="{{ req.status }}" class="hover:bg-slate-50/60 transition-colors">
+                      <td class="whitespace-nowrap px-6 py-5 align-middle">
+                        {% if req.status == 'Pending' %}
+                        <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-800 ring-1 ring-amber-200">
+                          <span class="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500"></span>
+                          ⏳ Pending
+                        </span>
+                        {% elif req.status == 'Approved' %}
+                        <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800 ring-1 ring-emerald-200">
+                          <span class="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                          ✅ Approved
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-700 ring-1 ring-slate-200">
+                          <span class="inline-block h-1.5 w-1.5 rounded-full bg-slate-500"></span>
+                          ❌ Rejected
+                        </span>
+                        {% endif %}
+                      </td>
+                      <td class="px-6 py-5 align-middle">
+                        <div class="flex flex-col gap-1">
+                          <div class="flex items-center gap-2.5">
+                            <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-amber-100 to-orange-200 text-sm font-black text-amber-900">
+                              {{ req.target_display_name|slice:1|default:"S" }}
+                            </div>
+                            <div class="min-w-0">
+                              <p class="truncate text-sm font-bold text-slate-900">{{ req.target_display_name|default:req.target_username }}</p>
+                              <p class="truncate text-xs text-slate-500">@{{ req.target_username }}</p>
+                            </div>
+                          </div>
+                          {% if req.target_email %}
+                          <a href="mailto:{{ req.target_email }}" class="ml-[46px] text-xs text-slate-500 hover:text-emerald-700 hover:underline">{{ req.target_email }}</a>
+                          {% else %}
+                          <p class="ml-[46px] text-xs italic text-slate-400">Account already removed</p>
+                          {% endif %}
+                        </div>
+                      </td>
+                      <td class="px-6 py-5 align-middle">
+                        <div class="flex flex-col gap-0.5">
+                          <p class="text-sm font-semibold text-slate-900">{{ req.requested_by_name }}</p>
+                          <p class="text-xs text-slate-500">{{ req.requested_by_role }}</p>
+                          {% if req.reason %}
+                            <p class="mt-1.5 max-w-xs rounded-lg border border-amber-100 bg-amber-50 px-2.5 py-1.5 text-xs text-amber-900" title="{{ req.reason }}"><span class="font-bold">Reason:</span> {{ req.reason }}</p>
+                          {% endif %}
+                        </div>
+                      </td>
+                      <td class="whitespace-nowrap px-6 py-5 align-middle">
+                        <div class="flex flex-col gap-0.5">
+                          <p class="text-sm font-medium text-slate-900">{{ req.requested_at }}</p>
+                        </div>
+                      </td>
+                      <td class="px-6 py-5 align-middle">
+                        {% if req.status == 'Pending' %}
+                        <p class="text-xs italic text-slate-400">— Awaiting review —</p>
+                        {% else %}
+                        <div class="flex flex-col gap-1 max-w-xs">
+                          <div class="flex items-center gap-2">
+                            <p class="text-xs font-semibold text-slate-700">{{ req.reviewed_by_name|default:"—" }}</p>
+                            {% if req.reviewed_at %}
+                            <span class="text-[11px] text-slate-400">· {{ req.reviewed_at }}</span>
+                            {% endif %}
+                          </div>
+                          {% if req.review_notes %}
+                          <p class="text-xs text-slate-600 bg-slate-50 rounded-lg px-2.5 py-1.5 border border-slate-100 line-clamp-2">{{ req.review_notes }}</p>
+                          {% endif %}
+                        </div>
+                        {% endif %}
+                      </td>
+                      <td class="whitespace-nowrap px-6 py-5 align-middle text-right">
+                        {% if req.status == 'Pending' %}
+                        <div class="flex items-center justify-end gap-2">
+                          <form method="post" data-approve-form data-request-id="{{ req.id }}" class="inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="approve_delete">
+                            <input type="hidden" name="deletion_request_id" value="{{ req.id }}">
+                          </form>
+                          <button
+                            type="button"
+                            data-delete-confirm
+                            data-mode="approve"
+                            data-request-reason="{{ req.reason }}"
+                            data-requested-by="{{ req.requested_by_name }}"
+                            data-delete-confirm-form="form[data-approve-form][data-request-id='{{ req.id }}']"
+                            data-target-name="{{ req.target_display_name|default:req.target_username }}"
+                            class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-3.5 py-2 text-xs font-bold text-white shadow-md shadow-emerald-200 transition hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-800"
+                          >
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+                              <path d="M20 6 9 17l-5-5"></path>
+                            </svg>
+                            Approve
+                          </button>
+                          <form method="post" data-reject-form data-request-id="{{ req.id }}" class="inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="reject_delete">
+                            <input type="hidden" name="deletion_request_id" value="{{ req.id }}">
+                          </form>
+                          <button
+                            type="button"
+                            data-delete-confirm
+                            data-mode="reject"
+                            data-request-reason="{{ req.reason }}"
+                            data-requested-by="{{ req.requested_by_name }}"
+                            data-delete-confirm-form="form[data-reject-form][data-request-id='{{ req.id }}']"
+                            data-target-name="{{ req.target_display_name|default:req.target_username }}"
+                            class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50"
+                          >
+                            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+                              <path d="M18 6 6 18"></path>
+                              <path d="m6 6 12 12"></path>
+                            </svg>
+                            Reject
+                          </button>
+                        </div>
+                        {% else %}
+                        <span class="text-xs italic text-slate-400">— Archived —</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                      <td colspan="6" class="px-6 py-16 text-center">
+                        <div class="flex flex-col items-center gap-3">
+                          <div class="flex h-16 w-16 items-center justify-center rounded-3xl bg-slate-50 ring-1 ring-slate-100">
+                            <svg class="h-8 w-8 text-slate-300" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24">
+                              <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"></path>
+                              <rect x="9" y="3" width="6" height="4" rx="1"></rect>
+                            </svg>
+                          </div>
+                          <div>
+                            <p class="text-sm font-semibold text-slate-700">No deletion requests yet</p>
+                            <p class="mt-1 text-xs text-slate-500">Requests from Staff Admins to delete student accounts will appear here.</p>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {% include 'core/_delete_confirm_modal.html' %}
+        {% include 'core/_result_modal.html' with message=action_message error=action_error %}
+      </main>
+    </div>
+
+    <script src="{% static 'core/js/sidebar-groups.js' %}"></script>
+
+    <script src="{% static 'core/js/main.js' %}"></script>
+  </body>
+</html>

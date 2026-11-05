@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 940" width="1400" height="940" font-family="Segoe UI, Arial, Helvetica, sans-serif" role="img" aria-label="System Architecture of FOOD MATCH">
+<title>System Architecture of FOOD MATCH</title>
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10z" fill="#334155"/></marker>
+  <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10z" fill="#047857"/></marker>
+  
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="700.0" y="40.0" font-size="22" font-weight="bold" fill="#0f172a" text-anchor="middle">System Architecture of FOOD MATCH</text>
+<text x="700.0" y="64.0" font-size="14" font-weight="normal" fill="#475569" text-anchor="middle">Three-tier web architecture deployed with Docker</text>
+<text x="145.0" y="104.0" font-size="13" font-weight="bold" fill="#475569" text-anchor="middle">CLIENT TIER</text>
+<text x="435.0" y="104.0" font-size="13" font-weight="bold" fill="#475569" text-anchor="middle">WEB TIER</text>
+<text x="830.0" y="104.0" font-size="13" font-weight="bold" fill="#475569" text-anchor="middle">APPLICATION TIER</text>
+<text x="1235.0" y="104.0" font-size="13" font-weight="bold" fill="#475569" text-anchor="middle">DATA TIER</text>
+<rect x="300.0" y="118.0" width="1080.0" height="600.0" rx="18" fill="none" stroke="#0369a1" stroke-width="1.8" stroke-dasharray="9 6"/>
+<rect x="313.0" y="128.0" width="189.4" height="20.9" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="318.0" y="142.0" font-size="13" font-weight="bold" fill="#0369a1" text-anchor="start">Docker (docker compose)</text>
+<rect x="40.0" y="200.0" width="210.0" height="330.0" rx="14" fill="#f0f9ff" stroke="#0369a1" stroke-width="1.8"/>
+<text x="145.0" y="232.0" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="middle">Web Browser</text>
+<rect x="58.0" y="252.0" width="174.0" height="34.0" rx="17" fill="#ffffff" stroke="#0369a1" stroke-width="1.2"/>
+<text x="145.0" y="274.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Visitor</text>
+<rect x="58.0" y="298.0" width="174.0" height="34.0" rx="17" fill="#ffffff" stroke="#0369a1" stroke-width="1.2"/>
+<text x="145.0" y="320.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Student</text>
+<rect x="58.0" y="344.0" width="174.0" height="34.0" rx="17" fill="#ffffff" stroke="#0369a1" stroke-width="1.2"/>
+<text x="145.0" y="366.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Admin</text>
+<rect x="58.0" y="390.0" width="174.0" height="34.0" rx="17" fill="#ffffff" stroke="#0369a1" stroke-width="1.2"/>
+<text x="145.0" y="412.0" font-size="13.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Super Admin</text>
+<text x="145.0" y="452.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="middle">HTML, Tailwind CSS,</text>
+<text x="145.0" y="469.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="middle">JavaScript, Chart.js</text>
+<rect x="325.0" y="200.0" width="220.0" height="330.0" rx="14" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="435.0" y="232.0" font-size="17" font-weight="bold" fill="#0f172a" text-anchor="middle">nginx</text>
+<text x="435.0" y="252.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="middle">Reverse proxy</text>
+<circle cx="347" cy="285.5" r="2.4" fill="#0f172a"/>
+<text x="357.0" y="290.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">Receives every request</text>
+<circle cx="347" cy="308.5" r="2.4" fill="#0f172a"/>
+<text x="357.0" y="313.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">Serves CSS and JavaScript</text>
+<text x="357.0" y="329.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">files</text>
+<circle cx="347" cy="347.5" r="2.4" fill="#0f172a"/>
+<text x="357.0" y="352.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">Serves landing page</text>
+<text x="357.0" y="368.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">images directly from</text>
+<text x="357.0" y="384.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">media storage</text>
+<circle cx="347" cy="402.5" r="2.4" fill="#0f172a"/>
+<text x="357.0" y="407.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">Forwards other requests</text>
+<text x="357.0" y="423.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">to Django</text>
+<circle cx="347" cy="441.5" r="2.4" fill="#0f172a"/>
+<text x="357.0" y="446.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">Passes the visitor&#x27;s real</text>
+<text x="357.0" y="462.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">IP address</text>
+<circle cx="347" cy="480.5" r="2.4" fill="#0f172a"/>
+<text x="357.0" y="485.0" font-size="12.5" font-weight="normal" fill="#0f172a" text-anchor="start">Upload limit 60 MB</text>
+<rect x="620.0" y="160.0" width="420.0" height="530.0" rx="14" fill="#ecfdf5" stroke="#047857" stroke-width="2"/>
+<text x="830.0" y="190.0" font-size="16" font-weight="bold" fill="#0f172a" text-anchor="middle">Gunicorn + Django 4.2 (Python 3.12)</text>
+<rect x="636.0" y="210.0" width="186.0" height="144.0" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+<text x="650.0" y="238.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="start">URL routing and views</text>
+<text x="650.0" y="260.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">20 modules: public</text>
+<text x="650.0" y="277.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">site, student and admin</text>
+<text x="650.0" y="294.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">portals</text>
+<rect x="838.0" y="210.0" width="186.0" height="144.0" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+<text x="852.0" y="238.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="start">Access control</text>
+<text x="852.0" y="260.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Login lockout, roles,</text>
+<text x="852.0" y="277.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Admin module</text>
+<text x="852.0" y="294.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">privileges, CSRF</text>
+<rect x="636.0" y="366.0" width="186.0" height="144.0" rx="10" fill="#ffffff" stroke="#047857" stroke-width="2"/>
+<text x="650.0" y="394.0" font-size="14" font-weight="bold" fill="#047857" text-anchor="start">Similarity engine</text>
+<text x="650.0" y="416.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">PyPDF2 / python-docx</text>
+<text x="650.0" y="433.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">text, section</text>
+<text x="650.0" y="450.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">detection, TF-IDF and</text>
+<text x="650.0" y="467.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">cosine similarity</text>
+<text x="650.0" y="484.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">(scikit-learn)</text>
+<rect x="838.0" y="366.0" width="186.0" height="144.0" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+<text x="852.0" y="394.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="start">File handling</text>
+<text x="852.0" y="416.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Upload checks,</text>
+<text x="852.0" y="433.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Tesseract OCR, Pillow</text>
+<text x="852.0" y="450.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">image resizing,</text>
+<text x="852.0" y="467.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">protected document</text>
+<text x="852.0" y="484.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">access</text>
+<rect x="636.0" y="522.0" width="186.0" height="144.0" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+<text x="650.0" y="550.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="start">Notifications and logs</text>
+<text x="650.0" y="572.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">In-app notifications,</text>
+<text x="650.0" y="589.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">login and activity logs</text>
+<rect x="838.0" y="522.0" width="186.0" height="144.0" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+<text x="852.0" y="550.0" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="start">Reports</text>
+<text x="852.0" y="572.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Summary figures, chart</text>
+<text x="852.0" y="589.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">data, CSV export</text>
+<path d="M1110 214 V336 A125.0 14 0 0 0 1360 336 V214" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/><ellipse cx="1235.0" cy="214" rx="125.0" ry="14" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+<text x="1235.0" y="254.0" font-size="15.5" font-weight="bold" fill="#0f172a" text-anchor="middle">PostgreSQL 17</text>
+<text x="1235.0" y="276.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="middle">Users, research, submissions,</text>
+<text x="1235.0" y="292.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="middle">checks, logs, notifications,</text>
+<text x="1235.0" y="308.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="middle">settings (22 tables)</text>
+<path d="M1110 444 V566 A125.0 14 0 0 0 1360 566 V444" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/><ellipse cx="1235.0" cy="444" rx="125.0" ry="14" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+<text x="1235.0" y="484.0" font-size="15.5" font-weight="bold" fill="#0f172a" text-anchor="middle">Media Storage</text>
+<text x="1235.0" y="506.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="middle">Uploaded research files</text>
+<text x="1235.0" y="522.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="middle">(served only after a permission check)</text>
+<text x="1235.0" y="538.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="middle">Landing page images (public)</text>
+<rect x="705.0" y="790.0" width="250.0" height="92.0" rx="12" fill="#ffffff" stroke="#334155" stroke-width="1.8"/>
+<text x="830.0" y="824.0" font-size="15.5" font-weight="bold" fill="#0f172a" text-anchor="middle">SMTP Mail Server</text>
+<text x="830.0" y="846.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="middle">One-time codes, invitations,</text>
+<text x="830.0" y="862.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="middle">account status emails</text>
+<path d="M250 365 H325" fill="none" stroke="#334155" stroke-width="2" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<rect x="251.4" y="339.5" width="72.1" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="287.5" y="352.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">HTTP/HTTPS</text>
+<path d="M545 365 H620" fill="none" stroke="#334155" stroke-width="2" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<rect x="562.0" y="339.5" width="41.0" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="582.5" y="352.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">proxy</text>
+<path d="M1040 275 H1110" fill="none" stroke="#334155" stroke-width="2" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<rect x="1039.0" y="249.5" width="72.1" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1075.0" y="262.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">Django ORM</text>
+<path d="M1040 505 H1110" fill="none" stroke="#334155" stroke-width="2" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<rect x="1054.5" y="479.5" width="41.0" height="19.0" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="1075.0" y="492.0" font-size="11.5" font-weight="normal" fill="#475569" text-anchor="middle">files</text>
+<path d="M830.0 690 V790" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="835.0" y="732.0" width="120.2" height="19.6" rx="4" fill="#ffffff" fill-opacity="0.95"/>
+<text x="840.0" y="745.0" font-size="12" font-weight="normal" fill="#475569" text-anchor="start">send email (SMTP)</text>
+<text x="40.0" y="910.0" font-size="12.5" font-weight="normal" fill="#475569" text-anchor="start">Uploaded research files are opened only through Django, which checks who is asking; nginx serves only CSS, JavaScript and landing page images.</text>
+</svg>
