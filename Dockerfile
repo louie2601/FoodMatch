@@ -18,6 +18,12 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
+# The AI model used by Similarity Check (Sentence-BERT, all-MiniLM-L6-v2) is
+# downloaded here, once, so the running server never needs internet for it.
+ENV ML_MODELS_DIR=/app/ml_models
+RUN python -c "from fastembed import TextEmbedding; TextEmbedding(model_name='sentence-transformers/all-MiniLM-L6-v2', cache_dir='/app/ml_models')"
+ENV HF_HUB_OFFLINE=1
+
 COPY . .
 
 RUN useradd --create-home appuser \

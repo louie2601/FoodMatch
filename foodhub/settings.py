@@ -198,4 +198,9 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# Machine-learning similarity (core/semantic.py): where the pre-trained language
+# model is stored, and a switch to fall back to TF-IDF only.
+ML_MODELS_DIR = Path(os.environ.get("ML_MODELS_DIR", "").strip() or BASE_DIR / "ml_models")
+SEMANTIC_SIMILARITY_ENABLED = env_bool("SEMANTIC_SIMILARITY_ENABLED", True)
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

@@ -20,6 +20,9 @@ staticfiles/
 # Uploaded files (students' research papers, images) — data, not code
 media/
 
+# Downloaded AI model files (re-downloaded automatically)
+ml_models/
+
 # Secrets / credentials
 secrets/
 

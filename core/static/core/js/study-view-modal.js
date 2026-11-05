@@ -72,6 +72,22 @@ window.addEventListener("DOMContentLoaded", function () {
       </div>`;
   }
 
+  // The AI language model's meaning score decides the Overall score; the
+  // weighted TF-IDF score only counts when it shows a near-exact copy (80%+).
+  function buildMeaningCell(rawValue, tfidfValue) {
+    const has = rawValue !== "" && rawValue != null;
+    const tfidf = tfidfValue !== "" && tfidfValue != null ? toNum(tfidfValue) : null;
+    return `
+      <div class="col-span-2 rounded-2xl border border-emerald-100 bg-emerald-50/60 px-3 py-2.5 text-center sm:col-span-4">
+        <p class="text-[10px] font-bold uppercase tracking-[0.12em] text-emerald-700">Meaning · AI model (Sentence-BERT)</p>
+        <p class="mt-1 text-lg font-black text-slate-900">${has ? toNum(rawValue) + "%" : "—"}</p>
+        <p class="text-[9px] font-semibold text-slate-500">${has
+          ? "share of your passages with the same meaning as this study · this decides the Overall score"
+          : "not used for this study (no document on file, or the AI model is off) · TF-IDF decides"}</p>
+        ${tfidf != null ? `<p class="mt-1 text-[9px] font-semibold text-slate-500">Weighted TF-IDF: ${tfidf}%${has ? " · counts toward Overall only at 80%+ (a near-exact copy)" : ""}</p>` : ""}
+      </div>`;
+  }
+
   // "What Matched": one card per part with the shared key terms and, when the
   // server found one, the closest passage pair. Segments come pre-split by the
   // server as {t: text, m: shared-word?}; every piece is escaped here.
@@ -220,7 +236,7 @@ window.addEventListener("DOMContentLoaded", function () {
     if (els.basisGrid) {
       els.basisGrid.innerHTML = BASIS_FIELDS.map(function (field) {
         return buildBasisCell(field, get(field.key + "-score"), get(field.key + "-weight"));
-      }).join("");
+      }).join("") + buildMeaningCell(get("meaning-score"), get("tfidf-score"));
     }
     if (els.metadataOnlyNote) {
       els.metadataOnlyNote.classList.toggle("hidden", get("metadata-only") !== "true");

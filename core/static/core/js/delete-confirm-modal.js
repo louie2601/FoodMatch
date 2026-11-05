@@ -25,17 +25,36 @@
   var requestBox = modal.querySelector('[data-delete-confirm-request-box]');
   var requestReasonEl = modal.querySelector('[data-delete-confirm-request-reason]');
   var requestedByEl = modal.querySelector('[data-delete-confirm-requested-by]');
+  var reasonHint = modal.querySelector('[data-delete-confirm-reason-hint]');
+  var nextBtn = modal.querySelector('[data-delete-confirm-next]');
+  var nextBtnHtml = nextBtn.innerHTML;
+  var nextBtnClass = nextBtn.className;
   var targetForm = null;
   var busyLabel = 'Deleting...';
   var needsReason = true;
+  var reasonOnly = false;
 
   var DELETE_DESC = 'This cannot be undone. The account and its profile are removed permanently.';
+  var LOG_HINT = 'Saved in the System Logs. Up to 500 characters.';
+  var SHARED_HINT = 'Sent to the Admin who asked and saved in the System Logs. Up to 500 characters.';
   var DANGER_BTN = 'inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-rose-600 via-red-600 to-orange-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-rose-200 transition hover:-translate-y-0.5';
   var NEUTRAL_BTN = 'inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800';
+  // passwordOnly: skip the reason step. reasonOnly: no password step.
   var MODES = {
-    delete: { eyebrow: 'Permanently Delete Account', verb: 'Delete', desc: DELETE_DESC, label: 'Reason for deleting this account ', placeholder: 'e.g. Duplicate account created by mistake.', submit: 'Delete permanently', busy: 'Deleting...', btn: DANGER_BTN },
-    approve: { eyebrow: 'Approve Deletion Request', verb: 'Approve deletion of', desc: DELETE_DESC, passwordOnly: true, submit: 'Approve and delete', busy: 'Deleting...', btn: DANGER_BTN },
-    reject: { eyebrow: 'Reject Deletion Request', verb: 'Reject deletion of', desc: 'The account is kept. The Admin who asked is notified.', passwordOnly: true, submit: 'Reject request', busy: 'Rejecting...', btn: NEUTRAL_BTN }
+    delete: { eyebrow: 'Permanently Delete Account', verb: 'Delete', target: 'this account', desc: DELETE_DESC,
+      label: 'Reason for deleting this account ', placeholder: 'e.g. Duplicate account created by mistake.', hint: LOG_HINT,
+      submit: 'Delete permanently', busy: 'Deleting...', btn: DANGER_BTN },
+    approve: { eyebrow: 'Approve Deletion Request', verb: 'Approve deletion of', target: 'this account', desc: DELETE_DESC,
+      label: 'Your reason for approving ', placeholder: 'e.g. Confirmed duplicate account that is no longer used.', hint: SHARED_HINT,
+      submit: 'Approve and delete', busy: 'Deleting...', btn: DANGER_BTN },
+    reject: { eyebrow: 'Reject Deletion Request', verb: 'Reject deletion of', target: 'this account',
+      desc: 'The account is kept. The Admin who asked is notified with your reason.', reasonOnly: true,
+      label: 'Your reason for rejecting ', placeholder: 'e.g. The account still belongs to an active student.', hint: SHARED_HINT,
+      submit: 'Reject request', busy: 'Rejecting...', btn: NEUTRAL_BTN },
+    research: { eyebrow: 'Delete Research', verb: 'Delete', target: 'this study',
+      desc: 'This cannot be undone. The study and its uploaded file are removed from the repository and from future similarity checks.',
+      label: 'Reason for deleting this study ', placeholder: 'e.g. Duplicate entry uploaded by mistake.', hint: LOG_HINT,
+      submit: 'Delete permanently', busy: 'Deleting...', btn: DANGER_BTN }
   };
 
   var CHIP_ON = 'inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-1 text-rose-700 ring-1 ring-rose-100';
@@ -56,23 +75,35 @@
     targetForm = form;
     var m = MODES[mode] || MODES.delete;
     needsReason = !m.passwordOnly;
-    targetEl.textContent = targetName || 'this account';
+    reasonOnly = !!m.reasonOnly;
+    targetEl.textContent = targetName || m.target;
     verbEl.textContent = m.verb;
     eyebrowEl.textContent = m.eyebrow;
     descEl.textContent = m.desc;
     if (needsReason) {
       reasonLabel.firstChild.textContent = m.label;
       reasonInput.placeholder = m.placeholder;
+      reasonHint.textContent = m.hint;
     }
-    stepsEl.classList.toggle('hidden', !needsReason);
+    // Two steps (reason, then password) show the step chips; one step doesn't.
+    stepsEl.classList.toggle('hidden', !needsReason || reasonOnly);
     backBtn.classList.toggle('invisible', !needsReason);
-    requestBox.classList.toggle('hidden', needsReason || !requestReason);
+    requestBox.classList.toggle('hidden', !requestReason);
     requestReasonEl.textContent = requestReason || '';
     requestedByEl.textContent = requestedBy || 'the Admin';
     reasonInput.value = '';
     passwordInput.value = '';
     reasonError.classList.add('hidden');
     passwordError.classList.add('hidden');
+    // With no password step, the reason step's button does the action itself.
+    nextBtn.disabled = false;
+    if (reasonOnly) {
+      nextBtn.className = m.btn;
+      nextBtn.textContent = m.submit;
+    } else {
+      nextBtn.className = nextBtnClass;
+      nextBtn.innerHTML = nextBtnHtml;
+    }
     submitBtn.disabled = false;
     submitBtn.className = m.btn;
     submitBtn.textContent = m.submit;
@@ -126,8 +157,13 @@
     e.preventDefault();
     var ok = reasonInput.value.trim().length > 0;
     reasonError.classList.toggle('hidden', ok);
-    if (ok) showStep(2);
-    else reasonInput.focus();
+    if (!ok) { reasonInput.focus(); return; }
+    if (!reasonOnly) { showStep(2); return; }
+    if (!targetForm) return;
+    setHidden(targetForm, 'deletion_reason', reasonInput.value.trim());
+    nextBtn.disabled = true;
+    nextBtn.textContent = busyLabel;
+    targetForm.submit();
   });
 
   stepForms[2].addEventListener('submit', function (e) {

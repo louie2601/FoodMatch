@@ -299,9 +299,17 @@
                             </svg>
                           </button>
                           {% if is_super_admin %}
+                          <form method="post" data-delete-research-form data-paper-id="{{ paper.id }}" class="hidden">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete_research">
+                            <input type="hidden" name="paper_id" value="{{ paper.id }}">
+                          </form>
                           <button
                             type="button"
-                            data-delete-research
+                            data-delete-confirm
+                            data-mode="research"
+                            data-target-name="{{ paper.title }}"
+                            data-delete-confirm-form="form[data-delete-research-form][data-paper-id='{{ paper.id }}']"
                             aria-label="Delete"
                             title="Delete"
                             class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-rose-500 transition hover:bg-rose-50 hover:text-rose-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
@@ -756,94 +764,7 @@
     </div>
 
     {% if is_super_admin %}
-    {% comment %} DELETE RESEARCH CONFIRMATION MODAL {% endcomment %}
-    <div
-      id="deleteResearchModal"
-      data-delete-research-modal
-      class="fixed inset-0 z-50 hidden items-center justify-center px-4 py-6"
-      aria-labelledby="deleteResearchModalLabel"
-      role="alertdialog"
-      aria-modal="true"
-    >
-      <div data-delete-research-modal-backdrop class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"></div>
-
-      <div class="relative z-10 w-full max-w-lg rounded-[2rem] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.3)]">
-        <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-rose-500 via-red-500 to-pink-500"></div>
-
-        <div class="bg-gradient-to-br from-rose-50 via-red-50 to-pink-50 px-6 pt-6 pb-5 sm:px-8">
-          <div class="flex items-start justify-between gap-4">
-            <div class="flex items-start gap-4">
-              <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl border-4 border-white shadow-lg bg-gradient-to-br from-rose-100 to-red-200 text-rose-900">
-                <svg class="h-8 w-8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
-                  <path d="M12 9v4"></path>
-                  <path d="M12 17h.01"></path>
-                  <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path>
-                </svg>
-              </div>
-              <div class="min-w-0">
-                <p id="deleteResearchModalLabel" class="text-xs font-black uppercase tracking-[0.2em] text-rose-700">Delete Research</p>
-                <h3 class="mt-1 text-2xl font-black tracking-tight text-slate-900 break-words">Delete this study?</h3>
-                <p id="researchDeleteTitle" class="mt-2 text-sm font-semibold text-rose-900/90 break-words">Title</p>
-                <p class="mt-2 text-sm text-slate-600 max-w-md">
-                  This will permanently remove the study from the repository and exclude it from future similarity checks. This action cannot be undone.
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              data-close-delete-research-modal
-              aria-label="Close Delete Research modal"
-              class="-mt-1 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-slate-300 hover:bg-slate-50 hover:text-slate-800"
-            >
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
-                <path d="M18 6 6 18"></path>
-                <path d="m6 6 12 12"></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <form id="deleteResearchForm" method="post" class="px-6 py-6 sm:px-8 sm:py-7">
-          {% csrf_token %}
-          <input type="hidden" name="action" value="delete_research" />
-          <input id="deleteResearchPaperId" type="hidden" name="paper_id" value="" />
-
-          <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4">
-            <p class="text-xs font-black uppercase tracking-[0.2em] text-rose-700">Be careful</p>
-            <ul class="mt-2 space-y-1 text-sm leading-relaxed text-rose-900/90">
-              <li>• Metadata entry (ResearchPaper) will be permanently deleted.</li>
-              <li>• If this Super Admin uploaded a full document (PDF/DOCX/TXT), it will also be removed from similarity indexing.</li>
-              <li>• Other authors' submissions sharing the same title are <em class="font-semibold">preserved</em>.</li>
-            </ul>
-          </div>
-
-          <div class="mt-6 flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-end">
-            <button
-              type="button"
-              data-close-delete-research-modal
-              class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-3 text-base font-bold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              id="submitDeleteResearchBtn"
-              class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-rose-600 via-red-600 to-pink-600 px-7 py-3 text-base font-bold text-white shadow-lg shadow-rose-200 transition hover:-translate-y-0.5 hover:from-rose-700 hover:via-red-700 hover:to-pink-700"
-            >
-              <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
-                <path d="M3 6h18"></path>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
-                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                <path d="M10 11v6"></path>
-                <path d="M14 11v6"></path>
-              </svg>
-              Delete Research
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
+    {% include 'core/_delete_confirm_modal.html' %}
     {% endif %}
 
     <script src="{% static 'core/js/field-rules.js' %}"></script>

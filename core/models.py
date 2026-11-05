@@ -195,6 +195,11 @@ class ResearchSubmission(models.Model):
     # lazily, once, the first time a check needs it (see
     # build_repository_documents_from_submissions in utils.py).
     cached_document_text = models.TextField(null=True, blank=True, default=None)
+    # Meaning vectors of the document's passages from the AI model (see
+    # core/semantic.py), saved once so a Similarity Check only embeds the
+    # uploaded file. The version says which model/passage settings made them.
+    semantic_index = models.BinaryField(null=True, blank=True, editable=False)
+    semantic_index_version = models.CharField(max_length=60, blank=True, default="")
     status = models.CharField(
         max_length=20,
         choices=ResearchSubmissionStatus.choices,

@@ -653,84 +653,10 @@
       });
     }
 
-    // ---------------- DELETE MODAL ----------------
-    var deleteModal = document.querySelector('[data-delete-research-modal]');
-    if (deleteModal) {
-      var deleteBackdrops = document.querySelectorAll('[data-delete-research-modal-backdrop]');
-      var deleteCloseButtons = document.querySelectorAll('[data-close-delete-research-modal]');
-      var deleteTitleEl = document.getElementById('researchDeleteTitle');
-      var deletePaperIdEl = document.getElementById('deleteResearchPaperId');
-      var submitDeleteBtn = document.getElementById('submitDeleteResearchBtn');
-      var deleteForm = document.getElementById('deleteResearchForm');
-
-      function openDeleteModal(row) {
-        var id = row.getAttribute('data-paper-id') || '';
-        var title = row.getAttribute('data-title') || '';
-        if (deleteTitleEl) deleteTitleEl.textContent = title;
-        if (deletePaperIdEl) deletePaperIdEl.value = id;
-        deleteModal.classList.remove('hidden');
-        deleteModal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-        if (submitDeleteBtn) {
-          submitDeleteBtn.disabled = false;
-          submitDeleteBtn.classList.remove('opacity-70', 'cursor-not-allowed');
-          submitDeleteBtn.innerHTML =
-            '<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></svg>' +
-            ' Delete Research';
-        }
-      }
-
-      function closeDeleteModal() {
-        deleteModal.classList.add('hidden');
-        deleteModal.classList.remove('flex');
-        document.body.style.overflow = '';
-      }
-
-      document.querySelectorAll('[data-delete-research]').forEach(function (btn) {
-        btn.addEventListener('click', function (e) {
-          var row = e.currentTarget.closest('[data-paper-row]');
-          if (row) openDeleteModal(row);
-        });
-      });
-      deleteCloseButtons.forEach(function (btn) {
-        btn.addEventListener('click', closeDeleteModal);
-      });
-      deleteBackdrops.forEach(function (bd) {
-        bd.addEventListener('click', closeDeleteModal);
-      });
-
-      if (deleteForm) {
-        deleteForm.addEventListener('submit', function (e) {
-          // Defensive CSRF token injection (same logic as add form)
-          try {
-            var cookieMatch = document.cookie.match(new RegExp('(^| )csrftoken=([^;]+)'));
-            var tok = cookieMatch ? decodeURIComponent(cookieMatch[2]) : '';
-            var tokF = deleteForm.querySelector('input[name="csrfmiddlewaretoken"]');
-            if (tokF && tok && !tokF.value) {
-              tokF.value = tok;
-            } else if (!tokF && tok) {
-              var ni = document.createElement('input');
-              ni.type = 'hidden';
-              ni.name = 'csrfmiddlewaretoken';
-              ni.value = tok;
-              deleteForm.appendChild(ni);
-            }
-          } catch (err) { /* swallow */ }
-
-          if (submitDeleteBtn) {
-            submitDeleteBtn.disabled = true;
-            submitDeleteBtn.classList.add('opacity-70', 'cursor-not-allowed');
-            submitDeleteBtn.innerHTML =
-              '<svg class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Deleting…';
-          }
-        });
-      }
-    }
-
     // ---------------- ESC (global for all modals) ----------------
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
-        [addModal, detailsModal, deleteModal].forEach(function (m) {
+        [addModal, detailsModal].forEach(function (m) {
           if (m && !m.classList.contains('hidden')) {
             m.classList.add('hidden');
             m.classList.remove('flex');

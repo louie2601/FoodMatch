@@ -205,6 +205,15 @@
 
                 <div class="rounded-[2rem] border border-slate-200 bg-white/90 p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur sm:p-8">
                   <h3 class="text-xl font-black tracking-tight text-slate-900">Similarity Levels</h3>
+                  <p class="mt-2 text-sm text-slate-600">
+                    Scored with TF-IDF and cosine similarity (30% Ingredients &amp; Process, 30% Rest of the Paper, 20% Title, 20% Abstract)
+                    and an AI language model, <span class="font-semibold text-slate-800">{{ semantic_model_label }}</span>, that compares the meaning of each passage.
+                    The <span class="font-semibold text-slate-800">Overall</span> score comes from the AI model; TF-IDF also counts when it shows a
+                    near-exact copy (80% or more), and decides alone if the AI model is unavailable.
+                  </p>
+                  {% if comparison_submitted and not semantic_used and similarity_results %}
+                    <p class="mt-2 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-800 ring-1 ring-amber-100">The AI model wasn't available for this check, so only TF-IDF was used.</p>
+                  {% endif %}
                   <div class="mt-5 grid gap-3 sm:grid-cols-3">
                     <div class="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-4">
                       <p class="text-xs font-bold uppercase tracking-[0.14em] text-emerald-700">0% – 30%</p>
@@ -337,6 +346,7 @@
                                 <th scope="col" class="px-3 py-3 text-center text-xs font-bold uppercase tracking-wider text-slate-500" title="30% weight"><span class="whitespace-nowrap">Rest of</span> Paper</th>
                                 <th scope="col" class="px-3 py-3 text-center text-xs font-bold uppercase tracking-wider text-slate-500" title="20% weight">Title</th>
                                 <th scope="col" class="px-3 py-3 text-center text-xs font-bold uppercase tracking-wider text-slate-500" title="20% weight">Abstract</th>
+                                <th scope="col" class="px-3 py-3 text-center text-xs font-bold uppercase tracking-wider text-emerald-700" title="AI language model (Sentence-BERT): share of the file's passages with the same meaning as this study">Meaning <span class="whitespace-nowrap">(AI)</span></th>
                                 <th scope="col" class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Overall</th>
                                 <th scope="col" class="px-4 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Actions</th>
                               </tr>
@@ -368,6 +378,8 @@
                                   data-general-score="{{ result.general_score }}"
                                   data-title-score="{{ result.title_score }}"
                                   data-abstract-score="{{ result.abstract_score }}"
+                                  data-meaning-score="{% if result.semantic_score is not None %}{{ result.semantic_score }}{% endif %}"
+                                  data-tfidf-score="{{ result.tfidf_score|default_if_none:'' }}"
                                   data-ingredients-weight="{{ result.ingredients_weight }}"
                                   data-general-weight="{{ result.general_weight }}"
                                   data-title-weight="{{ result.title_weight }}"
@@ -396,6 +408,7 @@
                                   <td class="px-3 py-4 text-center align-top text-sm font-semibold text-slate-700">{{ result.general_score }}%</td>
                                   <td class="px-3 py-4 text-center align-top text-sm font-semibold text-slate-700">{{ result.title_score }}%</td>
                                   <td class="px-3 py-4 text-center align-top text-sm font-semibold text-slate-700">{{ result.abstract_score }}%</td>
+                                  <td class="px-3 py-4 text-center align-top text-sm font-semibold text-emerald-700">{% if result.semantic_score is not None %}{{ result.semantic_score }}%{% else %}<span class="text-slate-400" title="No document on file for this study, or the AI model is off">—</span>{% endif %}</td>
                                   <td class="whitespace-nowrap px-4 py-4 align-top">
                                     <span class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 ring-1
                                       {% if result.similarity_level == 'low' %}bg-emerald-50 text-emerald-700 ring-emerald-100

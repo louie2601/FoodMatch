@@ -38,6 +38,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 from .auth_backends import is_emergency_user, verify_user_password
 from .duplicates import duplicate_file_error, duplicate_title_error, file_sha256
+from . import semantic
 from .food_relevance import assess_food_relevance, check_uploaded_research, not_food_research_error
 from .text_rules import list_rule_error, normalize_text_input, rule_error, tidy_to_rule
 from .completeness import (
@@ -468,6 +469,7 @@ def research_similarity_view(request):
         return redirect_response
 
     form = ResearchSimilarityForm(request.POST or None, request.FILES or None)
+    semantic.warm_up_in_background()
     similarity_results = []
     comparison_submitted = False
     repository_error = ""
@@ -484,6 +486,7 @@ def research_similarity_view(request):
     query_ingredients_guess = ""
     query_general_guess = ""
     similarity_weights_used = {}
+    semantic_used = False
 
     if request.method == "POST" and form.is_valid():
         comparison_submitted = True
@@ -575,6 +578,8 @@ def research_similarity_view(request):
                     f"Similarity check refused '{uploaded_file_name}': not food research.",
                 )
             else:
+                query_passages, query_semantic = semantic.query_vectors(query_text)
+                semantic_used = query_semantic is not None
                 similarity_results, similarity_weights_used = rank_similar_documents_weighted(
                     {
                         "ingredients": query_ingredients_guess,
@@ -584,6 +589,7 @@ def research_similarity_view(request):
                     },
                     repository_documents,
                     threshold=0.0,
+                    query_semantic=query_semantic,
                 )
                 similarity_results = similarity_results[:5]
                 query_fields_raw = {
@@ -593,7 +599,9 @@ def research_similarity_view(request):
                     "general": query_general_guess,
                 }
                 for result in similarity_results:
-                    result["match_details_json"] = json.dumps(explain_similarity_match(query_fields_raw, result))
+                    details = explain_similarity_match(query_fields_raw, result)
+                    details.append(semantic.meaning_section(result, query_passages, result.get("document_text", "")))
+                    result["match_details_json"] = json.dumps(details)
                 _record_similarity_check(request.user, uploaded_file_name, similarity_results, total_repository_documents)
                 can_submit_for_review = not any(result["score_percent"] > 30 for result in similarity_results)
                 # Unfinished papers can still be checked (e.g. to test a topic early),
@@ -659,13 +667,18 @@ def research_similarity_view(request):
         "detected_abstract": query_abstract_guess,
         "similarity_weights": similarity_weights_used,
         "similarity_base_weights": SIMILARITY_WEIGHTS,
+        "semantic_used": semantic_used,
+        "semantic_model_label": semantic.MODEL_LABEL,
         "framework_summary": (
             "This module applies Information Retrieval Theory by organizing research documents "
             "from approved research submissions stored in the system repository and PostgreSQL "
             "records for search and comparison. It uses the TF-IDF "
             "mathematical method for text representation and cosine similarity for document "
             "comparison, weighted 30% ingredients & process, 30% the rest of the paper, "
-            "20% title, and 20% abstract, implemented through the scikit-learn library."
+            "20% title, and 20% abstract, implemented through the scikit-learn library. "
+            "A pre-trained Sentence-BERT language model (all-MiniLM-L6-v2) also compares the "
+            "meaning of passages, so reworded copying is found. The AI score decides the result; "
+            "TF-IDF also counts for a near-exact copy (80%+), and decides alone if the model is off."
         ),
     }
     return render(request, "core/research_similarity.html", context)
@@ -1432,6 +1445,7 @@ def admin_research_similarity_view(request):
     if redirect_response:
         return redirect_response
 
+    semantic.warm_up_in_background()
     form = ResearchSimilarityForm()
     similarity_results = []
     comparison_submitted = False
@@ -1446,6 +1460,7 @@ def admin_research_similarity_view(request):
     query_ingredients_guess = ""
     query_general_guess = ""
     similarity_weights_used = {}
+    semantic_used = False
 
     if request.method == "POST":
         form = ResearchSimilarityForm(request.POST, request.FILES)
@@ -1536,6 +1551,8 @@ def admin_research_similarity_view(request):
                         f"Similarity check refused '{uploaded_file_name}': not food research.",
                     )
                 else:
+                    query_passages, query_semantic = semantic.query_vectors(query_text)
+                    semantic_used = query_semantic is not None
                     raw_results, similarity_weights_used = rank_similar_documents_weighted(
                         {
                             "ingredients": query_ingredients_guess,
@@ -1545,6 +1562,7 @@ def admin_research_similarity_view(request):
                         },
                         repository_documents,
                         threshold=0.0,
+                        query_semantic=query_semantic,
                     )
                     raw_results = raw_results[:10]
                     query_fields_raw = {
@@ -1556,7 +1574,9 @@ def admin_research_similarity_view(request):
                     similarity_results = []
                     for r in raw_results:
                         result = dict(r)
-                        result["match_details_json"] = json.dumps(explain_similarity_match(query_fields_raw, result))
+                        details = explain_similarity_match(query_fields_raw, result)
+                        details.append(semantic.meaning_section(result, query_passages, result.get("document_text", "")))
+                        result["match_details_json"] = json.dumps(details)
                         result["view_url"] = ""
                         doc_id = result.get("id")
                         if isinstance(doc_id, int) or (isinstance(doc_id, str) and doc_id.isdigit()):
@@ -1604,12 +1624,17 @@ def admin_research_similarity_view(request):
         "detected_abstract": query_abstract_guess,
         "similarity_weights": similarity_weights_used,
         "similarity_base_weights": SIMILARITY_WEIGHTS,
+        "semantic_used": semantic_used,
+        "semantic_model_label": semantic.MODEL_LABEL,
         "framework_summary": (
             "Uses TF-IDF (Term Frequency–Inverse Document Frequency) vectorization together "
             "with cosine similarity via scikit-learn. The comparison corpus combines full-text "
             "from approved research submissions with metadata from every ResearchPaper entry "
             "in the repository so studies added directly to it are also checked. Weighted "
-            "30% ingredients & process, 30% the rest of the paper, 20% title, 20% abstract."
+            "30% ingredients & process, 30% the rest of the paper, 20% title, 20% abstract. "
+            "A pre-trained Sentence-BERT language model (all-MiniLM-L6-v2) also compares the "
+            "meaning of passages, so reworded copying is found. The AI score decides the result; "
+            "TF-IDF also counts for a near-exact copy (80%+), and decides alone if the model is off."
         ),
     }
     return render(request, "core/admin_similarity_check.html", context)
@@ -3717,14 +3742,18 @@ def deletion_requests_view(request):
                     ),
                     pk=request_id,
                 )
-                # The requesting Admin already gave the reason, so the Super
-                # Admin only confirms the decision with their own password.
-                confirm_error = _confirm_password_only(
-                    request,
-                    "Incorrect password. The account was not deleted."
-                    if action == "approve_delete"
-                    else "Incorrect password. The request was not rejected.",
-                )
+                # The Super Admin gives their own reason for the decision.
+                # Approving deletes the account, so it also needs their password;
+                # rejecting keeps the account, so the reason is enough.
+                if action == "approve_delete":
+                    decision_reason, confirm_error = _confirm_with_password(
+                        request,
+                        "Please give a reason for approving this request. Nothing was deleted.",
+                        "Incorrect password. The account was not deleted.",
+                    )
+                else:
+                    decision_reason = (request.POST.get("deletion_reason") or "").strip()[:MAX_STATUS_REASON_LENGTH]
+                    confirm_error = "" if decision_reason else "Please give a reason for rejecting this request. It is still pending."
                 if del_request.status != DeletionRequestStatus.PENDING:
                     action_error = (
                         f"This request is already {del_request.status}."
@@ -3746,7 +3775,7 @@ def deletion_requests_view(request):
                         )
                         del_request.reviewed_by = request.user
                         del_request.reviewed_at = timezone.now()
-                        del_request.review_notes = ""
+                        del_request.review_notes = decision_reason
                         del_request.save()
 
                         if action == "approve_delete" and del_request.target_user:
@@ -3772,6 +3801,7 @@ def deletion_requests_view(request):
                     )
                     if action == "approve_delete":
                         log_msg += " Account was permanently deleted."
+                    log_msg += f" Super Admin's reason: {decision_reason}"
                     if del_request.reason:
                         log_msg += f" Request reason: {del_request.reason}"
                     _log_system_event(
@@ -3786,7 +3816,7 @@ def deletion_requests_view(request):
                         NotificationCategory.DELETION,
                         f"Deletion request {status_word}",
                         f"Your request to delete '{target_label}' was {status_word}."
-                        + (f" Notes: {review_notes}" if review_notes else ""),
+                        + (f" Reason: {review_notes}" if review_notes else ""),
                         "admin_manage_users",
                         exclude=request.user,
                     )
@@ -4071,6 +4101,8 @@ def repository_add_research_view(request):
     saved_error = ""
     action_message = ""
     action_error = ""
+    if request.method != "POST":
+        action_message, action_error = _pop_result_messages(request)
 
     # Staff Admins without the privilege browse the repository read-only.
     if request.method == "POST" and not can_add_research:
@@ -4079,43 +4111,54 @@ def repository_add_research_view(request):
     if request.method == "POST":
         action = request.POST.get("action")
         if action == "delete_research":
+            delete_reason = ""
             if not is_super_admin:
                 action_error = "Only Super Admin can delete research from the repository."
                 paper_id = None
             else:
                 paper_id = request.POST.get("paper_id")
+                # A reason, then the Super Admin's own password (see _delete_confirm_modal.html).
+                delete_reason, confirm_error = _confirm_with_password(
+                    request,
+                    "Please give a reason for deleting this study. Nothing was deleted.",
+                    "Incorrect password. The study was not deleted.",
+                )
+                if confirm_error:
+                    action_error, paper_id = confirm_error, None
             if paper_id:
                 try:
                     paper = ResearchPaper.objects.get(pk=paper_id)
                     deleted_title = paper.title
                     deleted_authors = paper.authors
                     with transaction.atomic():
-                        try:
-                            sub = ResearchSubmission.objects.get(
-                                student=request.user,
-                                title=paper.title,
-                                status=ResearchSubmissionStatus.APPROVED,
-                            )
-                            if sub.document:
-                                try:
-                                    sub.document.delete(save=False)
-                                except Exception:
-                                    pass
-                            sub.delete()
-                        except ResearchSubmission.DoesNotExist:
-                            pass
+                        # The same study may have been uploaded more than once
+                        # (before duplicate uploads were blocked); remove every copy.
+                        copies = list(ResearchSubmission.objects.filter(
+                            student=request.user,
+                            title=paper.title,
+                            status=ResearchSubmissionStatus.APPROVED,
+                        ))
+                        files = [(sub.document.storage, sub.document.name) for sub in copies if sub.document]
+                        ResearchSubmission.objects.filter(pk__in=[sub.pk for sub in copies]).delete()
                         paper.delete()
+                        # Files go only once the database change is saved.
+                        transaction.on_commit(lambda files=files: [_delete_stored_file(name, storage) for storage, name in files])
                     action_message = f"Deleted '{deleted_title}' from the repository."
+                    copies_note = f" Removed {len(copies)} uploaded copies of it." if len(copies) > 1 else ""
                     _log_system_event(
                         request,
                         request.user,
                         SystemLogType.ACTIVITY,
-                        f"Super Admin deleted research from the repository: '{deleted_title}' (authors: {deleted_authors}).",
+                        f"Super Admin deleted research from the repository: '{deleted_title}' (authors: {deleted_authors}).{copies_note}"
+                        f" Reason: {delete_reason}",
                     )
                 except ResearchPaper.DoesNotExist:
                     action_error = "Research paper not found or already deleted."
                 except Exception as exc:
                     action_error = f"Unable to delete study: {str(exc)}"
+            # Post/Redirect/Get: a refresh can never resend the delete (or the password).
+            return _redirect_with_result(request, "admin_repository_add", action_message, action_error,
+                                         query=request.GET.urlencode())
         elif action == "add_research" or not action:
             form = RepositoryResearchAddForm(request.POST, request.FILES)
             if form.is_valid():
@@ -4189,6 +4232,8 @@ def repository_add_research_view(request):
                                 reviewed_at=timezone.now(),
                             )
                             submission.save()
+                            # Prepare the AI model's meaning vectors for future checks.
+                            transaction.on_commit(lambda pk=submission.pk: semantic.index_in_background(pk))
 
                         paper_defaults = {
                             "abstract": abstract,
@@ -4474,6 +4519,8 @@ def manage_submissions_view(request):
                         submission.drive_file_id = ""
                         submission.drive_file_url = ""
                         submission.save()
+                        # Prepare the AI model's meaning vectors for future checks.
+                        transaction.on_commit(lambda pk=submission.pk: semantic.index_in_background(pk))
 
                         ResearchPaper.objects.update_or_create(
                             title=submission.title,
@@ -5399,7 +5446,7 @@ def _delete_stored_file(name, storage):
         try:
             storage.delete(name)
         except OSError:
-            logger.warning("Could not delete replaced landing image %s", name)
+            logger.warning("Could not delete stored file %s", name)
 
 
 @login_required(login_url="login")
