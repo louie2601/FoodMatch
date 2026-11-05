@@ -185,5 +185,9 @@
   <script src="{% static 'core/js/pages/login-1.js' %}"></script>
 {% endif %}
 
+{% if pending_notice %}
+  {% include 'core/_result_modal.html' with title="Registration waiting for approval" message=pending_notice tone="pending" %}
+{% endif %}
+
 <script src="{% static 'core/js/pages/login-2.js' %}"></script>
 {% endblock %}

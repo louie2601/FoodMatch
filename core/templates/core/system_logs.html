@@ -52,7 +52,7 @@
             <h2 class="mt-2 text-3xl font-black tracking-tight text-slate-900">Login &amp; Activity Logs</h2>
             <p class="mt-2 max-w-2xl text-sm text-slate-600 sm:text-base">
               {% if is_super_admin %}Login events and activity records for every account.{% else %}Login events and activity records for Admin and Student accounts.{% endif %}
-              Total records: <span class="font-bold text-slate-900">{{ total_logs_count }}</span>
+              {% if filters_active %}Matching records{% else %}Total records{% endif %}: <span class="font-bold text-slate-900">{{ total_logs_count }}</span>
             </p>
           </div>
 

@@ -251,6 +251,11 @@ class SimilarityCheckRecord(models.Model):
         return f"[{timezone.localtime(self.checked_at):%Y-%m-%d %H:%M}] {self.file_name} by {account_display_name(self.user)}"
 
 
+class RegistrationStatus(models.TextChoices):
+    PENDING = "Pending", "Waiting for approval"
+    APPROVED = "Approved", "Approved"
+
+
 class RegistrationProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="registration_profile")
     middle_name = models.CharField(max_length=100, blank=True)
@@ -258,6 +263,14 @@ class RegistrationProfile(models.Model):
     program = models.CharField(max_length=255, blank=True)
     college = models.CharField(max_length=120, blank=True)
     group_name = models.CharField(max_length=150, blank=True)
+    # A group that signs up on the Registration page waits here (and cannot
+    # log in) until an Admin or Super Admin approves it. Accounts made any
+    # other way are approved from the start.
+    approval_status = models.CharField(
+        max_length=20, choices=RegistrationStatus.choices, default=RegistrationStatus.APPROVED
+    )
+    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="+")
+    approved_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

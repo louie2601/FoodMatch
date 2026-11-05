@@ -5,6 +5,8 @@ from .models import (
     AdminModuleAccess,
     DeletionRequestStatus,
     LandingSettings,
+    RegistrationProfile,
+    RegistrationStatus,
     UserDeletionRequest,
 )
 
@@ -17,6 +19,22 @@ def pending_deletion_count(request):
         "pending_deletion_count": UserDeletionRequest.objects.filter(
             status=DeletionRequestStatus.PENDING
         ).count()
+    }
+
+
+def registration_requests_nav(request):
+    """Sidebar link to Registration Requests (Super Admins, and Admins with the
+    Manage Users module) with the number of groups waiting for approval."""
+    user = getattr(request, "user", None)
+    if not user or not user.is_authenticated or not (user.is_staff or user.is_superuser):
+        return {}
+    if not user.is_superuser and not AdminModuleAccess.objects.filter(user=user, module=AdminModule.MANAGE_USERS).exists():
+        return {}
+    return {
+        "can_review_registrations": True,
+        "pending_registration_count": RegistrationProfile.objects.filter(
+            approval_status=RegistrationStatus.PENDING, user__is_staff=False, user__is_superuser=False
+        ).count(),
     }
 
 

@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 
 from .models import (
     FoodCategory,
+    GroupMember,
     LoginAs,
     MAX_GROUP_MEMBERS,
     PendingUserInvite,
@@ -118,23 +119,15 @@ PUBLISHED_MONTH_CHOICES = [("", "— Select month —")] + [
     ]
 ]
 
-LEGACY_COLLEGE_ALIASES = {
-    "CBA (College of Business and Accountancy)": "CHTM (College of Tourism and Hospitality Management)",
-    "CBA (College of Tourism and Hospitality Management)": "CHTM (College of Tourism and Hospitality Management)",
-}
-
-
+# Colleges and programs come only from Settings > Programs & Colleges (Super
+# Admin); nothing is listed in the code. They're read each time a form opens,
+# so changes there show at once.
 def program_choices():
-    """Programs offered right now, read when the form opens so Settings changes show at once."""
     return [("", "Select Program"), *[(name, name) for name in active_program_names()]]
 
 
 def college_choices():
-    return [
-        ("", "Select College"),
-        *[(name, name) for name in active_college_names()],
-        *[(legacy, legacy) for legacy in LEGACY_COLLEGE_ALIASES],
-    ]
+    return [("", "Select College"), *[(name, name) for name in active_college_names()]]
 
 
 def program_college_map():
@@ -143,8 +136,6 @@ def program_college_map():
     mapping = {"": []}
     for name, college in Program.objects.filter(is_active=True).values_list("name", "college__name"):
         mapping.setdefault(college or "", []).append(name)
-    for legacy, target in LEGACY_COLLEGE_ALIASES.items():
-        mapping[legacy] = mapping.get(target, [])
     return mapping
 
 
@@ -324,24 +315,74 @@ class MemberForm(forms.Form):
         return clean_name_field(self.cleaned_data.get("last_name", ""), "Last name")
 
 
+def _name_key(value):
+    return " ".join((value or "").replace(".", " ").split()).lower()
+
+
+def same_person(a, b):
+    """Whether two (first, middle, last) names are the same person: the same
+    first and last name, and middle names that agree when both are given
+    (an initial matches the full middle name: "D" = "Dela")."""
+    if _name_key(a[0]) != _name_key(b[0]) or _name_key(a[2]) != _name_key(b[2]):
+        return False
+    middle_a, middle_b = _name_key(a[1]), _name_key(b[1])
+    if not middle_a or not middle_b or middle_a == middle_b:
+        return True
+    short, full = sorted((middle_a, middle_b), key=len)
+    return len(short) == 1 and full.startswith(short)
+
+
+def _full_name(person):
+    return " ".join(part for part in (person[0], person[1], person[2]) if part)
+
+
 class BaseMemberFormSet(BaseFormSet):
     default_error_messages = {
         **BaseFormSet.default_error_messages,
         "too_few_forms": "Add at least %(num)d member.",
         "too_many_forms": "A group can have at most %(num)d members.",
     }
+    # The account being edited, if it already exists.
+    owner_id = None
 
     def clean(self):
         super().clean()
         if any(self.errors):
             return
-        seen = set()
-        for form in self.forms:
-            data = form.cleaned_data
-            key = (data["first_name"].lower(), data.get("middle_name", "").lower(), data["last_name"].lower())
-            if key in seen:
+        people = [(form.cleaned_data["first_name"], form.cleaned_data.get("middle_name", ""), form.cleaned_data["last_name"])
+                  for form in self.forms]
+        for index, person in enumerate(people):
+            if any(same_person(person, earlier) for earlier in people[:index]):
                 raise forms.ValidationError("The same member is listed more than once.")
-            seen.add(key)
+
+        # A student can belong to only one group (one student account). If a person
+        # is listed in two groups (from before this rule), the group that listed
+        # them first keeps them; any other group must remove them before saving.
+        others = GroupMember.objects.select_related("user__registration_profile")
+        own = []
+        if self.owner_id:
+            others = others.exclude(user_id=self.owner_id)
+            own = list(GroupMember.objects.filter(user_id=self.owner_id))
+        taken = []
+        for person in people:
+            elsewhere = [
+                member
+                for member in others.filter(last_name__iexact=person[2].strip(), first_name__iexact=person[0].strip()).order_by("pk")
+                if same_person(person, (member.first_name, member.middle_name, member.last_name))
+            ]
+            if not elsewhere:
+                continue
+            listed_here = [m.pk for m in own if same_person(person, (m.first_name, m.middle_name, m.last_name))]
+            if listed_here and min(listed_here) < elsewhere[0].pk:
+                continue
+            profile = getattr(elsewhere[0].user, "registration_profile", None)
+            group = (getattr(profile, "group_name", "") or "").strip() or elsewhere[0].user.username
+            taken.append(f"{_full_name(person)} (already in {group})")
+        if taken:
+            raise forms.ValidationError(
+                "These people are already members of another group, and a student can belong to only one group: "
+                + "; ".join(taken) + "."
+            )
 
 
 MemberFormSet = formset_factory(
@@ -356,9 +397,12 @@ MemberFormSet = formset_factory(
 
 
 def build_member_formset(data=None, user=None):
-    """Bound formset from POST data, or one pre-filled with the account's current members."""
+    """Bound formset from POST data, or one pre-filled with the account's current
+    members. `user` is the account being edited, if it already exists."""
     if data is not None:
-        return MemberFormSet(data, prefix="members")
+        formset = MemberFormSet(data, prefix="members")
+        formset.owner_id = user.pk if user is not None and user.pk else None
+        return formset
     initial = []
     if user is not None and user.pk:
         initial = [
@@ -458,10 +502,6 @@ class ProfileCompletionForm(forms.Form):
             }
         ),
     )
-
-    def clean_college(self):
-        college = self.cleaned_data.get("college")
-        return LEGACY_COLLEGE_ALIASES.get(college, college)
 
     def __init__(self, *args, require_student_fields=False, **kwargs):
         super().__init__(*args, **kwargs)
@@ -574,10 +614,6 @@ class ProfileUpdateForm(forms.Form):
 
     def clean_last_name(self):
         return clean_name_field(self.cleaned_data.get("last_name", ""), "Last name")
-
-    def clean_college(self):
-        college = self.cleaned_data.get("college")
-        return LEGACY_COLLEGE_ALIASES.get(college, college)
 
     def clean_email(self):
         email = self.cleaned_data.get("email", "").strip().lower()
@@ -1135,10 +1171,6 @@ class RegistrationForm(forms.Form):
             }
         ),
     )
-
-    def clean_college(self):
-        college = self.cleaned_data.get("college")
-        return LEGACY_COLLEGE_ALIASES.get(college, college)
 
     def clean_email(self):
         email = self.cleaned_data.get("email", "").strip().lower()

@@ -28,6 +28,7 @@ urlpatterns = [
     path("dashboard/admin/privilege-access/", views.privilege_and_access_control_view, name="admin_privilege_access_control"),
     path("dashboard/admin/manage-users/", views.manage_users_view, name="admin_manage_users"),
     path("dashboard/admin/deletion-requests/", views.deletion_requests_view, name="admin_deletion_requests"),
+    path("dashboard/admin/registration-requests/", views.registration_requests_view, name="admin_registration_requests"),
     path("dashboard/admin/categories/", views.manage_food_categories_view, name="admin_manage_categories"),
     path("dashboard/admin/manage-submissions/", views.manage_submissions_view, name="admin_manage_submissions"),
     path("dashboard/admin/repository/add/", views.repository_add_research_view, name="admin_repository_add"),

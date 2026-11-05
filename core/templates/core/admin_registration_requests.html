@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Match | Registration Requests</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 text-slate-900">
+    <div data-app-layout class="min-h-screen lg:grid lg:grid-cols-[280px_1fr]">
+      <aside data-app-sidebar class="sticky top-0 max-h-screen overflow-y-auto z-30 bg-gradient-to-b from-slate-950 via-emerald-950 to-slate-900 px-5 py-6 text-white shadow-2xl">
+        <div class="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-3 py-3">
+          <img
+            src="{% static 'core/images/Logo.png' %}"
+            alt="Food Match Logo"
+            class="h-14 w-14 rounded-full border border-white/15 bg-white object-cover"
+          />
+          <div>
+            <p class="text-2xl font-bold tracking-tight">
+              FOOD <span class="text-emerald-400">MATCH</span>
+            </p>
+            <p class="text-xs uppercase tracking-[0.25em] text-emerald-100/80">
+              {% if is_super_admin %}Super Admin Portal{% else %}Admin Portal{% endif %}
+            </p>
+          </div>
+        </div>
+
+        {% include 'core/_nav_admin.html' %}
+      </aside>
+
+      <main class="overflow-hidden">
+        <div class="relative z-40 border-b border-slate-200 bg-white/85 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
+          {% include 'core/_sidebar_toggle.html' %}
+          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">User Management</p>
+              <h1 class="mt-1 text-2xl font-bold tracking-tight text-slate-900">Registration Requests</h1>
+            </div>
+
+            <div class="flex items-center gap-4 self-end md:self-auto">
+              <p class="hidden text-lg font-semibold text-slate-900 sm:block">
+                Welcome, {{ admin_name }}
+              </p>
+              {% include 'core/_account_menu.html' with menu_name=admin_name menu_role=admin_role menu_super=is_super_admin %}
+            </div>
+          </div>
+        </div>
+
+        <section class="px-5 py-6 sm:px-8">
+          <div class="mx-auto max-w-7xl">
+            <div class="overflow-hidden rounded-[2rem] border border-white/70 bg-white shadow-[0_10px_40px_rgba(15,23,42,0.08)]">
+              <div class="flex flex-col gap-4 border-b border-slate-100 px-6 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-100 to-orange-100 text-amber-700">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="9" cy="7" r="4"></circle>
+                      <path d="M19 8v6"></path>
+                      <path d="M22 11h-6"></path>
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 class="text-xl font-black tracking-tight text-slate-900">Registration Requests</h2>
+                    <p class="text-sm text-slate-500">Student groups that signed up on the Registration page. They can't log in until they are approved.</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  {% if pending_requests %}
+                  <span class="inline-flex items-center gap-2 rounded-full bg-amber-100 px-4 py-2 text-sm font-bold text-amber-800 ring-1 ring-amber-200">
+                    <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-amber-500"></span>
+                    {{ pending_requests|length }} waiting
+                  </span>
+                  {% else %}
+                  <span class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-sm font-bold text-emerald-700 ring-1 ring-emerald-200">
+                    <span class="inline-block h-2 w-2 rounded-full bg-emerald-500"></span>
+                    All clear
+                  </span>
+                  {% endif %}
+                </div>
+              </div>
+
+              <p class="border-b border-slate-100 bg-slate-50/60 px-6 py-3 text-xs text-slate-600 sm:px-8">
+                <span class="font-semibold text-slate-700">Approve</span> turns the account on and emails the group that they can log in.
+                <span class="font-semibold text-slate-700">Reject</span> asks for a reason, emails it to the group and removes the request so they can register again. Every decision is saved in the System Logs.
+              </p>
+
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-100">
+                  <thead class="bg-slate-50/60">
+                    <tr>
+                      <th scope="col" class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
+                      <th scope="col" class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Group</th>
+                      <th scope="col" class="hidden px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500 md:table-cell">Members</th>
+                      <th scope="col" class="hidden px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500 lg:table-cell">Program</th>
+                      <th scope="col" class="hidden px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500 lg:table-cell">Registered</th>
+                      <th scope="col" class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-50">
+                    {% for req in pending_requests %}
+                    <tr data-registration-request="{{ req.id }}" class="align-top transition-colors hover:bg-amber-50/40">
+                      <td class="whitespace-nowrap px-6 py-5">
+                        <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-800 ring-1 ring-amber-200">
+                          <span class="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500"></span>
+                          Waiting
+                        </span>
+                      </td>
+                      <td class="px-6 py-5">
+                        <p class="text-sm font-bold text-slate-900">{{ req.display_name }}</p>
+                        <p class="text-xs text-slate-500">@{{ req.username }}</p>
+                        <a href="mailto:{{ req.email }}" class="text-xs text-slate-500 hover:text-emerald-700 hover:underline">{{ req.email }}</a>
+                      </td>
+                      <td class="hidden px-6 py-5 text-sm text-slate-700 md:table-cell">
+                        <ol class="space-y-0.5 whitespace-nowrap">
+                          {% for name in req.members %}<li>{{ forloop.counter }}. {{ name }}{% if forloop.first %} <span class="text-xs text-slate-500">(leader)</span>{% endif %}</li>{% endfor %}
+                        </ol>
+                      </td>
+                      <td class="hidden px-6 py-5 text-sm text-slate-700 lg:table-cell">
+                        <p>{{ req.program }}</p>
+                        <p class="mt-0.5 text-xs text-slate-500">{{ req.college }}</p>
+                      </td>
+                      <td class="hidden whitespace-nowrap px-6 py-5 text-sm text-slate-700 lg:table-cell">{{ req.registered_at }}</td>
+                      <td class="whitespace-nowrap px-6 py-5 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                          <form method="post" class="inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="approve_registration" />
+                            <input type="hidden" name="user_id" value="{{ req.id }}" />
+                            <button
+                              type="submit"
+                              class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-3.5 py-2 text-xs font-bold text-white shadow-md shadow-emerald-200 transition hover:-translate-y-0.5 hover:from-emerald-700 hover:to-green-800"
+                            >
+                              <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+                              Approve
+                            </button>
+                          </form>
+                          <form method="post" class="inline">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="reject_registration" />
+                            <input type="hidden" name="user_id" value="{{ req.id }}" />
+                            <button
+                              type="button"
+                              data-delete-confirm
+                              data-mode="reject_registration"
+                              data-target-name="{{ req.display_name }}"
+                              class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50"
+                            >
+                              <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                              Reject
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                      <td colspan="6" class="px-6 py-12 text-center">
+                        <div class="flex flex-col items-center gap-3">
+                          <div class="flex h-14 w-14 items-center justify-center rounded-3xl bg-emerald-50 text-emerald-500 ring-1 ring-emerald-100">
+                            <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"></path></svg>
+                          </div>
+                          <div>
+                            <p class="text-sm font-semibold text-slate-700">No registrations waiting for approval</p>
+                            <p class="mt-1 text-xs text-slate-500">New student group sign-ups will appear here.</p>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+
+                    {% if recently_approved %}
+                    <tr class="bg-slate-50/80">
+                      <td colspan="6" class="px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-500">Recently approved</td>
+                    </tr>
+                    {% for req in recently_approved %}
+                    <tr data-approved-registration="{{ req.id }}" class="align-top transition-colors hover:bg-slate-50/60">
+                      <td class="whitespace-nowrap px-6 py-5">
+                        <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800 ring-1 ring-emerald-200">
+                          <span class="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                          Approved
+                        </span>
+                      </td>
+                      <td class="px-6 py-5">
+                        <p class="text-sm font-bold text-slate-900">{{ req.display_name }}</p>
+                        <p class="text-xs text-slate-500">@{{ req.username }}</p>
+                      </td>
+                      <td class="hidden px-6 py-5 text-sm text-slate-700 md:table-cell">
+                        <ol class="space-y-0.5 whitespace-nowrap">
+                          {% for name in req.members %}<li>{{ forloop.counter }}. {{ name }}</li>{% endfor %}
+                        </ol>
+                      </td>
+                      <td class="hidden px-6 py-5 text-sm text-slate-700 lg:table-cell">
+                        <p>{{ req.program }}</p>
+                        <p class="mt-0.5 text-xs text-slate-500">{{ req.college }}</p>
+                      </td>
+                      <td class="hidden whitespace-nowrap px-6 py-5 text-sm text-slate-700 lg:table-cell">{{ req.registered_at }}</td>
+                      <td class="px-6 py-5 text-right">
+                        <p class="text-xs font-semibold text-slate-700">Approved by {{ req.approved_by|default:"—" }}</p>
+                        <p class="text-[11px] text-slate-400">{{ req.approved_at }}</p>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {% include 'core/_delete_confirm_modal.html' %}
+        {% include 'core/_result_modal.html' with message=action_message error=action_error %}
+      </main>
+    </div>
+
+    <script src="{% static 'core/js/sidebar-groups.js' %}"></script>
+    <script src="{% static 'core/js/main.js' %}"></script>
+  </body>
+</html>

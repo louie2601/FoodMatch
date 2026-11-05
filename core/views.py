@@ -21,6 +21,7 @@ from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.models import User
 from django.core.files.base import File
 from django.core.cache import cache
+from django.core.exceptions import NON_FIELD_ERRORS
 from django.core.files.storage import default_storage
 from django.core.mail import EmailMultiAlternatives
 from django.core.paginator import Paginator
@@ -68,6 +69,7 @@ from .forms import (
     ForgotPasswordResetForm,
     ForgotPasswordUsernameForm,
     build_member_formset,
+    same_person,
     LoginForm,
     ProfileCompletionForm,
     ProfileUpdateForm,
@@ -104,6 +106,7 @@ from .models import (
     PendingUserInviteRole,
     Program,
     RegistrationProfile,
+    RegistrationStatus,
     ResearchPaper,
     ResearchSubmission,
     ResearchSubmissionStatus,
@@ -128,7 +131,7 @@ from .utils import (
     rank_similar_documents_weighted,
 )
 
-SYSTEM_LOGS_PAGE_SIZE = 10
+SYSTEM_LOGS_PAGE_SIZE = 20
 # Failed sign-ins are recorded as Login logs starting with this text, so the
 # dashboard can count them and System Logs can search for them.
 FAILED_SIGNIN_LOG_PREFIX = "Failed sign-in attempt"
@@ -719,6 +722,64 @@ def student_similarity_records_view(request):
     return render(request, "core/student_similarity_records.html", context)
 
 
+# Role filter on System Logs: key -> (label, which log owners it keeps).
+LOG_ROLE_FILTERS = {
+    "super_admin": ("Super Admin", Q(user__is_superuser=True)),
+    "admin": ("Admin", Q(user__is_staff=True, user__is_superuser=False)),
+    "student": ("Student", Q(user__isnull=False, user__is_staff=False, user__is_superuser=False)),
+}
+
+
+def _log_filters(params, allowed_roles=()):
+    """Search, role and date range for the log pages, plus the query string
+    that keeps them when switching tabs or pages."""
+    search = (params.get("q") or "").strip()[:200]
+    role = (params.get("role") or "").strip()
+    if role not in allowed_roles:
+        role = ""
+    date_from = _parse_date_param(params.get("date_from"))
+    date_to = _parse_date_param(params.get("date_to"))
+    if date_from and date_to and date_from > date_to:
+        date_from, date_to = date_to, date_from
+    kept = {
+        "q": search,
+        "role": role,
+        "date_from": date_from.isoformat() if date_from else "",
+        "date_to": date_to.isoformat() if date_to else "",
+    }
+    kept = {key: value for key, value in kept.items() if value}
+    return {"q": search, "role": role, "date_from": date_from, "date_to": date_to,
+            "active": bool(kept), "params": urlencode(kept)}
+
+
+def _apply_log_role_and_dates(logs, filters):
+    if filters["role"]:
+        logs = logs.filter(LOG_ROLE_FILTERS[filters["role"]][1])
+    if filters["date_from"]:
+        logs = logs.filter(created_at__date__gte=filters["date_from"])
+    if filters["date_to"]:
+        logs = logs.filter(created_at__date__lte=filters["date_to"])
+    return logs
+
+
+def _page_links(page_obj):
+    """Page numbers for the pager, with None where pages are skipped (…)."""
+    return [number if isinstance(number, int) else None
+            for number in page_obj.paginator.get_elided_page_range(page_obj.number, on_each_side=1, on_ends=1)]
+
+
+def _log_page_context(filters, page_obj):
+    return {
+        "search_query": filters["q"],
+        "role_filter": filters["role"],
+        "date_from": filters["date_from"].isoformat() if filters["date_from"] else "",
+        "date_to": filters["date_to"].isoformat() if filters["date_to"] else "",
+        "filters_active": filters["active"],
+        "filter_params": filters["params"],
+        "page_links": _page_links(page_obj),
+    }
+
+
 @login_required(login_url="login")
 def student_logs_view(request):
     """My Logs: the student's own Login/Logout and Activity events, shown as
@@ -733,10 +794,10 @@ def student_logs_view(request):
     if log_type not in ("login", "activity"):
         log_type = "login"
 
-    search_query = request.GET.get("q", "").strip()
-    base_logs = SystemLog.objects.filter(user=request.user)
-    if search_query:
-        base_logs = base_logs.filter(action__icontains=search_query)
+    filters = _log_filters(request.GET)
+    base_logs = _apply_log_role_and_dates(SystemLog.objects.filter(user=request.user), filters)
+    if filters["q"]:
+        base_logs = base_logs.filter(action__icontains=filters["q"])
     login_log_types = (SystemLogType.LOGIN, SystemLogType.LOGOUT)
     login_logs = base_logs.filter(log_type__in=login_log_types)
     activity_logs = base_logs.filter(log_type=SystemLogType.ACTIVITY)
@@ -764,7 +825,7 @@ def student_logs_view(request):
         "page_obj": page_obj,
         "login_count": login_logs.count(),
         "activity_count": activity_logs.count(),
-        "search_query": search_query,
+        **_log_page_context(filters, page_obj),
     }
     return render(request, "core/student_logs.html", context)
 
@@ -1722,6 +1783,13 @@ def _current_login_ui(request):
     return fails, locked
 
 
+def _registration_pending(user):
+    """A group that signed up on the Registration page and is still waiting
+    for an Admin or Super Admin to approve it."""
+    profile = getattr(user, "registration_profile", None)
+    return bool(profile and profile.approval_status == RegistrationStatus.PENDING)
+
+
 def login_view(request):
     if request.user.is_authenticated:
         redirect_response = _redirect_authenticated_user(request.user)
@@ -1730,6 +1798,7 @@ def login_view(request):
 
     form = LoginForm(request.POST or None)
     deactivated_notice = None
+    pending_notice = None
 
     if request.method == "POST" and form.is_valid():
         username = form.cleaned_data["username"]
@@ -1767,7 +1836,18 @@ def login_view(request):
                 cache.delete(throttle_key)
                 request.session.pop("login_ui", None)
 
-            if deactivated_user:
+            if deactivated_user and _registration_pending(deactivated_user):
+                pending_notice = (
+                    "Your registration is still waiting for approval by an Admin or Super Admin, "
+                    f"so you can't log in yet. We will email {deactivated_user.email} as soon as it is approved."
+                )
+                _log_system_event(
+                    request,
+                    deactivated_user,
+                    SystemLogType.ACTIVITY,
+                    "Sign-in blocked: the registration is still waiting for approval.",
+                )
+            elif deactivated_user:
                 record = AccountDeactivation.objects.filter(user=deactivated_user).first()
                 deactivated_notice = {
                     "reason": record.reason if record else "",
@@ -1844,6 +1924,7 @@ def login_view(request):
         "show_forgot_password": fails >= LOGIN_FORGOT_PASSWORD_AFTER_FAILS,
         "lock_seconds_remaining": lock_seconds_remaining,
         "deactivated_notice": deactivated_notice,
+        "pending_notice": pending_notice,
         "contact_email": (LandingSettings.load().contact_email or "").strip(),
     }
     return render(request, "core/login.html", context)
@@ -2150,19 +2231,21 @@ def _apply_group_members(user, profile, member_formset, group_name):
     """Replace a student account's members with the (validated) formset and mirror
     the leader onto the User / profile. The caller saves user and profile."""
     members = [form.cleaned_data for form in member_formset.forms]
-    GroupMember.objects.filter(user=user).delete()
-    GroupMember.objects.bulk_create(
-        [
-            GroupMember(
-                user=user,
-                first_name=data["first_name"],
-                middle_name=data.get("middle_name", ""),
-                last_name=data["last_name"],
-                position=position,
-            )
-            for position, data in enumerate(members)
-        ]
-    )
+    # People who stay in the group keep their record, so the system still knows
+    # which group listed a person first (see BaseMemberFormSet.clean).
+    existing = list(GroupMember.objects.filter(user=user).order_by("pk"))
+    rows = []
+    for position, data in enumerate(members):
+        person = (data["first_name"], data.get("middle_name", ""), data["last_name"])
+        row = next(
+            (m for m in existing if m not in rows and same_person(person, (m.first_name, m.middle_name, m.last_name))),
+            None,
+        ) or GroupMember(user=user)
+        row.first_name, row.middle_name, row.last_name, row.position = person[0], person[1], person[2], position
+        rows.append(row)
+    GroupMember.objects.filter(user=user).exclude(pk__in=[row.pk for row in rows if row.pk]).delete()
+    for row in rows:
+        row.save()
     leader = members[0]
     user.first_name = leader["first_name"]
     user.last_name = leader["last_name"]
@@ -2170,26 +2253,48 @@ def _apply_group_members(user, profile, member_formset, group_name):
     profile.group_name = (group_name or "").strip()
 
 
+def _form_alert(forms, member_formset=None):
+    """Text for the error modal shown when a submitted form comes back with
+    problems: the form-wide problems (e.g. a member already in another group),
+    or a pointer to the fields marked in red."""
+    problems, marked = [], False
+    for form in forms:
+        problems += [str(error) for error in form.non_field_errors()]
+        marked = marked or any(name != NON_FIELD_ERRORS for name in form.errors)
+    if member_formset is not None:
+        problems += [str(error) for error in member_formset.non_form_errors()]
+        marked = marked or any(member_formset.errors)
+    if not problems:
+        return "Please check the fields marked in red and try again."
+    return " ".join(problems) + (" Please also check the fields marked in red." if marked else "")
+
+
+REGISTERED_USERNAME_SESSION_KEY = "registered_username"
+
+
 def register_view(request):
     form = RegistrationForm(request.POST or None)
     member_formset = build_member_formset(request.POST if request.method == "POST" else None)
-    form_submitted = False
+    form_alert = ""
 
     if request.method == "POST":
         form_valid = form.is_valid()
         members_valid = member_formset.is_valid()
         if form_valid and members_valid:
             with transaction.atomic():
+                # The account can't log in until an Admin or Super Admin approves it.
                 user = User.objects.create_user(
                     username=form.cleaned_data["username"],
                     email=form.cleaned_data["email"],
                     password=form.cleaned_data["password"],
+                    is_active=False,
                 )
                 profile = RegistrationProfile(
                     user=user,
                     login_as=LoginAs.STUDENT,
                     program=form.cleaned_data["program"],
                     college=form.cleaned_data["college"],
+                    approval_status=RegistrationStatus.PENDING,
                 )
                 _apply_group_members(user, profile, member_formset, form.cleaned_data.get("group_name", ""))
                 user.save(update_fields=["first_name", "last_name"])
@@ -2198,25 +2303,36 @@ def register_view(request):
                 request,
                 user,
                 SystemLogType.ACTIVITY,
-                f"New student group registered: {account_display_name(user)} "
+                f"New student group registered and is waiting for approval: {account_display_name(user)} "
                 f"({len(member_formset.forms)} member(s), program: {form.cleaned_data['program']}).",
             )
             notify(
                 staff_with_module(AdminModule.MANAGE_USERS),
                 NotificationCategory.ACCOUNT,
-                "New student registration",
-                f"{account_display_name(user)} registered ({form.cleaned_data['program']}).",
-                "admin_manage_users",
+                "New registration to approve",
+                f"{account_display_name(user)} registered ({form.cleaned_data['program']}) and is waiting for approval.",
+                "admin_registration_requests",
             )
-            form = RegistrationForm()
-            member_formset = build_member_formset()
-            form_submitted = True
+            # Post/Redirect/Get: reloading the page can't register the group twice.
+            request.session[REGISTERED_USERNAME_SESSION_KEY] = {"username": user.username, "email": user.email}
+            return redirect("register")
+        form_alert = _form_alert([form], member_formset)
 
+    registered = request.session.pop(REGISTERED_USERNAME_SESSION_KEY, None) if request.method == "GET" else None
+    registered = registered if isinstance(registered, dict) else None
     context = {
         "form": form,
         "member_formset": member_formset,
         "max_group_members": MAX_GROUP_MEMBERS,
-        "form_submitted": form_submitted,
+        "form_submitted": bool(registered),
+        "registered_username": registered["username"] if registered else "",
+        "registered_email": registered["email"] if registered else "",
+        "registration_message": (
+            f"Your registration ({registered['username']}) was sent and is now waiting for approval "
+            "by an Admin or Super Admin. You can't log in yet. "
+            f"We will email {registered['email']} as soon as it is approved."
+        ) if registered else "",
+        "form_alert": form_alert,
         "page_title": "Register",
     }
     return render(request, "core/register.html", context)
@@ -2382,6 +2498,9 @@ def admin_dashboard(request):
 
     # Staff Admins never see Super Admin accounts, logs or submissions.
     users = User.objects.all() if is_super_admin else User.objects.filter(is_superuser=False)
+    # Registrations waiting for approval aren't users yet; they're counted on their own.
+    registration_requests_count = users.filter(registration_profile__approval_status=RegistrationStatus.PENDING).count()
+    users = users.exclude(registration_profile__approval_status=RegistrationStatus.PENDING)
     submissions = ResearchSubmission.objects.all()
     logs = SystemLog.objects.select_related("user")
     if not is_super_admin:
@@ -2454,6 +2573,13 @@ def admin_dashboard(request):
             "tone": "critical",
         })
     attention += [
+        {
+            "label": "Registration requests",
+            "detail": "Groups waiting for approval",
+            "count": registration_requests_count,
+            "url": reverse("admin_registration_requests") if can["manage_users"] else "",
+            "tone": "warning",
+        },
         {
             "label": "Submissions awaiting review",
             "detail": oldest_wait_note or "Nothing waiting",
@@ -2646,6 +2772,7 @@ def _complete_profile_for_pending_invite(request, invite_id):
         "page_title": "Complete Your Profile",
         "form": form,
         "form_submitted": False,
+        "form_alert": _form_alert([form], member_formset) if request.method == "POST" else "",
         "is_student_role": is_student_role,
         "role_display": role_display,
         "user_name": invite.username,
@@ -2798,7 +2925,7 @@ def _portal_role_for(user):
     return "student"
 
 
-def _account_page_context(user, page_mode, profile_form=None):
+def _account_page_context(user, page_mode, profile_form=None, request=None):
     portal_role = _portal_role_for(user)
     role_display = {"super_admin": "Super Admin", "admin": "Admin", "student": "Student"}[portal_role]
     is_virtual = is_emergency_user(user)
@@ -2819,6 +2946,11 @@ def _account_page_context(user, page_mode, profile_form=None):
         context["original_email"] = user.email or ""
         context["date_joined"] = timezone.localtime(user.date_joined).strftime("%B %d, %Y")
         context["last_login"] = timezone.localtime(user.last_login).strftime("%b %d, %Y %I:%M %p") if user.last_login else "Never"
+    if request is not None:
+        # Outcome of the last action (after a redirect), shown as a modal.
+        context["alert_message"], context["alert_error"] = _pop_result_messages(request)
+        if context["alert_message"]:
+            context["alert_title"] = "Profile Updated" if page_mode == "profile" else "Password Changed"
     return context
 
 
@@ -2828,12 +2960,12 @@ def profile_view(request):
 
     if is_emergency_user(user):
         # Virtual break-glass account: no database row, so nothing to edit.
-        return render(request, "core/profile.html", _account_page_context(user, "profile"))
+        return render(request, "core/profile.html", _account_page_context(user, "profile", request=request))
 
     if not _profile_is_complete(user):
         return redirect("complete_profile")
 
-    context = _account_page_context(user, "profile")
+    context = _account_page_context(user, "profile", request=request)
     role_display = context["role_display"]
     is_student = context["is_student"]
     profile = getattr(user, "registration_profile", None)
@@ -2852,7 +2984,7 @@ def profile_view(request):
     if request.method == "POST":
         profile_form = ProfileUpdateForm(request.POST, user=user, require_student_fields=is_student)
         if is_student:
-            member_formset = build_member_formset(request.POST)
+            member_formset = build_member_formset(request.POST, user)
         members_valid = member_formset.is_valid() if member_formset is not None else True
         if profile_form.is_valid():
             data = profile_form.cleaned_data
@@ -2882,6 +3014,8 @@ def profile_view(request):
             )
             messages.success(request, "Your profile has been updated.")
             return redirect("profile")
+        context["alert_error"] = _form_alert([profile_form], member_formset)
+        context["alert_title"] = "Profile not updated"
 
     context["profile_form"] = profile_form
     context["member_formset"] = member_formset
@@ -2895,12 +3029,12 @@ def change_password_view(request):
     user = request.user
 
     if is_emergency_user(user):
-        return render(request, "core/profile.html", _account_page_context(user, "password"))
+        return render(request, "core/profile.html", _account_page_context(user, "password", request=request))
 
     if not _profile_is_complete(user):
         return redirect("complete_profile")
 
-    context = _account_page_context(user, "password")
+    context = _account_page_context(user, "password", request=request)
     role_display = context["role_display"]
 
     if not user.email:
@@ -3118,6 +3252,7 @@ def complete_profile_view(request):
         "page_title": "Complete Your Profile",
         "form": form,
         "form_submitted": form_submitted,
+        "form_alert": _form_alert([form], member_formset) if request.method == "POST" else "",
         "is_student_role": is_student_role,
         "role_display": role_display,
         "user_name": request.user.username,
@@ -3173,6 +3308,57 @@ def _send_account_status_email(request, user, active, reason=""):
     except Exception:
         logger.exception("Could not send account status email to user %s", user.pk)
         return "The status was changed, but the email to the user could not be sent."
+    return ""
+
+
+def _send_registration_decision_email(request, user, approved, reason=""):
+    """Tells a group whether its registration was approved (they can now log in)
+    or rejected (with the reason). Returns an error message if the email could
+    not be sent, else ""."""
+    if not user.email:
+        return "This account has no email address, so no email was sent."
+    name = account_display_name(user)
+    contact = (LandingSettings.load().contact_email or "").strip()
+    contact_line = f"If you have questions, contact {contact}." if contact else "If you have questions, contact the research office."
+    if approved:
+        login_url = request.build_absolute_uri(reverse("login"))
+        subject = "Your Food Match registration has been approved"
+        text_body = (
+            f"Hello {name},\n\n"
+            "Good news! Your Food Match registration has been approved. You can now log in with your "
+            f"username ({user.username}) and the password you chose when you registered.\n\n"
+            f"Log in here: {login_url}\n\n{contact_line}\n"
+        )
+        html_body = (
+            f"<p>Hello {escape(name)},</p>"
+            "<p>Good news! Your Food Match registration has been approved. You can now log in with your "
+            f"username (<strong>{escape(user.username)}</strong>) and the password you chose when you registered.</p>"
+            f'<p><a href="{escape(login_url)}">Log in to Food Match</a></p>'
+            f"<p>{escape(contact_line)}</p>"
+        )
+    else:
+        register_url = request.build_absolute_uri(reverse("register"))
+        subject = "Your Food Match registration was not approved"
+        text_body = (
+            f"Hello {name},\n\n"
+            f"Your Food Match registration ({user.username}) was not approved, so the account was not created.\n\n"
+            f"Reason: {reason}\n\n"
+            f"You may register again here: {register_url}\n\n{contact_line}\n"
+        )
+        html_body = (
+            f"<p>Hello {escape(name)},</p>"
+            f"<p>Your Food Match registration (<strong>{escape(user.username)}</strong>) was not approved, so the account was not created.</p>"
+            f'<p><strong>Reason:</strong><br>{escape(reason)}</p>'
+            f'<p>You may <a href="{escape(register_url)}">register again</a>.</p>'
+            f"<p>{escape(contact_line)}</p>"
+        )
+    try:
+        message = EmailMultiAlternatives(subject, text_body, to=[user.email])
+        message.attach_alternative(html_body, "text/html")
+        message.send(fail_silently=False)
+    except Exception:
+        logger.exception("Could not send registration decision email to user %s", user.pk)
+        return "The email to the group could not be sent."
     return ""
 
 
@@ -3287,7 +3473,7 @@ def _account_edit_forms(target, data=None):
         members = build_member_formset(None, target) if is_student else None
     else:
         form = AdminUserEditForm(data, user=target, require_student_fields=is_student)
-        members = build_member_formset(data) if is_student else None
+        members = build_member_formset(data, target) if is_student else None
     return form, members, is_student
 
 
@@ -3367,6 +3553,8 @@ def manage_users_view(request):
                     action_error = "You cannot modify your own account status."
                 else:
                     action_error = "You do not have permission to change this account's status."
+            elif _registration_pending(target_user):
+                action_error = "This registration is still waiting for approval. Approve or reject it on the Registration Requests page."
             else:
                 make_active = _requested_active_state(request, target_user)
                 reason = _clean_status_reason(request)
@@ -3620,6 +3808,8 @@ def manage_users_view(request):
         all_users = User.objects.select_related("registration_profile").prefetch_related("group_members").filter(
             is_superuser=False
         ).order_by("-is_staff", "-date_joined")
+    # Registrations still waiting for approval live on the Registration Requests page.
+    all_users = all_users.exclude(registration_profile__approval_status=RegistrationStatus.PENDING)
 
     # Build set of user_ids with a pending deletion request
     pending_req_user_ids = set(
@@ -3676,22 +3866,6 @@ def manage_users_view(request):
             }
         )
 
-    pending_invites_qs = PendingUserInvite.objects.select_related("created_by")
-    if not is_super_admin:
-        pending_invites_qs = pending_invites_qs.exclude(login_as=PendingUserInviteRole.SUPER_ADMIN)
-
-    pending_invites = [
-        {
-            "id": invite.pk,
-            "username": invite.username,
-            "email": invite.email,
-            "login_as": invite.login_as,
-            "created_by_name": invite.creator_display_name(),
-            "created_at": timezone.localtime(invite.created_at).strftime("%b %d, %Y %I:%M %p"),
-        }
-        for invite in pending_invites_qs
-    ]
-
     context = {
         "page_title": "Manage Users",
         "is_super_admin": is_super_admin,
@@ -3706,7 +3880,6 @@ def manage_users_view(request):
         "admin_role": "Super Admin" if is_super_admin else "Admin",
         "user_rows": user_rows,
         "total_users": len(user_rows),
-        "pending_invites": pending_invites,
         "edit_target": edit_target,
         "edit_target_name": account_display_name(edit_target) if edit_target else "",
         "edit_form": edit_form,
@@ -3715,6 +3888,134 @@ def manage_users_view(request):
         "max_group_members": MAX_GROUP_MEMBERS,
     }
     return render(request, "core/admin_manage_users.html", context)
+
+
+REGISTRATION_HISTORY_SHOWN = 20
+
+
+def _decide_registration(request, action, user_id_raw):
+    """Approve (account turned on + email) or reject (email with the reason,
+    then the request is removed) one registration. Returns (message, error)."""
+    actor_label = "Super Admin" if request.user.is_superuser else "Admin"
+    applicant = None
+    if user_id_raw.isdigit():
+        applicant = User.objects.select_related("registration_profile").filter(
+            pk=int(user_id_raw),
+            is_staff=False,
+            is_superuser=False,
+            registration_profile__approval_status=RegistrationStatus.PENDING,
+        ).first()
+    if applicant is None:
+        return "", "This registration request no longer exists or was already handled."
+    applicant_label = account_display_name(applicant)
+
+    if action == "approve_registration":
+        with transaction.atomic():
+            # Only one decision counts if two people click at the same time.
+            approved = RegistrationProfile.objects.filter(
+                user=applicant, approval_status=RegistrationStatus.PENDING
+            ).update(
+                approval_status=RegistrationStatus.APPROVED,
+                approved_by=request.user,
+                approved_at=timezone.now(),
+            )
+            if approved:
+                User.objects.filter(pk=applicant.pk).update(is_active=True)
+        if not approved:
+            return "", "This registration request was already handled."
+        _log_system_event(
+            request,
+            request.user,
+            SystemLogType.ACTIVITY,
+            f"{actor_label} approved the registration of {applicant_label} "
+            f"(username: {applicant.username}, email: {applicant.email}).",
+        )
+        email_warning = _send_registration_decision_email(request, applicant, True)
+        message = f"The registration of '{applicant_label}' was approved. " + (
+            "They can now log in." if email_warning else "They were emailed that they can now log in."
+        )
+        return message, email_warning
+
+    reason = (request.POST.get("deletion_reason") or "").strip()[:MAX_STATUS_REASON_LENGTH]
+    if not reason:
+        return "", "Please give a reason for rejecting this registration."
+    username, email = applicant.username, applicant.email
+    email_warning = _send_registration_decision_email(request, applicant, False, reason)
+    # Removing the request frees the username, email and members, so the group
+    # can fix the problem and register again.
+    applicant.delete()
+    _log_system_event(
+        request,
+        request.user,
+        SystemLogType.ACTIVITY,
+        f"{actor_label} rejected the registration of {applicant_label} "
+        f"(username: {username}, email: {email}). Reason: {reason}",
+    )
+    message = f"The registration of '{applicant_label}' was rejected and removed."
+    if not email_warning:
+        message += " The group was emailed your reason."
+    return message, email_warning
+
+
+def _registration_row(applicant):
+    profile = applicant.registration_profile
+    return {
+        "id": applicant.pk,
+        "status": profile.approval_status,
+        "username": applicant.username,
+        "email": applicant.email,
+        "display_name": account_display_name(applicant),
+        "members": group_member_names(applicant),
+        "program": profile.program,
+        "college": profile.college,
+        "registered_at": timezone.localtime(applicant.date_joined).strftime("%b %d, %Y %I:%M %p"),
+        "approved_by": account_display_name(profile.approved_by) if profile.approved_by else "",
+        "approved_at": timezone.localtime(profile.approved_at).strftime("%b %d, %Y %I:%M %p") if profile.approved_at else "",
+    }
+
+
+@login_required(login_url="login")
+def registration_requests_view(request):
+    """Student groups that signed up on the Registration page and wait for an
+    Admin or Super Admin to approve them, plus the ones approved most recently."""
+    redirect_response = _admin_module_or_denied(request, AdminModule.MANAGE_USERS)
+    if redirect_response:
+        return redirect_response
+
+    if request.method == "POST":
+        action = request.POST.get("action", "").strip()
+        if action in ("approve_registration", "reject_registration"):
+            message, error = _decide_registration(request, action, request.POST.get("user_id", "").strip())
+        else:
+            message, error = "", "Unknown action."
+        return _redirect_with_result(request, "admin_registration_requests", message, error)
+
+    action_message, action_error = _pop_result_messages(request)
+    students = User.objects.filter(is_staff=False, is_superuser=False).select_related(
+        "registration_profile__approved_by"
+    ).prefetch_related("group_members")
+    pending = [
+        _registration_row(applicant)
+        for applicant in students.filter(registration_profile__approval_status=RegistrationStatus.PENDING).order_by("date_joined")
+    ]
+    recently_approved = [
+        _registration_row(applicant)
+        for applicant in students.filter(
+            registration_profile__approval_status=RegistrationStatus.APPROVED,
+            registration_profile__approved_at__isnull=False,
+        ).order_by("-registration_profile__approved_at")[:REGISTRATION_HISTORY_SHOWN]
+    ]
+    context = {
+        "page_title": "Registration Requests",
+        "is_super_admin": request.user.is_superuser,
+        "admin_name": request.user.get_full_name().strip() or request.user.username,
+        "admin_role": "Super Admin" if request.user.is_superuser else "Admin",
+        "pending_requests": pending,
+        "recently_approved": recently_approved,
+        "action_message": action_message,
+        "action_error": action_error,
+    }
+    return render(request, "core/admin_registration_requests.html", context)
 
 
 @login_required(login_url="login")
@@ -3742,15 +4043,12 @@ def deletion_requests_view(request):
                     ),
                     pk=request_id,
                 )
-                # The Super Admin gives their own reason for the decision.
-                # Approving deletes the account, so it also needs their password;
-                # rejecting keeps the account, so the reason is enough.
+                # Approving: the requesting Admin already gave the reason, so the
+                # Super Admin only confirms with their own password. Rejecting
+                # keeps the account and needs the Super Admin's reason (no password).
                 if action == "approve_delete":
-                    decision_reason, confirm_error = _confirm_with_password(
-                        request,
-                        "Please give a reason for approving this request. Nothing was deleted.",
-                        "Incorrect password. The account was not deleted.",
-                    )
+                    decision_reason = ""
+                    confirm_error = _confirm_password_only(request, "Incorrect password. The account was not deleted.")
                 else:
                     decision_reason = (request.POST.get("deletion_reason") or "").strip()[:MAX_STATUS_REASON_LENGTH]
                     confirm_error = "" if decision_reason else "Please give a reason for rejecting this request. It is still pending."
@@ -3801,7 +4099,8 @@ def deletion_requests_view(request):
                     )
                     if action == "approve_delete":
                         log_msg += " Account was permanently deleted."
-                    log_msg += f" Super Admin's reason: {decision_reason}"
+                    if decision_reason:
+                        log_msg += f" Super Admin's reason: {decision_reason}"
                     if del_request.reason:
                         log_msg += f" Request reason: {del_request.reason}"
                     _log_system_event(
@@ -4859,13 +5158,17 @@ def system_logs_view(request):
     active_type = request.GET.get("type", "login").strip().lower()
     if active_type not in ("login", "activity"):
         active_type = "login"
-    search_query = request.GET.get("q", "").strip()
+    # Staff Admins never see Super Admin logs, so they can't filter by that role either.
+    allowed_roles = ("super_admin", "admin", "student") if is_super_admin else ("admin", "student")
+    filters = _log_filters(request.GET, allowed_roles)
+    search_query = filters["q"]
 
     base_logs = SystemLog.objects.select_related("user").all()
     if not is_super_admin:
         # Staff Admins only see Admin and Student logs. Super Admin logs (and
         # user-less entries such as the emergency account) are excluded.
         base_logs = base_logs.filter(user__isnull=False, user__is_superuser=False)
+    base_logs = _apply_log_role_and_dates(base_logs, filters)
 
     if search_query:
         base_logs = base_logs.filter(
@@ -4903,12 +5206,13 @@ def system_logs_view(request):
         "admin_name": request.user.get_full_name().strip() or request.user.username,
         "admin_role": "Super Admin" if is_super_admin else "Admin",
         "active_type": active_type,
-        "search_query": search_query,
         "events": events,
         "page_obj": page_obj,
         "login_count": login_count,
         "activity_count": activity_count,
         "total_logs_count": login_count + activity_count,
+        "role_options": [(key, LOG_ROLE_FILTERS[key][0]) for key in allowed_roles],
+        **_log_page_context(filters, page_obj),
     }
     return render(request, "core/system_logs.html", context)
 

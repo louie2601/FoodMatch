@@ -210,4 +210,7 @@
 </section>
 
 {% include 'core/_program_by_college.html' with mapping=form.program_college_map %}
+{% if form_alert %}
+  {% include 'core/_result_modal.html' with title="Profile not saved" error=form_alert %}
+{% endif %}
 {% endblock %}

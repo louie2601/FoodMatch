@@ -18,25 +18,7 @@
           </div>
         </div>
 
-        <nav class="mt-8 space-y-1">
-          <a href="{% url 'student_dashboard' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'student_dashboard' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">Dashboard</a>
-          <a href="{% url 'student_logs' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'student_logs' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">My Logs</a>
-
-          <div class="mt-3">
-            <button type="button" data-group-toggle class="flex w-full items-center justify-center gap-2 rounded-xl px-2 py-2 text-lg font-bold tracking-wide text-emerald-200/80 transition hover:text-emerald-100">
-              <span>My Research</span>
-              <svg data-group-chevron class="h-5 w-5 shrink-0 transition-transform duration-200{% if request.resolver_match.url_name == 'research_similarity' or request.resolver_match.url_name == 'student_submissions' or request.resolver_match.url_name == 'student_similarity_records' %}{% else %} -rotate-90{% endif %}" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24">
-                <path d="m6 9 6 6 6-6"></path>
-              </svg>
-            </button>
-            <div data-group-panel class="mt-1 space-y-2{% if request.resolver_match.url_name == 'research_similarity' or request.resolver_match.url_name == 'student_submissions' or request.resolver_match.url_name == 'student_similarity_records' %}{% else %} hidden{% endif %}">
-              <a href="{% url 'research_similarity' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'research_similarity' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">Similarity Check</a>
-              <a href="{% url 'student_similarity_records' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'student_similarity_records' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">Similarity Check Records</a>
-              <a href="{% url 'student_submissions' %}" class="block rounded-2xl text-center {% if request.resolver_match.url_name == 'student_submissions' %}bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-900/30{% else %}text-white/90 transition hover:bg-white/10 hover:text-white{% endif %} px-4 py-3 text-base font-semibold">My Submissions</a>
-            </div>
-          </div>
-
-        </nav>
+        {% include 'core/_nav_student.html' %}
       </aside>
 
       <main class="overflow-hidden">

@@ -2,10 +2,11 @@
 {% comment %}
   Super Admin confirmation. Modes (data-mode on the trigger button):
     delete   (Manage Users)        1) reason  2) the Super Admin's own password
-    approve  (Deletion Requests)   1) reason  2) password, showing the requesting
-                                   Admin's reason (data-request-reason, data-requested-by)
+    approve  (Deletion Requests)   password only, showing the requesting Admin's
+                                   reason (data-request-reason, data-requested-by)
     reject   (Deletion Requests)   reason only, with the Admin's reason shown
     research (Research Repository) 1) reason  2) password
+    reject_registration (Manage Users, Registration Requests) reason only
   Any button with [data-delete-confirm] opens it and submits its form (the
   enclosing form, or the one named by data-delete-confirm-form) with
   deletion_reason (+ confirm_password) added. The server re-checks — see

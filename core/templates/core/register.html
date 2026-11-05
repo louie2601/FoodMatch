@@ -19,8 +19,9 @@
           </div>
 
           {% if form_submitted %}
-            <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900 shadow-sm">
-              Registration form submitted successfully.
+            <div class="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-sm">
+              Registration submitted successfully. <span class="font-semibold">{{ registered_username }}</span> is waiting for approval by an Admin or Super Admin.
+              We will email <span class="font-semibold">{{ registered_email }}</span> once it is approved, and then you can log in.
             </div>
           {% endif %}
 
@@ -155,4 +156,9 @@
   </div>
 </section>
 {% include 'core/_program_by_college.html' with mapping=form.program_college_map %}
+{% if registered_username %}
+  {% include 'core/_result_modal.html' with title="Registration Submitted" message=registration_message tone="pending" %}
+{% elif form_alert %}
+  {% include 'core/_result_modal.html' with title="Registration not completed" error=form_alert %}
+{% endif %}
 {% endblock %}

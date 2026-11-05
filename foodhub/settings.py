@@ -111,6 +111,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "django.template.context_processors.csrf",
                 "core.context_processors.pending_deletion_count",
+                "core.context_processors.registration_requests_nav",
                 "core.context_processors.notifications",
                 "core.context_processors.landing_site",
                 "core.context_processors.admin_settings_access",

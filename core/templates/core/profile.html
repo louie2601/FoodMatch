@@ -85,11 +85,7 @@
             </aside>
 
             <div class="space-y-6">
-              {% if messages %}
-                {% for message in messages %}
-                  <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-900 shadow-sm">{{ message }}</div>
-                {% endfor %}
-              {% endif %}
+              {% include 'core/_result_modal.html' with message=alert_message error=alert_error title=alert_title %}
 
               {% if is_virtual_account %}
                 <div class="rounded-[2rem] border border-amber-200 bg-amber-50 p-6 text-sm text-amber-900 shadow-sm">

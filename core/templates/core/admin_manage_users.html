@@ -590,68 +590,6 @@
             </div>
           </div>
 
-          {% if pending_invites %}
-          <div class="mx-auto mt-6 max-w-7xl">
-            <div class="rounded-[2rem] border border-amber-200/70 bg-amber-50/60 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
-              <div class="border-b border-amber-200/60 px-5 py-4 sm:px-6 sm:py-5">
-                <p class="text-sm font-semibold uppercase tracking-[0.2em] text-amber-700">Pending Invites</p>
-                <p class="mt-1 text-sm text-amber-900">
-                  Not yet in the database. The account is only created once the invited person logs in with these credentials and completes their onboarding profile.
-                </p>
-              </div>
-              <div class="overflow-x-auto">
-                <table class="w-full border-collapse text-sm">
-                  <thead>
-                    <tr class="border-b border-amber-200/60 bg-amber-50/80">
-                      <th class="px-5 py-3 text-left text-xs font-bold uppercase tracking-[0.18em] text-amber-800">Username</th>
-                      <th class="hidden px-5 py-3 text-left text-xs font-bold uppercase tracking-[0.18em] text-amber-800 md:table-cell">Email</th>
-                      <th class="px-5 py-3 text-left text-xs font-bold uppercase tracking-[0.18em] text-amber-800">Role</th>
-                      <th class="hidden px-5 py-3 text-left text-xs font-bold uppercase tracking-[0.18em] text-amber-800 lg:table-cell">Invited By</th>
-                      <th class="hidden px-5 py-3 text-left text-xs font-bold uppercase tracking-[0.18em] text-amber-800 lg:table-cell">Invited On</th>
-                      <th class="px-5 py-3 text-right text-xs font-bold uppercase tracking-[0.18em] text-amber-800">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for invite in pending_invites %}
-                      <tr class="border-b border-amber-100 last:border-0">
-                        <td class="px-5 py-3 font-semibold text-slate-900">{{ invite.username }}</td>
-                        <td class="hidden px-5 py-3 text-slate-700 md:table-cell">{{ invite.email }}</td>
-                        <td class="px-5 py-3 text-slate-700">{{ invite.login_as }}</td>
-                        <td class="hidden px-5 py-3 text-slate-700 lg:table-cell">{{ invite.created_by_name }}</td>
-                        <td class="hidden px-5 py-3 text-slate-600 lg:table-cell">{{ invite.created_at }}</td>
-                        <td class="px-5 py-3 text-right">
-                          <form method="post" class="inline">
-                            {% csrf_token %}
-                            <input type="hidden" name="user_id" value="{{ invite.id }}" />
-                            <input type="hidden" name="action" value="resend_invite" />
-                            <button
-                              type="submit"
-                              title="Email a new temporary password to the user"
-                              class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
-                            >
-                              Resend Login
-                            </button>
-                          </form>
-                          <form method="post" class="inline">
-                            {% csrf_token %}
-                            <input type="hidden" name="user_id" value="{{ invite.id }}" />
-                            <input type="hidden" name="action" value="cancel_invite" />
-                            <button
-                              type="submit"
-                              class="inline-flex items-center justify-center rounded-xl border border-rose-200 bg-white px-3.5 py-2 text-xs font-semibold text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-50"
-                            >
-                              Cancel Invite
-                            </button>
-                          </form>
-                        </td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-          {% endif %}
 
         </section>
 
