@@ -1,0 +1,22 @@
+# Optional add-on: a free Cloudflare Tunnel gives the site an https:// address
+# without opening any firewall port or buying a domain.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.tunnel.yml up -d --build
+#   docker compose -f docker-compose.yml -f docker-compose.tunnel.yml logs tunnel   # shows the address
+#
+# This quick tunnel's *.trycloudflare.com address changes whenever the tunnel
+# restarts. In .env, allow it with:
+#   ALLOWED_HOSTS=localhost,127.0.0.1,.trycloudflare.com
+#   CSRF_TRUSTED_ORIGINS=https://*.trycloudflare.com
+services:
+  nginx:
+    # Only the tunnel (and the server itself) can reach nginx.
+    ports: !override
+      - "127.0.0.1:8080:80"
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate --url http://nginx:80
+    depends_on:
+      - nginx
+    restart: unless-stopped

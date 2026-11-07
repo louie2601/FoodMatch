@@ -5,7 +5,7 @@
   aria-label="Toggle sidebar"
   aria-expanded="true"
   title="Toggle sidebar"
-  class="absolute left-5 top-4 rounded-xl bg-slate-100 p-3 text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-200 focus:outline-none focus:ring-4 focus:ring-slate-200 sm:left-8 md:top-1/2 md:-translate-y-1/2"
+  class="absolute left-5 top-1/2 -translate-y-1/2 rounded-xl bg-slate-100 p-3 text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-200 focus:outline-none focus:ring-4 focus:ring-slate-200 sm:left-8"
 >
   <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
     <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"></path>
@@ -31,5 +31,14 @@
     body.sidebar-collapsed [data-app-sidebar] { display: none; }
     body.sidebar-collapsed [data-app-layout] { grid-template-columns: minmax(0, 1fr) !important; }
   }
+  /* Top bar: menu button, page title and the bell/account menu share one row. */
+  [data-page-header] > :first-child { min-width: 0; }
+  [data-page-header] > :last-child { align-self: center; flex-shrink: 0; }
+  @media (max-width: 639px) {
+    /* Phones: keep only the page title; the small eyebrow/description lines are hidden. */
+    [data-page-header] > :first-child p { display: none; }
+    [data-page-header] h1 { font-size: 1.2rem; line-height: 1.5rem; overflow-wrap: anywhere; }
+  }
 </style>
 <script src="{% static 'core/js/pages/sidebar-toggle.js' %}"></script>
+<script src="{% static 'core/js/swipe-hint.js' %}" defer></script>

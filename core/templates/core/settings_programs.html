@@ -23,7 +23,7 @@
       <main class="overflow-hidden">
         <div class="relative z-40 border-b border-slate-200 bg-white/85 px-5 py-4 shadow-sm backdrop-blur sm:px-8">
           {% include 'core/_sidebar_toggle.html' %}
-          <div class="pl-14 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div data-page-header class="pl-14 flex items-center justify-between gap-3">
             <div>
               <h1 class="text-2xl font-bold tracking-tight text-slate-900">Programs &amp; Colleges</h1>
               <p class="mt-1 text-sm text-slate-500">The colleges and programs people pick when they sign up.</p>
@@ -40,7 +40,7 @@
           </p>
 
           {% comment %} Add controls {% endcomment %}
-          <div class="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div class="grid grid-cols-1 gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <form method="post" class="flex flex-col gap-2 sm:flex-row">
               {% csrf_token %}
               <input type="hidden" name="action" value="add_college" />
@@ -53,7 +53,7 @@
               {% csrf_token %}
               <input type="hidden" name="action" value="add_program" />
               <label class="sr-only" for="newProgramCollege">College</label>
-              <select id="newProgramCollege" name="college_id" required class="min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100 sm:max-w-[45%]">
+              <select id="newProgramCollege" name="college_id" required class="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-4 focus:ring-emerald-100 sm:max-w-[45%]">
                 <option value="">Select college</option>
                 {% for college in college_options %}<option value="{{ college.pk }}">{{ college.name }}</option>{% endfor %}
               </select>

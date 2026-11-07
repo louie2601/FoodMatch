@@ -34,15 +34,48 @@
               <a href="#contact" class="text-slate-700 hover:text-green-700 font-medium">Contact</a>
             </nav>
 
-            <div class="flex justify-end">
+            <div class="flex items-center justify-end gap-2">
             {% if request.user.is_authenticated %}
-              <a href="{% url 'dashboard_redirect' %}" class="rounded-full bg-gradient-to-r from-emerald-600 to-green-700 px-5 py-2.5 font-semibold text-white shadow-sm transition hover:from-emerald-700 hover:to-green-800 hover:shadow-md">
+              <a href="{% url 'dashboard_redirect' %}" class="rounded-full bg-gradient-to-r from-emerald-600 to-green-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:from-emerald-700 hover:to-green-800 hover:shadow-md sm:px-5 sm:py-2.5 sm:text-base">
                 {% if request.user.is_staff or request.user.is_superuser %}Admin Dashboard{% else %}My Dashboard{% endif %}
               </a>
             {% endif %}
+              {% comment %} Phones: the navigation links live in a drop-down menu. {% endcomment %}
+              <button type="button" data-public-menu-toggle aria-controls="publicMenu" aria-expanded="false" aria-label="Open menu"
+                class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-slate-700 ring-1 ring-slate-200 transition hover:bg-slate-200 focus:outline-none focus:ring-4 focus:ring-emerald-100 md:hidden">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+              </button>
             </div>
           </div>
         </div>
+        <nav id="publicMenu" data-public-menu class="hidden border-t border-slate-200 bg-white px-4 pb-4 pt-2 shadow-lg md:hidden" aria-label="Main menu">
+          <a href="{% url 'home' %}" class="block rounded-xl px-3 py-3 font-medium text-slate-700 hover:bg-emerald-50 hover:text-green-700">Home</a>
+          <a href="{% url 'home' %}#how-it-works" class="block rounded-xl px-3 py-3 font-medium text-slate-700 hover:bg-emerald-50 hover:text-green-700">How It Works</a>
+          <a href="{% url 'home' %}#features" class="block rounded-xl px-3 py-3 font-medium text-slate-700 hover:bg-emerald-50 hover:text-green-700">Features</a>
+          <a href="{% url 'home' %}#faq" class="block rounded-xl px-3 py-3 font-medium text-slate-700 hover:bg-emerald-50 hover:text-green-700">FAQ</a>
+          <a href="#contact" class="block rounded-xl px-3 py-3 font-medium text-slate-700 hover:bg-emerald-50 hover:text-green-700">Contact</a>
+          {% if not request.user.is_authenticated %}
+            <div class="mt-2 grid grid-cols-2 gap-2 border-t border-slate-100 pt-3">
+              <a href="{% url 'login' %}" class="rounded-xl border border-slate-200 px-3 py-2.5 text-center font-semibold text-slate-700 hover:bg-slate-50">Log in</a>
+              <a href="{% url 'register' %}" class="rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-3 py-2.5 text-center font-semibold text-white">Create Account</a>
+            </div>
+          {% endif %}
+        </nav>
+        <script>
+          (function () {
+            var button = document.querySelector('[data-public-menu-toggle]');
+            var menu = document.querySelector('[data-public-menu]');
+            if (!button || !menu) return;
+            function setOpen(open) {
+              menu.classList.toggle('hidden', !open);
+              button.setAttribute('aria-expanded', open ? 'true' : 'false');
+              button.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+            }
+            button.addEventListener('click', function () { setOpen(menu.classList.contains('hidden')); });
+            menu.addEventListener('click', function (e) { if (e.target.closest('a')) setOpen(false); });
+            document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+          })();
+        </script>
       </header>
     {% endblock %}
 

@@ -175,6 +175,6 @@ class SystemLogAdmin(admin.ModelAdmin):
         return False
 
 
-admin.site.site_header = "FoodHub Super Admin"
-admin.site.site_title = "FoodHub Super Admin Portal"
+admin.site.site_header = "Food Match Super Admin"
+admin.site.site_title = "Food Match Super Admin Portal"
 admin.site.index_title = "All System Controls"

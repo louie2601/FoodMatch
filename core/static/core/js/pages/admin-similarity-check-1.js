@@ -1,12 +1,18 @@
 (function () {
+  // Same as the student Similarity Check: the full-screen "Analyzing your file…"
+  // card (templates/core/_analyzing_overlay.html) plus a disabled button.
+  var overlay = document.getElementById('analyzingOverlay');
   var simForm = document.getElementById('adminSimilarityForm');
   var submitBtn = document.getElementById('submitSimilarityBtn');
+  var label = submitBtn ? submitBtn.querySelector('[data-check-similarity-label]') : null;
   if (simForm && submitBtn) {
     simForm.addEventListener('submit', function () {
+      if (overlay) {
+        overlay.classList.remove('hidden');
+        overlay.classList.add('flex');
+      }
       submitBtn.disabled = true;
-      submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
-      submitBtn.innerHTML =
-        '<svg class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Analyzing… (up to a minute)';
+      if (label) label.textContent = 'Analyzing...';
     });
   }
 })();

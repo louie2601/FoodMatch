@@ -192,7 +192,12 @@ def _username_key(username):
 
 def _get_client_ip(request):
     """The visitor's IP. X-Forwarded-For is only believed behind our own proxy
-    (TRUST_X_FORWARDED_FOR), where nginx overwrites it with the real address."""
+    (TRUST_X_FORWARDED_FOR), where nginx overwrites it with the real address,
+    and CF-Connecting-IP only when the app sits behind a Cloudflare Tunnel."""
+    if getattr(settings, "TRUST_CF_CONNECTING_IP", False):
+        cloudflare_ip = request.META.get("HTTP_CF_CONNECTING_IP", "").strip()
+        if cloudflare_ip:
+            return cloudflare_ip
     if settings.TRUST_X_FORWARDED_FOR:
         forwarded = request.META.get("HTTP_X_FORWARDED_FOR", "")
         if forwarded.strip():
@@ -657,6 +662,9 @@ def research_similarity_view(request):
         "form": form,
         "similarity_results": similarity_results,
         "total_repository_documents": total_repository_documents,
+        # Studies the check compares against (same de-duplicated count as the
+        # dashboard), shown before a check has run too.
+        "repository_count": len(_all_repository_rows(request.user)),
         "comparison_submitted": comparison_submitted,
         "student_name": account_display_name(request.user),
         "student_role": "Student",
@@ -1681,6 +1689,9 @@ def admin_research_similarity_view(request):
         "overall_label": overall_label,
         "total_approved_submissions": total_approved_submissions,
         "total_papers": total_papers,
+        # Studies the check compares against (same de-duplicated count as the
+        # dashboard), shown before a check has run too.
+        "repository_count": len(_all_repository_rows(request.user)),
         "detected_title": query_title_guess,
         "detected_abstract": query_abstract_guess,
         "similarity_weights": similarity_weights_used,

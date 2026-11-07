@@ -1,5 +1,7 @@
-# FoodHub
-A Django backend with JavaScript and Tailwind CSS frontend starter for food innovation.
+# Food Match
+A web repository for food research with machine-learning similarity detection (Django, PostgreSQL, Tailwind CSS).
+
+The project folder and Django project are named `FoodHub` / `foodhub`; the system itself is called Food Match.
 
 ---
 

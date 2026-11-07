@@ -59,6 +59,10 @@ ENABLE_DJANGO_ADMIN = env_bool("ENABLE_DJANGO_ADMIN", False)
 # docker/) may that header be trusted as the visitor's IP; otherwise anyone
 # could fake it to dodge the login lockout or spoof the IP in the logs.
 TRUST_X_FORWARDED_FOR = env_bool("TRUST_X_FORWARDED_FOR", False)
+# Only when the app is reachable solely through a Cloudflare Tunnel (bound to
+# 127.0.0.1, see run_public.ps1): Cloudflare then sets CF-Connecting-IP to the
+# visitor's real address and overwrites any value a visitor sends.
+TRUST_CF_CONNECTING_IP = env_bool("TRUST_CF_CONNECTING_IP", False)
 
 # Turn on once the site is served over HTTPS (HTTPS_ENABLED=True in .env).
 HTTPS_ENABLED = env_bool("HTTPS_ENABLED", False)
