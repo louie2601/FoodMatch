@@ -27,6 +27,9 @@
   var requestedByEl = modal.querySelector('[data-delete-confirm-requested-by]');
   var reasonHint = modal.querySelector('[data-delete-confirm-reason-hint]');
   var nextBtn = modal.querySelector('[data-delete-confirm-next]');
+  var iconBox = modal.querySelector('[data-delete-confirm-icon]');
+  var defaultIcon = iconBox ? iconBox.innerHTML : '';
+  var KEY_ICON = '<svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="15.5" r="4.5"></circle><path d="m10.7 12.3 9.8-9.8"></path><path d="m17 6 3 3"></path><path d="m14.5 8.5 2.5 2.5"></path></svg>';
   var nextBtnHtml = nextBtn.innerHTML;
   var nextBtnClass = nextBtn.className;
   var targetForm = null;
@@ -56,6 +59,11 @@
       label: 'Reason for rejecting ', placeholder: 'e.g. The members listed are not enrolled in this program.',
       hint: 'Emailed to the group and saved in the System Logs. Up to 500 characters.',
       submit: 'Reject registration', busy: 'Rejecting...', btn: DANGER_BTN },
+    reset_password: { eyebrow: 'Reset Password', verb: 'Reset the password of', target: 'this account', icon: 'key',
+      desc: 'A new 8-character password is generated and emailed to the account owner. Their current password stops working right away.',
+      label: 'Reason for resetting the password ', placeholder: 'e.g. The student forgot their password and asked for a new one.',
+      hint: 'Emailed to the account owner and saved in the System Logs. Up to 500 characters.',
+      submit: 'Reset and email password', busy: 'Resetting...', btn: DANGER_BTN },
     research: { eyebrow: 'Delete Research', verb: 'Delete', target: 'this study',
       desc: 'This cannot be undone. The study and its uploaded file are removed from the repository and from future similarity checks.',
       label: 'Reason for deleting this study ', placeholder: 'e.g. Duplicate entry uploaded by mistake.', hint: LOG_HINT,
@@ -85,6 +93,7 @@
     verbEl.textContent = m.verb;
     eyebrowEl.textContent = m.eyebrow;
     descEl.textContent = m.desc;
+    if (iconBox) iconBox.innerHTML = m.icon === 'key' ? KEY_ICON : defaultIcon;
     if (needsReason) {
       reasonLabel.firstChild.textContent = m.label;
       reasonInput.placeholder = m.placeholder;

@@ -241,16 +241,16 @@
                 <table class="w-full border-collapse text-sm">
                   <thead>
                     <tr class="border-b border-slate-200 {% if is_super_admin %}bg-gradient-to-r from-emerald-50 via-teal-50 to-sky-50{% else %}bg-gradient-to-r from-emerald-50 via-teal-50 to-sky-50{% endif %}">
-                      <th class="px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Username</th>
-                      <th class="px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Name</th>
-                      <th class="hidden px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600 md:table-cell">Email</th>
-                      <th class="px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Role</th>
-                      <th class="px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Status</th>
+                      <th class="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Username</th>
+                      <th class="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Name</th>
+                      <th class="hidden px-4 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600 md:table-cell">Email</th>
+                      <th class="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Role</th>
+                      <th class="px-4 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Status</th>
                       {% if not is_super_admin %}
-                      <th class="hidden px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600 lg:table-cell">Onboarding</th>
+                      <th class="hidden px-4 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600 2xl:table-cell">Onboarding</th>
                       {% endif %}
-                      <th class="hidden px-5 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600 lg:table-cell">Created</th>
-                      <th class="px-5 py-3.5 text-right text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Actions</th>
+                      <th class="hidden px-4 py-3.5 text-left text-xs font-bold uppercase tracking-[0.18em] text-slate-600 2xl:table-cell">Created</th>
+                      <th class="px-4 py-3.5 text-right text-xs font-bold uppercase tracking-[0.18em] text-slate-600">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -287,7 +287,7 @@
                         data-profile-date-joined="{{ row.date_joined }}"
                         data-profile-last-login="{{ row.last_login }}"
                       >
-                        <td class="px-5 py-3">
+                        <td class="px-4 py-3">
                           <div class="flex flex-col gap-1.5">
                             <div class="flex items-center gap-3">
                               <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br {% if row.role_category == 'super_admin' %}from-emerald-100 to-green-200{% elif row.role_category == 'admin' %}from-emerald-100 to-teal-200{% else %}from-amber-100 to-orange-200{% endif %} text-sm font-bold ring-2 ring-white shadow-sm {% if row.role_category == 'super_admin' %}text-emerald-900{% elif row.role_category == 'admin' %}text-emerald-900{% else %}text-amber-900{% endif %}">
@@ -306,7 +306,7 @@
                             {% endif %}
                           </div>
                         </td>
-                        <td class="px-5 py-3 text-slate-700">
+                        <td class="px-4 py-3 text-slate-700">
                           {% if row.display_name %}
                             {{ row.display_name }}
                             {% if row.members|length > 1 %}<span class="ml-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-100">{{ row.members|length }} members</span>{% endif %}
@@ -314,10 +314,10 @@
                             <span class="text-slate-400 italic">Not set yet</span>
                           {% endif %}
                         </td>
-                        <td class="hidden px-5 py-3 text-slate-700 md:table-cell">
+                        <td class="hidden px-4 py-3 text-slate-700 md:table-cell">
                           <a href="mailto:{{ row.email }}" class="hover:underline">{{ row.email }}</a>
                         </td>
-                        <td class="px-5 py-3">
+                        <td class="px-4 py-3">
                           {% if row.role_category == 'super_admin' %}
                             <span class="inline-flex items-center rounded-full bg-gradient-to-r from-emerald-100 via-green-100 to-pink-100 px-2.5 py-1 text-xs font-bold text-emerald-900 ring-1 ring-green-200">
                               🛡️ {{ row.role_label }}
@@ -332,7 +332,7 @@
                             </span>
                           {% endif %}
                         </td>
-                        <td class="px-5 py-3">
+                        <td class="px-4 py-3">
                           {% if row.is_active %}
                             <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-200">
                               <span class="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
@@ -346,7 +346,7 @@
                           {% endif %}
                         </td>
                         {% if not is_super_admin %}
-                        <td class="hidden px-5 py-3 lg:table-cell">
+                        <td class="hidden px-4 py-3 2xl:table-cell">
                           {% if row.profile_complete %}
                             <span class="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-200">
                               ✅ Completed
@@ -358,201 +358,103 @@
                           {% endif %}
                         </td>
                         {% endif %}
-                        <td class="hidden px-5 py-3 text-slate-600 lg:table-cell">
+                        <td class="hidden px-4 py-3 text-slate-600 2xl:table-cell">
                           {{ row.date_joined }}
                         </td>
-                        <td class="px-5 py-3">
-                          <div class="flex items-center justify-end gap-1">
+                        <td class="px-4 py-3 text-right">
+                          {% comment %} One "Actions" menu per row. Each item keeps the hooks the page's
+                               scripts use (view drawer, deactivate reason, delete / reset confirmation,
+                               deletion request), so they work exactly as the old icon buttons did. {% endcomment %}
+                          <div class="relative inline-block text-left" data-row-menu>
                             <button
                               type="button"
-                              data-trigger-view-profile
-                              title="View full account and profile details"
-                              aria-label="View full account and profile details"
-                              class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+                              data-row-menu-toggle
+                              aria-haspopup="menu"
+                              aria-expanded="false"
+                              aria-label="Actions for {{ row.display_name|default:row.username }}"
+                              class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-emerald-100"
                             >
-                              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
-                                <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                              </svg>
+                              Actions
+                              <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
                             </button>
 
-                            {% if row.id != request.user.pk %}{% if is_super_admin or not row.is_superuser %}
-                              <a
-                                href="?edit={{ row.id }}"
-                                data-edit-user
-                                title="Edit this account"
-                                aria-label="Edit this account"
-                                class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-sky-200 bg-sky-50 text-sky-800 shadow-sm transition hover:border-sky-300 hover:bg-sky-100"
-                              >
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
-                                  <path d="M12 20h9"></path>
-                                  <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                                </svg>
-                              </a>
-                            {% endif %}{% endif %}
+                            <div data-row-menu-panel role="menu" class="hidden z-[45] w-60 overflow-hidden rounded-2xl border border-slate-200 bg-white py-1.5 text-left shadow-[0_20px_50px_rgba(15,23,42,0.18)]">
+                              <button type="button" role="menuitem" data-trigger-view-profile class="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:bg-slate-50 focus:outline-none">
+                                <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                View details
+                              </button>
 
-                            {% if is_super_admin %}
-                              {# --------------- SUPER ADMIN ACTIONS --------------- #}
-                              <form method="post" class="inline">
-                                {% csrf_token %}
-                                <input type="hidden" name="user_id" value="{{ row.id }}" />
-                                <input type="hidden" name="action" value="toggle_active" />
-                                <input type="hidden" name="make_active" value="{% if row.is_active %}0{% else %}1{% endif %}" />
-                                {% if row.id == request.user.pk %}
-                                <button
-                                  type="button"
-                                  disabled
-                                  title="You cannot modify your own account status"
-                                  aria-label="Account status locked"
-                                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 shadow-sm opacity-60 cursor-not-allowed"
-                                >
-                                  <span class="inline-block h-2 w-2 rounded-full bg-slate-300"></span>
-                                </button>
-                                {% elif row.is_active %}
-                                <button
-                                  type="submit"
-                                  data-action-btn="deactivate"
-                                  data-needs-deactivation-reason
-                                  data-target-name="{{ row.display_name|default:row.username }}"
-                                  title="Deactivate this account"
-                                  aria-label="Deactivate this account"
-                                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-amber-200 bg-amber-50 text-amber-800 shadow-sm transition hover:border-amber-300 hover:bg-amber-100"
-                                >
-                                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
-                                    <path d="M18.36 6.64A9 9 0 0 1 20.77 15"></path>
-                                    <path d="M6.16 6.16a9 9 0 1 0 12.68 12.68"></path>
-                                    <path d="M2.26 2.26l19.5 19.5"></path>
-                                    <path d="M7.16 7.16A4 4 0 0 0 12 16c1.24 0 2.35-.52 3.14-1.36"></path>
-                                  </svg>
-                                </button>
-                                {% else %}
-                                <button
-                                  type="submit"
-                                  data-action-btn="activate"
-                                  title="Activate this account"
-                                  aria-label="Activate this account"
-                                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-100"
-                                >
-                                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
-                                    <circle cx="12" cy="12" r="8"></circle>
-                                    <path d="M9 12l2 2 4-4"></path>
-                                  </svg>
-                                </button>
-                                {% endif %}
-                              </form>
-
-                              {% if row.id != request.user.pk %}
-                              <form method="post" class="inline" data-delete-form data-user-name="{{ row.display_name|default:row.username }}">
-                                {% csrf_token %}
-                                <input type="hidden" name="user_id" value="{{ row.id }}" />
-                                <input type="hidden" name="action" value="delete_user" />
-                                <button
-                                  type="button"
-                                  data-delete-confirm
-                                  title="Permanently delete this account"
-                                  aria-label="Permanently delete this account"
-                                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-200 bg-white text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-50"
-                                >
-                                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
-                                    <path d="M3 6h18"></path>
-                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
-                                    <path d="M10 11v6"></path>
-                                    <path d="M14 11v6"></path>
-                                  </svg>
-                                </button>
-                              </form>
-                              {% endif %}
-
-                            {% else %}
-                              {# --------------- STAFF ADMIN ACTIONS (ADMINS & STUDENTS, NOT SELF/SUPER ADMIN) --------------- #}
-                              <form method="post" class="inline">
-                                {% csrf_token %}
-                                <input type="hidden" name="user_id" value="{{ row.id }}" />
-                                <input type="hidden" name="action" value="toggle_active" />
-                                <input type="hidden" name="make_active" value="{% if row.is_active %}0{% else %}1{% endif %}" />
-                                {% if row.id == request.user.pk %}
-                                <button
-                                  type="button"
-                                  disabled
-                                  title="You cannot modify your own account status"
-                                  aria-label="Account status locked"
-                                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-400 shadow-sm opacity-60 cursor-not-allowed"
-                                >
-                                  <span class="inline-block h-2 w-2 rounded-full bg-slate-300"></span>
-                                </button>
-                                {% elif row.is_active %}
-                                <button
-                                  type="submit"
-                                  data-action-btn="deactivate"
-                                  data-needs-deactivation-reason
-                                  data-target-name="{{ row.display_name|default:row.username }}"
-                                  title="Deactivate this account"
-                                  aria-label="Deactivate this account"
-                                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-amber-200 bg-amber-50 text-amber-800 shadow-sm transition hover:border-amber-300 hover:bg-amber-100"
-                                >
-                                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
-                                    <path d="M18.36 6.64A9 9 0 0 1 20.77 15"></path>
-                                    <path d="M6.16 6.16a9 9 0 1 0 12.68 12.68"></path>
-                                    <path d="M2.26 2.26l19.5 19.5"></path>
-                                    <path d="M7.16 7.16A4 4 0 0 0 12 16c1.24 0 2.35-.52 3.14-1.36"></path>
-                                  </svg>
-                                </button>
-                                {% else %}
-                                <button
-                                  type="submit"
-                                  data-action-btn="activate"
-                                  title="Activate this account"
-                                  aria-label="Activate this account"
-                                  class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-100"
-                                >
-                                  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
-                                    <circle cx="12" cy="12" r="8"></circle>
-                                    <path d="M9 12l2 2 4-4"></path>
-                                  </svg>
-                                </button>
-                                {% endif %}
-                              </form>
-
-                              {% if row.id != request.user.pk %}
-                              <form method="post" class="inline" data-request-delete-form data-user-name="{{ row.display_name|default:row.username }}">
-                                {% csrf_token %}
-                                <input type="hidden" name="user_id" value="{{ row.id }}" />
-                                <input type="hidden" name="action" value="request_delete" />
-                                {% if row.has_pending_delete %}
-                                  <button
-                                    type="button"
-                                    disabled
-                                    title="A deletion request for this account is already pending Super Admin approval"
-                                    aria-label="Deletion request pending Super Admin approval"
-                                    class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-amber-200 bg-amber-50 text-amber-700 shadow-sm opacity-70 cursor-not-allowed"
-                                  >
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
-                                      <path d="M12 8v4"></path>
-                                      <path d="M12 16h.01"></path>
-                                      <circle cx="12" cy="12" r="10"></circle>
-                                    </svg>
+                              {% if row.id != request.user.pk %}{% if is_super_admin or not row.is_superuser %}
+                                <a href="?edit={{ row.id }}" role="menuitem" data-edit-user class="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:bg-slate-50 focus:outline-none">
+                                  <svg class="h-4 w-4 text-sky-600" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+                                  Edit account
+                                </a>
+                                <form method="post">
+                                  {% csrf_token %}
+                                  <input type="hidden" name="user_id" value="{{ row.id }}" />
+                                  <input type="hidden" name="action" value="reset_password" />
+                                  <button type="button" role="menuitem" data-delete-confirm data-mode="reset_password" data-target-name="{{ row.display_name|default:row.username }}" data-reset-password
+                                    class="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 focus:bg-slate-50 focus:outline-none">
+                                    <svg class="h-4 w-4 text-slate-500" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><circle cx="7.5" cy="15.5" r="4.5"></circle><path d="m10.7 12.3 9.8-9.8"></path><path d="m17 6 3 3"></path><path d="m14.5 8.5 2.5 2.5"></path></svg>
+                                    Reset password
                                   </button>
+                                </form>
+
+                                <div class="my-1.5 border-t border-slate-100" role="separator"></div>
+
+                                <form method="post">
+                                  {% csrf_token %}
+                                  <input type="hidden" name="user_id" value="{{ row.id }}" />
+                                  <input type="hidden" name="action" value="toggle_active" />
+                                  <input type="hidden" name="make_active" value="{% if row.is_active %}0{% else %}1{% endif %}" />
+                                  {% if row.is_active %}
+                                    <button type="submit" role="menuitem" data-action-btn="deactivate" data-needs-deactivation-reason data-target-name="{{ row.display_name|default:row.username }}"
+                                      class="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-amber-800 hover:bg-amber-50 focus:bg-amber-50 focus:outline-none">
+                                      <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="m5.6 5.6 12.8 12.8"></path></svg>
+                                      Deactivate account
+                                    </button>
+                                  {% else %}
+                                    <button type="submit" role="menuitem" data-action-btn="activate"
+                                      class="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-emerald-800 hover:bg-emerald-50 focus:bg-emerald-50 focus:outline-none">
+                                      <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M9 12l2 2 4-4"></path></svg>
+                                      Activate account
+                                    </button>
+                                  {% endif %}
+                                </form>
+
+                                {% if is_super_admin %}
+                                  <form method="post" data-delete-form data-user-name="{{ row.display_name|default:row.username }}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="user_id" value="{{ row.id }}" />
+                                    <input type="hidden" name="action" value="delete_user" />
+                                    <button type="button" role="menuitem" data-delete-confirm
+                                      class="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-rose-700 hover:bg-rose-50 focus:bg-rose-50 focus:outline-none">
+                                      <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></svg>
+                                      Delete account
+                                    </button>
+                                  </form>
                                 {% else %}
-                                  <button
-                                    type="button"
-                                    data-trigger-request-delete
-                                    title="Submit a deletion request for Super Admin approval"
-                                    aria-label="Request deletion for Super Admin approval"
-                                    class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-rose-200 bg-white text-rose-700 shadow-sm transition hover:border-rose-300 hover:bg-rose-50"
-                                  >
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24">
-                                      <path d="M3 6h18"></path>
-                                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
-                                      <path d="M10 11v6"></path>
-                                      <path d="M14 11v6"></path>
-                                    </svg>
-                                  </button>
+                                  <form method="post" data-request-delete-form data-user-name="{{ row.display_name|default:row.username }}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="user_id" value="{{ row.id }}" />
+                                    <input type="hidden" name="action" value="request_delete" />
+                                    {% if row.has_pending_delete %}
+                                      <button type="button" role="menuitem" disabled title="Already waiting for Super Admin approval"
+                                        class="flex w-full cursor-not-allowed items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-400">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4"></path><path d="M12 16h.01"></path><circle cx="12" cy="12" r="10"></circle></svg>
+                                        Deletion request pending
+                                      </button>
+                                    {% else %}
+                                      <button type="button" role="menuitem" data-trigger-request-delete
+                                        class="flex w-full items-center gap-3 px-4 py-2.5 text-sm font-medium text-rose-700 hover:bg-rose-50 focus:bg-rose-50 focus:outline-none">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></svg>
+                                        Request deletion
+                                      </button>
+                                    {% endif %}
+                                  </form>
                                 {% endif %}
-                              </form>
-                              {% endif %}
-                            {% endif %}
+                              {% endif %}{% endif %}
+                            </div>
                           </div>
                         </td>
                       </tr>
@@ -695,9 +597,8 @@
           </div>
         </div>
 
-        {% if is_super_admin %}
-          {% include 'core/_delete_confirm_modal.html' %}
-        {% endif %}
+        {% comment %} Delete (Super Admin) and Reset password (Super Admin and Admin) confirmations. {% endcomment %}
+        {% include 'core/_delete_confirm_modal.html' %}
 
         <div
           id="requestDeleteModal"
@@ -893,6 +794,7 @@
         {% include 'core/_deactivate_reason_modal.html' %}
 
         <script src="{% static 'core/js/pages/admin-manage-users-1.js' %}" data-has-errors="{% if form.errors %}1{% endif %}"></script>
+        <script src="{% static 'core/js/row-actions-menu.js' %}"></script>
         {% include 'core/_edit_user_modal.html' %}
         {% include 'core/_result_modal.html' with message=action_message error=action_error %}
       </main>

@@ -2841,6 +2841,41 @@ def _send_invite_credentials_email(request, username, email, role, temp_password
     message.send(fail_silently=False)
 
 
+def _send_admin_password_reset_email(request, user, temp_password, reason):
+    """Emails the new password an Admin or Super Admin set for this account.
+    Raises on failure so the caller can roll the change back."""
+    login_url = request.build_absolute_uri(reverse("login"))
+    name = account_display_name(user)
+    contact = (LandingSettings.load().contact_email or "").strip()
+    contact_line = (
+        f"If you did not ask for this, contact {contact}."
+        if contact else "If you did not ask for this, contact the research office."
+    )
+    text_body = (
+        f"Hello {name},\n\n"
+        f"An administrator reset the password of your Food Match account ({user.username}).\n\n"
+        f"New password: {temp_password}\n"
+        f"Reason: {reason}\n\n"
+        f"Log in here: {login_url}\n\n"
+        "For your security, change this password after you log in (My Profile > Change Password).\n"
+        "Keep this email private and do not share your password.\n\n"
+        f"{contact_line}\n"
+    )
+    html_body = (
+        f"<p>Hello {escape(name)},</p>"
+        f"<p>An administrator reset the password of your Food Match account (<strong>{escape(user.username)}</strong>).</p>"
+        f'<p>New password: <strong style="font-size:18px;letter-spacing:2px;">{escape(temp_password)}</strong></p>'
+        f"<p><strong>Reason:</strong><br>{escape(reason)}</p>"
+        f'<p><a href="{escape(login_url)}">Log in to Food Match</a></p>'
+        "<p>For your security, change this password after you log in (My Profile &rsaquo; Change Password). "
+        "Keep this email private and do not share your password.</p>"
+        f"<p>{escape(contact_line)}</p>"
+    )
+    message = EmailMultiAlternatives("Your Food Match password was reset", text_body, to=[user.email])
+    message.attach_alternative(html_body, "text/html")
+    message.send(fail_silently=False)
+
+
 PASSWORD_CHANGE_SESSION_KEY = "pw_change"
 PASSWORD_CHANGE_MAX_CURRENT_PASSWORD_FAILS = 5
 PASSWORD_CHANGE_STATE_LIFETIME_SECONDS = 30 * 60
@@ -3535,7 +3570,7 @@ def manage_users_view(request):
         id_valid = False
         target_user = None
         if user_id_raw and action in (
-            "toggle_active", "delete_user", "request_delete", "edit_user",
+            "toggle_active", "delete_user", "request_delete", "edit_user", "reset_password",
         ):
             try:
                 user_id = int(user_id_raw)
@@ -3580,6 +3615,54 @@ def manage_users_view(request):
                     )
                     if email_warning:
                         action_error = email_warning
+
+        elif action == "reset_password" and id_valid and target_user:
+            # Super Admin: any account but their own. Admin: Admins and Students.
+            # A reason + the actor's own password; the new password is generated
+            # and emailed to the account owner, never shown to the actor.
+            actor_label = "Super Admin" if is_super_admin else "Admin"
+            target_label = account_display_name(target_user)
+            if not _can_edit_account(request.user, target_user):
+                action_error = "You do not have permission to reset this account's password."
+            elif _registration_pending(target_user):
+                action_error = "This registration is still waiting for approval. Approve it first."
+            elif not (target_user.email or "").strip():
+                action_error = "This account has no email address, so a new password can't be sent. Add an email first."
+            else:
+                reason, confirm_error = _confirm_with_password(
+                    request,
+                    "Please give a reason for resetting this password. Nothing was changed.",
+                    "Incorrect password. The password was not reset.",
+                )
+                if confirm_error:
+                    action_error = confirm_error
+                else:
+                    temp_password = _generate_temp_password()
+                    try:
+                        # The email is sent inside the transaction: if it fails, the
+                        # old password stays, so nobody is locked out.
+                        with transaction.atomic():
+                            target_user.set_password(temp_password)
+                            target_user.save(update_fields=["password"])
+                            _send_admin_password_reset_email(request, target_user, temp_password, reason)
+                    except Exception:
+                        logger.exception("Could not reset the password of user %s", target_user.pk)
+                        action_error = (
+                            "We could not email the new password, so the password was not changed. "
+                            "Check the email address and try again."
+                        )
+                    else:
+                        _log_system_event(
+                            request,
+                            request.user,
+                            SystemLogType.ACTIVITY,
+                            f"{actor_label} reset the password of {target_label} "
+                            f"(username: {target_user.username}). Reason: {reason}",
+                        )
+                        action_message = (
+                            f"The password of '{target_label}' was reset. "
+                            f"A new password was emailed to {target_user.email}."
+                        )
 
         elif action == "delete_user" and id_valid and is_super_admin and target_user:
             deletion_reason, confirm_error = ("", "") if target_user.pk == request.user.pk else _confirm_permanent_delete(request)
