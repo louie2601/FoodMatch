@@ -235,6 +235,11 @@ class SimilarityCheckRecord(models.Model):
     # similarity_label, metadata_only) -- kept for a detail view later without
     # needing to re-run the comparison.
     results_snapshot = models.JSONField(default=list, blank=True)
+    # SHA-256 of the checked file, and whether that exact file may now be
+    # submitted (low similarity and a finished paper). My Submissions only
+    # accepts a file with such a record -- see student_submissions_view.
+    file_hash = models.CharField(max_length=64, blank=True, db_index=True)
+    upload_allowed = models.BooleanField(default=False)
     checked_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -355,8 +355,43 @@
       document.body.style.overflow = '';
     }
 
+    // No file has passed the Similarity Check yet: explain that and point to
+    // the check instead of opening a form that would refuse the upload.
+    var checkModal = document.querySelector('[data-check-required-modal]');
+
+    function openCheckModal() {
+      checkModal.classList.remove('hidden');
+      checkModal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+      var primary = checkModal.querySelector('[data-check-required-primary]');
+      if (primary) primary.focus({ preventScroll: true });
+    }
+
+    function closeCheckModal() {
+      checkModal.classList.add('hidden');
+      checkModal.classList.remove('flex');
+      document.body.style.overflow = '';
+      if (openBtn) openBtn.focus({ preventScroll: true });
+    }
+
+    if (checkModal) {
+      checkModal.querySelectorAll('[data-close-check-modal]').forEach(function (el) {
+        el.addEventListener('click', closeCheckModal);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !checkModal.classList.contains('hidden')) closeCheckModal();
+      });
+    }
+
     if (openBtn) {
-      openBtn.addEventListener('click', openModal);
+      openBtn.addEventListener('click', function () {
+        if (cfg.hasReadyFile !== '1' && checkModal) {
+          openCheckModal();
+          return;
+        }
+        openModal();
+        attachCheckedFile();
+      });
     }
 
     closeButtons.forEach(function (btn) {
@@ -373,8 +408,40 @@
       }
     });
 
-    if (hasErrors) {
+    // Put the PDF that just passed the Similarity Check into the file box (once,
+    // and only while the box is empty), then let the usual auto-fill read it.
+    var checkedFileAttached = false;
+    function attachCheckedFile() {
+      if (!cfg.checkedFileUrl || !documentInput || checkedFileAttached) return;
+      if (documentInput.files && documentInput.files.length) return;
+      checkedFileAttached = true;
+      var fail = function () {
+        setExtractStatus('error', 'Your checked file could not be attached automatically. Please choose it again.');
+      };
+      if (typeof DataTransfer === 'undefined') { fail(); return; }
+      setExtractStatus('loading', 'Attaching your checked file…');
+      fetch(cfg.checkedFileUrl, { credentials: 'same-origin' })
+        .then(function (res) {
+          if (!res.ok) throw new Error('not available');
+          return res.blob();
+        })
+        .then(function (blob) {
+          var file = new File([blob], cfg.checkedFileName || 'research.pdf', { type: 'application/pdf' });
+          var transfer = new DataTransfer();
+          transfer.items.add(file);
+          documentInput.files = transfer.files;
+          documentInput.dispatchEvent(new Event('change', { bubbles: true }));
+        })
+        .catch(fail);
+    }
+
+    // Opened with errors to fix, or straight from the Similarity Check's
+    // "Proceed to Upload" (?submit=1).
+    if (hasErrors || cfg.openOnLoad === "1") {
       openModal();
+    }
+    if (!hasErrors && cfg.openOnLoad === "1") {
+      attachCheckedFile();
     }
   })();
 })((document.currentScript && document.currentScript.dataset) || {});

@@ -30,6 +30,15 @@ SIMILARITY_CHECK_UPLOAD_EXTENSIONS = (".pdf",)
 SIMILARITY_CHECK_UPLOAD_ACCEPT = ",".join(SIMILARITY_CHECK_UPLOAD_EXTENSIONS)
 SIMILARITY_CHECK_UPLOAD_HELP_TEXT = "Food research only. PDF only."
 
+# My Submissions takes only the exact file that passed the Similarity Check,
+# and the check reads PDF only, so submissions are PDF only too.
+SUBMISSION_UPLOAD_ACCEPT = ".pdf"
+SUBMISSION_PDF_ONLY_ERROR = "Only PDF files can be submitted. Upload the same PDF that passed the Similarity Check."
+SUBMISSION_UPLOAD_HELP_TEXT = (
+    "Complete food research only (with Results, Conclusions, Recommendations, and References). "
+    "PDF only: the same file that passed the Similarity Check."
+)
+
 
 def _validate_document_extension(uploaded_file):
     file_name = uploaded_file.name.lower()
@@ -949,20 +958,22 @@ class ResearchSubmissionForm(ResearchTextRulesMixin, forms.ModelForm):
             "document": forms.ClearableFileInput(
                 attrs={
                     "class": REGISTER_INPUT_CLASSES,
-                    "accept": DOCUMENT_UPLOAD_ACCEPT,
+                    "accept": SUBMISSION_UPLOAD_ACCEPT,
                 }
             ),
         }
         help_texts = {
             "keywords": "Auto-generated from the title — add or remove as needed.",
-            "document": DOCUMENT_UPLOAD_HELP_TEXT,
+            "document": SUBMISSION_UPLOAD_HELP_TEXT,
         }
 
     def clean_document(self):
         document = self.cleaned_data.get("document")
         if not document:
             return document
-        return _validate_document_extension(document)
+        if not document.name.lower().endswith(".pdf"):
+            raise forms.ValidationError(SUBMISSION_PDF_ONLY_ERROR)
+        return document
 
 
 REPOSITORY_INPUT_CLASSES = (

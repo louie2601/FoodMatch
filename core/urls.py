@@ -9,6 +9,7 @@ urlpatterns = [
     path("profile/", views.profile_view, name="profile"),
     path("profile/password/", views.change_password_view, name="change_password"),
     path("research/similarity/", views.research_similarity_view, name="research_similarity"),
+    path("research/similarity/checked-file/", views.checked_similarity_file_view, name="checked_similarity_file"),
     path("login/", views.login_view, name="login"),
     path("forgot-password/", views.forgot_password_view, name="forgot_password"),
     path("forgot-password/verify/", views.forgot_password_verify_view, name="forgot_password_verify"),

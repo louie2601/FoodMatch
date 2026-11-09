@@ -77,6 +77,7 @@ from .forms import (
     RepositoryResearchAddForm,
     ResearchSimilarityForm,
     ResearchSubmissionForm,
+    SUBMISSION_PDF_ONLY_ERROR,
 )
 from .models import (
     AccountDeactivation,
@@ -154,11 +155,12 @@ REPORTS_TOP_CATEGORIES = 10
 SIMILARITY_UPLOAD_ALLOWED_SESSION_KEY = "similarity_upload_allowed"
 SIMILARITY_CHECKED_FILE_NAME_SESSION_KEY = "similarity_checked_file_name"
 SIMILARITY_CHECKED_FILE_STORAGE_KEY = "similarity_checked_file_storage_path"
+SIMILARITY_CHECKED_FILE_HASH_SESSION_KEY = "similarity_checked_file_hash"
 PROFILE_COMPLETE_SESSION_KEY = "profile_complete_override"
 
 
 def _clear_pending_similarity_file(request):
-    """Delete any temp file saved from a previous similarity check and clear its session key."""
+    """Delete any temp file saved from a previous similarity check and clear its session keys."""
     stored_path = request.session.get(SIMILARITY_CHECKED_FILE_STORAGE_KEY, "")
     if stored_path:
         try:
@@ -167,6 +169,26 @@ def _clear_pending_similarity_file(request):
         except Exception:
             pass
     request.session[SIMILARITY_CHECKED_FILE_STORAGE_KEY] = ""
+    request.session[SIMILARITY_CHECKED_FILE_HASH_SESSION_KEY] = ""
+
+
+def _pending_checked_file(request):
+    """(storage path, file name) of the PDF that passed this student's latest
+    Similarity Check and is still waiting to be submitted, or ("", "")."""
+    stored_path = request.session.get(SIMILARITY_CHECKED_FILE_STORAGE_KEY, "") or ""
+    file_name = request.session.get(SIMILARITY_CHECKED_FILE_NAME_SESSION_KEY, "") or ""
+    if not request.session.get(SIMILARITY_UPLOAD_ALLOWED_SESSION_KEY) or not stored_path or not file_name:
+        return "", ""
+    # The path comes from this account's own session; still, only ever serve
+    # a file from this account's own folder.
+    if not stored_path.startswith(f"pending_similarity_uploads/{request.user.pk}/"):
+        return "", ""
+    try:
+        if not default_storage.exists(stored_path):
+            return "", ""
+    except Exception:
+        return "", ""
+    return stored_path, file_name
 
 
 def _parse_authors_list(authors_json_raw, request):
@@ -230,18 +252,20 @@ def _log_system_event(request, user, log_type, action):
         pass
 
 
-def _record_similarity_check(user, file_name, results, total_compared):
+def _record_similarity_check(user, file_name, results, total_compared, file_hash=""):
     """Persist one Similarity Check run so it shows up in the requesting
-    role's history (see SimilarityCheckRecord). Best-effort, same as system
-    logging -- never let a logging failure break the check itself."""
+    role's history (see SimilarityCheckRecord). Returns the record, or None.
+    Best-effort, same as system logging -- never let a logging failure break
+    the check itself."""
     if is_emergency_user(user):
         # Virtual account, no real DB row to attach the FK to.
-        return
+        return None
     try:
         top = results[0] if results else None
-        SimilarityCheckRecord.objects.create(
+        return SimilarityCheckRecord.objects.create(
             user=user,
             file_name=(file_name or "")[:255],
+            file_hash=file_hash or "",
             top_score_percent=top.get("score_percent", 0.0) if top else 0.0,
             top_match_title=(top.get("title") or "")[:255] if top else "",
             similarity_level=(top.get("similarity_level") or "low") if top else "low",
@@ -258,7 +282,21 @@ def _record_similarity_check(user, file_name, results, total_compared):
             ],
         )
     except Exception:
-        pass
+        return None
+
+
+SIMILARITY_CHECK_REQUIRED_ERROR = (
+    "This file has not passed the Similarity Check yet. Check this exact PDF in Similarity Check first: "
+    "only a file with low similarity (30% or below) can be submitted. If you changed the file after "
+    "checking it, check it again."
+)
+
+
+def _passed_similarity_check(user, file_hash):
+    """True when this account checked this exact file and the check allowed upload."""
+    if not file_hash:
+        return False
+    return SimilarityCheckRecord.objects.filter(user=user, file_hash=file_hash, upload_allowed=True).exists()
 
 
 def _effective_login_role_for_profile(user):
@@ -503,6 +541,9 @@ def research_similarity_view(request):
         _clear_pending_similarity_file(request)
         request.session[SIMILARITY_UPLOAD_ALLOWED_SESSION_KEY] = False
         request.session[SIMILARITY_CHECKED_FILE_NAME_SESSION_KEY] = ""
+        # Fingerprint of the checked file: My Submissions accepts only a file
+        # whose fingerprint passed a check (see _passed_similarity_check).
+        proposal_hash = file_sha256(proposal_file)
 
         try:
             query_text = extract_text_from_uploaded_file(proposal_file, use_ocr=False)
@@ -610,7 +651,9 @@ def research_similarity_view(request):
                     details = explain_similarity_match(query_fields_raw, result)
                     details.append(semantic.meaning_section(result, query_passages, result.get("document_text", "")))
                     result["match_details_json"] = json.dumps(details)
-                _record_similarity_check(request.user, uploaded_file_name, similarity_results, total_repository_documents)
+                check_record = _record_similarity_check(
+                    request.user, uploaded_file_name, similarity_results, total_repository_documents, file_hash=proposal_hash
+                )
                 can_submit_for_review = not any(result["score_percent"] > 30 for result in similarity_results)
                 # Unfinished papers can still be checked (e.g. to test a topic early),
                 # but upload is only offered for a complete paper, as Submit Research
@@ -633,6 +676,9 @@ def research_similarity_view(request):
                         f"(missing: {', '.join(paper_missing)}); upload not offered.",
                     )
                 elif can_submit_for_review:
+                    if check_record:
+                        check_record.upload_allowed = True
+                        check_record.save(update_fields=["upload_allowed"])
                     stored_path = default_storage.save(
                         f"pending_similarity_uploads/{request.user.pk}/{uploaded_file_name}",
                         proposal_file,
@@ -640,6 +686,7 @@ def research_similarity_view(request):
                     request.session[SIMILARITY_UPLOAD_ALLOWED_SESSION_KEY] = True
                     request.session[SIMILARITY_CHECKED_FILE_NAME_SESSION_KEY] = uploaded_file_name
                     request.session[SIMILARITY_CHECKED_FILE_STORAGE_KEY] = stored_path
+                    request.session[SIMILARITY_CHECKED_FILE_HASH_SESSION_KEY] = proposal_hash
                     _log_system_event(
                         request,
                         request.user,
@@ -4377,14 +4424,20 @@ def admin_extract_research_metadata_view(request):
     if not uploaded_file:
         return JsonResponse({"error": "Please choose a file first."}, status=400)
 
+    if is_student and not uploaded_file.name.lower().endswith(".pdf"):
+        return JsonResponse({"error": SUBMISSION_PDF_ONLY_ERROR}, status=400)
     if not uploaded_file.name.lower().endswith(DOCUMENT_UPLOAD_EXTENSIONS):
         return JsonResponse({"error": "Only PDF, DOCX, TXT, JPG, or PNG files are allowed."}, status=400)
 
-    # Warn right away if this exact file is already in the system; the final
-    # submit checks again, so this is only an early heads-up.
-    duplicate_error = duplicate_file_error(file_sha256(uploaded_file), request.user)
+    # Warn right away if this exact file is already in the system, or (for a
+    # student) hasn't passed the Similarity Check; the final submit checks
+    # again, so these are only early heads-ups.
+    uploaded_hash = file_sha256(uploaded_file)
+    duplicate_error = duplicate_file_error(uploaded_hash, request.user)
     if duplicate_error:
         return JsonResponse({"error": duplicate_error, "duplicate": True}, status=409)
+    if is_student and not _passed_similarity_check(request.user, uploaded_hash):
+        return JsonResponse({"error": SIMILARITY_CHECK_REQUIRED_ERROR, "needs_check": True}, status=409)
 
     text_layer = read_text_layer(uploaded_file)
     try:
@@ -4798,10 +4851,11 @@ def student_submissions_view(request):
     if redirect_response:
         return redirect_response
 
-    # Submitting research is independent of the Similarity Check — that page
-    # remains a separate, optional tool. Upload happens directly here, same
-    # pattern as the Admin's Add Research File: upload -> auto-extract (AJAX)
-    # -> review editable fields -> submit.
+    # A file can be submitted only after this exact file passed the Similarity
+    # Check (low similarity, finished paper) -- matched by its SHA-256
+    # fingerprint, so an edited file must be checked again. Upload happens
+    # here, same pattern as the Admin's Add Research File: upload ->
+    # auto-extract (AJAX) -> review editable fields -> submit.
     form = ResearchSubmissionForm(request.POST or None, request.FILES or None, include_document_field=True)
     form_submitted = False
     submission_name = ""
@@ -4820,8 +4874,12 @@ def student_submissions_view(request):
                 form.add_error("document", file_error)
             if title_error:
                 form.add_error("title", title_error)
+            check_error = ""
+            if document and not file_error and not _passed_similarity_check(request.user, document_hash):
+                check_error = SIMILARITY_CHECK_REQUIRED_ERROR
+                form.add_error("document", check_error)
             content_error = ""
-            if document and not file_error:
+            if document and not file_error and not check_error:
                 text_layer = read_text_layer(document)
                 food_check = check_uploaded_research(
                     document, form.cleaned_data.get("title"), form.cleaned_data.get("abstract"),
@@ -4841,7 +4899,7 @@ def student_submissions_view(request):
                     form.add_error("document", content_error)
             if not author_list:
                 form.add_error(None, "Your account has no registered members to list as authors. Please update your profile first.")
-            elif not (file_error or title_error or content_error):
+            elif not (file_error or title_error or check_error or content_error):
                 submission = form.save(commit=False)
                 submission.document_hash = document_hash
                 submission.student = request.user
@@ -4851,6 +4909,12 @@ def student_submissions_view(request):
                 submission.save()
                 submission_name = submission.title
                 form_submitted = True
+                # The checked file that "Proceed to Upload" carried over is now
+                # submitted, so its waiting copy is no longer needed.
+                if request.session.get(SIMILARITY_CHECKED_FILE_HASH_SESSION_KEY) == document_hash:
+                    _clear_pending_similarity_file(request)
+                    request.session[SIMILARITY_UPLOAD_ALLOWED_SESSION_KEY] = False
+                    request.session[SIMILARITY_CHECKED_FILE_NAME_SESSION_KEY] = ""
                 form = ResearchSubmissionForm(include_document_field=True)
                 _log_system_event(
                     request,
@@ -4867,9 +4931,28 @@ def student_submissions_view(request):
                 )
 
     submissions = ResearchSubmission.objects.filter(student=request.user)
+    open_submit_modal = request.method == "GET" and request.GET.get("submit") == "1"
+    # Files that passed a check and haven't been submitted yet, newest first.
+    submitted_hashes = set(
+        submissions.exclude(document_hash="").exclude(status=ResearchSubmissionStatus.REJECTED)
+        .values_list("document_hash", flat=True)
+    )
+    ready_files, seen_hashes = [], set()
+    for record in SimilarityCheckRecord.objects.filter(user=request.user, upload_allowed=True).exclude(file_hash=""):
+        if record.file_hash in submitted_hashes or record.file_hash in seen_hashes:
+            continue
+        seen_hashes.add(record.file_hash)
+        ready_files.append(record)
+        if len(ready_files) == 3:
+            break
     context = {
         "page_title": "My Submissions",
         "form": form,
+        "ready_files": ready_files,
+        "open_submit_modal": open_submit_modal,
+        # The PDF that just passed this student's check: the page attaches it
+        # when the submit form opens, so it isn't chosen again.
+        "checked_file_name": _pending_checked_file(request)[1],
         "form_submitted": form_submitted,
         "submission_name": submission_name,
         "student_name": account_display_name(request.user),
@@ -4883,6 +4966,23 @@ def student_submissions_view(request):
         },
     }
     return render(request, "core/student_submissions.html", context)
+
+
+@login_required(login_url="login")
+def checked_similarity_file_view(request):
+    """The PDF that just passed this student's Similarity Check. My Submissions
+    fetches it after "Proceed to Upload" and puts it in the file box, so the
+    student doesn't choose the same file again. Submitting still re-checks its
+    fingerprint like any other upload."""
+    redirect_response = _student_only_or_redirect(request)
+    if redirect_response:
+        return redirect_response
+    stored_path, file_name = _pending_checked_file(request)
+    if not stored_path:
+        raise Http404("No checked file is waiting to be submitted.")
+    response = FileResponse(default_storage.open(stored_path, "rb"), content_type="application/pdf", filename=file_name)
+    response["Cache-Control"] = "no-store"
+    return response
 
 
 @login_required(login_url="login")

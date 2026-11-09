@@ -198,6 +198,12 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 # `collectstatic` gathers every static file here for the web server (Docker/nginx).
 STATIC_ROOT = BASE_DIR / "staticfiles"
+# Script and style links carry ?v=<last change time>, so browsers load an
+# updated file instead of an old cached copy (see core/storage.py).
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "core.storage.VersionedStaticFilesStorage"},
+}
 
 # Media files (user-uploaded content)
 MEDIA_URL = "/media/"

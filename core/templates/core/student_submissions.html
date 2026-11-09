@@ -40,8 +40,20 @@
             </div>
           {% endif %}
 
-          <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600 shadow-sm">
-            Tip: you can optionally run the <a href="{% url 'research_similarity' %}" class="font-semibold text-sky-700 hover:underline">Similarity Check</a> first to compare your research against the repository before submitting.
+          <div class="rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900 shadow-sm">
+            <p>
+              <span class="font-semibold">Check first, then submit.</span>
+              Run your paper through the <a href="{% url 'research_similarity' %}" class="font-semibold text-sky-700 underline hover:text-sky-800">Similarity Check</a>.
+              Only the exact PDF that passed the check (low similarity, 30% or below) can be submitted. If you edit the file afterwards, check it again.
+            </p>
+            {% if ready_files %}
+              <p class="mt-2 font-semibold">Ready to submit:</p>
+              <ul class="mt-1 space-y-0.5">
+                {% for record in ready_files %}
+                  <li>{{ record.file_name }} <span class="text-sky-700">· checked {{ record.checked_at|date:"M d, Y g:i A" }}</span></li>
+                {% endfor %}
+              </ul>
+            {% endif %}
           </div>
 
           <div class="grid gap-4 md:grid-cols-3">
@@ -139,7 +151,7 @@
             <div>
               <p id="submitResearchModalLabel" class="text-xs font-bold uppercase tracking-[0.2em] text-sky-700">Submit for Review</p>
               <h3 class="mt-1 text-2xl font-black tracking-tight text-slate-900">Submit Research File</h3>
-              <p class="mt-1 text-sm text-slate-600">PDF, DOCX, TXT, JPG, or PNG files are supported (scanned/photographed pages are read via OCR).</p>
+              <p class="mt-1 text-sm text-slate-600">PDF only: upload the same file that passed the Similarity Check.</p>
             </div>
             <button
               type="button"
@@ -170,7 +182,7 @@
               </label>
               {{ form.document }}
               <p class="mt-1 text-xs text-slate-500">
-                Complete food research only: it must have Results and Discussion, Conclusions, Recommendations, and References. Upload the original PDF or Word file (scanned copies and photos can't be checked). Once chosen, the fields below are filled in automatically from its content.
+                Complete food research only: it must have Results and Discussion, Conclusions, Recommendations, and References. Upload the exact PDF that passed the Similarity Check (scanned copies can't be checked). Once chosen, the fields below are filled in automatically from its content.
               </p>
               {% if form.document.errors %}<p class="mt-1 text-sm text-rose-600">{{ form.document.errors.0 }}</p>{% endif %}
               <p id="id_document_client_error" class="mt-1 hidden text-sm text-rose-600">Please upload your research document.</p>
@@ -304,8 +316,29 @@
         </div>
       </div>
 
+      {% comment %} Shown instead of the submit form when no file has passed the Similarity Check yet. {% endcomment %}
+      <div data-check-required-modal class="fixed inset-0 z-[60] hidden items-center justify-center px-4 py-6" role="alertdialog" aria-modal="true" aria-labelledby="checkRequiredTitle" aria-describedby="checkRequiredBody">
+        <div data-close-check-modal class="absolute inset-0 bg-slate-950/50 backdrop-blur-sm"></div>
+        <div class="relative z-10 w-full max-w-md overflow-hidden rounded-[1.5rem] border border-white/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.3)]">
+          <div class="h-1 bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500"></div>
+          <div class="px-6 pt-6 pb-5 text-center">
+            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 text-amber-600 ring-8 ring-amber-50/60">
+              <svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path><path d="M8.5 11h5"></path></svg>
+            </div>
+            <h2 id="checkRequiredTitle" class="mt-4 text-xl font-black tracking-tight text-slate-900">Similarity Check required</h2>
+            <p id="checkRequiredBody" class="mt-2 text-sm leading-relaxed text-slate-600">
+              Before you can submit, your research paper must pass the Similarity Check. Check your PDF first; if it has low similarity (30% or below), you can submit it here.
+            </p>
+          </div>
+          <div class="flex justify-end gap-2 border-t border-slate-100 bg-slate-50/60 px-6 py-3">
+            <button type="button" data-close-check-modal class="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Cancel</button>
+            <a href="{% url 'research_similarity' %}" data-check-required-primary class="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-600 to-green-700 px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-emerald-200 transition hover:-translate-y-0.5">Proceed to Similarity Check</a>
+          </div>
+        </div>
+      </div>
+
     <script src="{% static 'core/js/field-rules.js' %}"></script>
-    <script src="{% static 'core/js/pages/student-submissions-1.js' %}" data-add-category-url="{% url 'add_food_category' %}" data-extract-url="{% url 'admin_extract_research_metadata' %}" data-has-errors="{% if form.errors %}1{% endif %}"></script>
+    <script src="{% static 'core/js/pages/student-submissions-1.js' %}" data-add-category-url="{% url 'add_food_category' %}" data-extract-url="{% url 'admin_extract_research_metadata' %}" data-has-errors="{% if form.errors %}1{% endif %}" data-open-on-load="{% if open_submit_modal %}1{% endif %}" data-has-ready-file="{% if ready_files %}1{% endif %}"{% if checked_file_name %} data-checked-file-url="{% url 'checked_similarity_file' %}" data-checked-file-name="{{ checked_file_name }}"{% endif %}></script>
 
     <script src="{% static 'core/js/sidebar-groups.js' %}"></script>
   </body>
